@@ -200,7 +200,7 @@ function filter_generico_callback(array $link){
 		//replace our defaults
 		if(!empty($defaultprops)){
 			foreach($defaultprops as $name=>$value){
-				$genericotemplate = str_replace('@@' . $name .'@@',$value,$genericotemplate);
+				$genericotemplate = str_replace('@@' . $name .'@@',strip_tags($value),$genericotemplate);
 			}
 		}
 	}
