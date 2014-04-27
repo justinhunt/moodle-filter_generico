@@ -91,7 +91,7 @@ function generico_fetch_filter_properties($filterstring){
 function filter_generico_callback(array $link){
 	global $CFG, $COURSE, $USER;
 	
-	 $conf = get_config('filter_generico');
+	 $conf = get_object_vars(get_config('filter_generico'));
 	
 	//get our filter props
 	//we use a function in the poodll poodllresourcelib, because
@@ -103,7 +103,7 @@ function filter_generico_callback(array $link){
 	
 	//determine which template we are using
 	for($tempindex=1;$tempindex<11;$tempindex++){
-			if($filterprops['type']==get_config('filter_generico','templatekey_' . $tempindex)){
+			if($filterprops['type']==$conf['templatekey_' . $tempindex]){
 				break;
 			}
 	}
@@ -111,7 +111,7 @@ function filter_generico_callback(array $link){
 	if($tempindex==11){return '';}
 	
 	//fetch our template
-	$genericotemplate = get_config('filter_generico','template_' . $tempindex);
+	$genericotemplate = $conf['template_' . $tempindex];
 	
 	//replace the specified names with spec values
 	foreach($filterprops as $name=>$value){
@@ -119,7 +119,7 @@ function filter_generico_callback(array $link){
 	}
 	
 	//fetch defaults for this template
-	$defaults = get_config('filter_generico','templatedefaults_'. $tempindex);
+	$defaults = $conf['templatedefaults_'. $tempindex];
 	if(!empty($defaults)){
 		$defaults = "{GENERICO:" . $defaults . "}";
 		$defaultprops=generico_fetch_filter_properties($defaults);
