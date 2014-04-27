@@ -41,7 +41,7 @@ if ($ADMIN->fulltree) {
 	
 	for($tindex=1;$tindex<11;$tindex++){
 		//heading of template
-		$settings->add(new admin_setting_heading('filter_generico/templateheading', 
+		$settings->add(new admin_setting_heading('filter_generico/templateheading_' . $tindex, 
 				get_string('templateheading', 'filter_generico') . ' ' . $tindex , ''));
 		//template key
 		 $settings->add(new admin_setting_configtext('filter_generico/templatekey_' . $tindex , 

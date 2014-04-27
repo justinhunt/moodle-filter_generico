@@ -20,21 +20,13 @@
  *
  * @package    filter
  * @subpackage generico
- * @copyright  2014 Justin Huny <poodllsupport@gmail.com>
+ * @copyright  2014 Justin Hunt <poodllsupport@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 class filter_generico extends moodle_text_filter {
-
-    /**
-     * @var array global configuration for this filter
-     *
-     * This might be eventually moved into parent class if we found it
-     * useful for other filters, too.
-     */
-    protected static $globalconfig;
 
     /**
      * Apply the filter to the text
@@ -61,74 +53,8 @@ class filter_generico extends moodle_text_filter {
 
 		return $newtext;
     }
-	
-	public function generico_fetch_filter_properties($filterstring){
-	//this just removes the {GENERICO: .. } 
-	$rawproperties = explode ("{GENERICO:", $filterstring);
-	$rawproperties = $rawproperties[1];
-	$rawproperties = explode ("}", $rawproperties);	
-	$rawproperties = $rawproperties[0];
-
-	//Now we just have our properties string
-	//Lets run our regular expression over them
-	//string should be property=value,property=value
-	//got this regexp from http://stackoverflow.com/questions/168171/regular-expression-for-parsing-name-value-pairs
-	$regexpression='/([^=,]*)=("[^"]*"|[^,"]*)/';
-	$matches; 	
-
-	//here we match the filter string and split into name array (matches[1]) and value array (matches[2])
-	//we then add those to a name value array.
-	$itemprops = array();
-	if (preg_match_all($regexpression, $rawproperties,$matches,PREG_PATTERN_ORDER)){		
-		$propscount = count($matches[1]);
-		for ($cnt =0; $cnt < $propscount; $cnt++){
-			// echo $matches[1][$cnt] . "=" . $matches[2][$cnt] . " ";
-			$itemprops[$matches[1][$cnt]]=$matches[2][$cnt];
-		}
-	}
-	return $itemprops;
-}
-
-    ////////////////////////////////////////////////////////////////////////////
-    // internal implementation starts here
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns the global filter setting
-     *
-     * If the $name is provided, returns single value. Otherwise returns all
-     * global settings in object. Returns null if the named setting is not
-     * found.
-     *
-     * @param mixed $name optional config variable name, defaults to null for all
-     * @return string|object|null
-     */
-    protected function get_global_config($name=null) {
-        $this->load_global_config();
-        if (is_null($name)) {
-            return self::$globalconfig;
-
-        } elseif (array_key_exists($name, self::$globalconfig)) {
-            return self::$globalconfig->{$name};
-
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Makes sure that the global config is loaded in $this->globalconfig
-     *
-     * @return void
-     */
-    protected function load_global_config() {
-        if (is_null(self::$globalconfig)) {
-            self::$globalconfig = get_config('filter_generico');
-        }
-    }
-
    
-}
+}//end of class
 
 
 function generico_fetch_filter_properties($filterstring){

@@ -26,16 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['embedimages'] = 'Embed images';
-$string['embedimages_desc'] = 'Replace image urls with images in selected text formats.';
 $string['filtername'] = 'Generico';
 $string['pluginname'] = 'Generico';
 $string['filterdescription'] = 'Convert filter strings into templates merged with data';
-$string['settingformats'] = 'Apply to formats';
-$string['settingformats_desc'] = 'The filter will be applied only if the original text was inserted in one of the selected formats.';
 $string['templateheading'] = 'Settings for Generico Template';
 $string['template'] = 'The body of template';
-$string['template_desc'] = 'Put the template here, define variables by surround them with pairs of @ marks. eg @@variable@@';
+$string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@';
 $string['templatekey'] = 'The key that identifies template';
 $string['templatekey_desc'] = 'The key should be one word and only contain numbers and letters, underscores, hyphens and dots .';
 $string['templatedefaults'] = 'The defaults for template';
