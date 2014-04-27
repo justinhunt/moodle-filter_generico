@@ -25,19 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-
-/*
-
-    $settings->add(new admin_setting_configmulticheckbox('filter_generico/formats',
-            get_string('settingformats', 'filter_generico'),
-            get_string('settingformats_desc', 'filter_generico'),
-            array(FORMAT_MOODLE => 1), format_text_menu()));
-
-    $settings->add(new admin_setting_configcheckbox('filter_generico/embedimages',
-            get_string('embedimages', 'filter_generico'),
-            get_string('embedimages_desc', 'filter_generico'),
-            1));
-*/
 	
 	for($tindex=1;$tindex<11;$tindex++){
 		//heading of template
