@@ -13,21 +13,20 @@ The key is just a one word name, that tells Generico which template to use.
 The template is just passage of text that you want to use, and the parts of the template that you want to mark as variables you surround in @@ marks.
 The defaults are a comma delimited list of variablename=value pairs. Here is an example template.
 
-templatekey: greenthings
-template: There are many green things including @@thing1@@ and @@thing2@@
-template defaults: thing2=lettuce
+templatekey: wildthings
+template: Inside this box are @@thing1@@ and @@thing2@@
+template defaults: thing2=Silly
 
-A possible filter string for this "greenthings" template would like this:
-{GENERICO:type=greenthings,thing1=peas}
+A possible filter string for this "wildthings" template would look like this:
+{GENERICO:type=wildthings,thing1=Sally}
 
 Generico would replace the above filter string with:
-"There are many green things including peas and lettuce"
+"Inside this box are Sally and Silly"
 
 The filter string must follow this format,
 {GENERICO:type=templatekey,variable1=data1,variable2=data2}
 
-Th greenthings example above is trivial of course. Imagine using it to embed YouTube videos by registering the standard iframe code YouTube gives you, as a template.
-Then it would only be necessary to insert the id of the video in a generico filter string.
+The wildthings example above is trivial of course. Imagine using it to embed YouTube videos by registering the standard iframe code YouTube gives you, as a template. Then it would only be necessary to insert the id of the video in a generico filter string.
 {GENERICO:type=youtube,id=ABC12345678}
 
 Installation
@@ -36,11 +35,9 @@ If you are uploading Generico, first expand the zip file and upload the generico
 [PATH TO MOODLE]/filters.
 
 Then visit your Moodle server's Site Administration -> Notifications page. Moodle will guide you through the installation.
-On the final page of the installation you will be able to register templates. You can choose to skip that and do it later from the 
-Generico settings page if you wish.
+On the final page of the installation you will be able to register templates. You can choose to skip that and do it later from the Generico settings page if you wish.
 
-After installing you will need to enable the Generico filter. 
-You can enable the Generico filter when you visit:
+After installing you will need to enable the Generico filter. You can enable the Generico filter when you visit:
 Site Administration / plugins / filters / manage filters
 
 Enjoy
