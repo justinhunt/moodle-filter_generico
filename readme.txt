@@ -14,11 +14,11 @@ The template is just passage of text that you want to use, and the parts of the 
 The defaults are a comma delimited list of variablename=value pairs. Here is an example template.
 
 templatekey: greenthings
-template: There are many green things including @@greenthing1@@ and ii) @@greenthing2@@
-template defaults: greenthing2=lettuce
+template: There are many green things including @@thing1@@ and @@thing2@@
+template defaults: thing2=lettuce
 
 A possible filter string for this "greenthings" template would like this:
-{GENERICO:type=greenthings,greenthing1=peas}
+{GENERICO:type=greenthings,thing1=peas}
 
 Generico would replace the above filter string with:
 "There are many green things including peas and lettuce"
