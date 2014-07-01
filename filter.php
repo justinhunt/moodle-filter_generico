@@ -37,6 +37,11 @@ class filter_generico extends moodle_text_filter {
      * @return string text after processing
      */
     public function filter($text, array $options = array()) {
+		//if we don't even have our tag, just bail out
+		if(strpos($text,'{GENERICO:')===false){
+			return $text;
+		}
+	
          $search = '/{GENERICO:.*?}/is';
 		 if (!is_string($text)) {
 				// non string data can not be filtered anyway
@@ -57,7 +62,7 @@ class filter_generico extends moodle_text_filter {
 }//end of class
 
 
-function generico_fetch_filter_properties($filterstring){
+function filter_generico_fetch_filter_properties($filterstring){
 	//this just removes the {GENERICO: .. } 
 	$rawproperties = explode ("{GENERICO:", $filterstring);
 	$rawproperties = $rawproperties[1];
@@ -94,12 +99,14 @@ function filter_generico_callback(array $link){
 	 $conf = get_object_vars(get_config('filter_generico'));
 	
 	//get our filter props
-	//we use a function in the poodll poodllresourcelib, because
-	//parsing will also need to be done by the html editor
-	$filterprops=generico_fetch_filter_properties($link[0]);
+	$filterprops=filter_generico_fetch_filter_properties($link[0]);
 	
 	//if we have no props, quit
 	if(empty($filterprops)){return "";}
+	
+	//if we want to ignore the filter (for "how to use generico" or "cut and paste" this style use) we let it go
+	//to use this, make the last parameter of the filter passthrough=1
+	if (!empty($filterprops['passthrough'])) return str_replace( ",passthrough=1","",$link[0]);
 	
 	//determine which template we are using
 	for($tempindex=1;$tempindex<11;$tempindex++){
@@ -122,7 +129,7 @@ function filter_generico_callback(array $link){
 	$defaults = $conf['templatedefaults_'. $tempindex];
 	if(!empty($defaults)){
 		$defaults = "{GENERICO:" . $defaults . "}";
-		$defaultprops=generico_fetch_filter_properties($defaults);
+		$defaultprops=filter_generico_fetch_filter_properties($defaults);
 		//replace our defaults
 		if(!empty($defaultprops)){
 			foreach($defaultprops as $name=>$value){
