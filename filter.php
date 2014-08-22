@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Filter converting URLs in the text to HTML links
+ * Filter for expanding Generico templates 
  *
  * @package    filter
  * @subpackage generico
@@ -134,6 +134,48 @@ function filter_generico_callback(array $link){
 		if(!empty($defaultprops)){
 			foreach($defaultprops as $name=>$value){
 				$genericotemplate = str_replace('@@' . $name .'@@',strip_tags($value),$genericotemplate);
+			}
+		}
+	}
+	
+	//if we have user variables e.g @@USER:FIRSTNAME@@
+	//It is a bit wordy, because trying to avoid loading a lib
+	//of making a DB call if unneccessary
+	if(strpos($genericotemplate,'@@USER:')!==false){
+		$uservars = get_object_vars($USER);
+		$propstubs = explode('@@USER:',$genericotemplate);
+		$profileprops=false;
+		$count=0;
+		foreach($propstubs as $propstub){
+			//we don't want the first one, its junk
+			$count++;
+			if($count==1){continue;}
+			//init our prop value
+			$propvalue=false;
+			
+			//fetch the property name
+			//user can use any case, but we work with lower case version
+			$end = strpos($propstub,'@@');
+			$userprop_allcase = substr($propstub,0,$end);
+			$userprop=strtolower($userprop_allcase);
+			
+			//check if it exists in user, else look for it in profile fields
+			if(array_key_exists($userprop,$uservars)){
+				$propvalue=$uservars[$userprop];
+			}else{
+				if(!$profileprops){
+					require_once("$CFG->dirroot/user/profile/lib.php");
+					$profileprops = get_object_vars(profile_user_record($USER->id));
+				}
+				if($profileprops && array_key_exists($userprop,$profileprops)){
+					$propvalue=$profileprops[$userprop];
+				}
+			}
+			
+			//if we have a propname and a propvalue, do the replace
+			if(!empty($userprop) && !empty($propvalue)){
+				//echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
+				$genericotemplate = str_replace('@@USER:' . $userprop_allcase .'@@',$propvalue,$genericotemplate);
 			}
 		}
 	}
