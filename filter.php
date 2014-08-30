@@ -140,7 +140,7 @@ function filter_generico_callback(array $link){
 	
 	//if we have user variables e.g @@USER:FIRSTNAME@@
 	//It is a bit wordy, because trying to avoid loading a lib
-	//of making a DB call if unneccessary
+	//or making a DB call if unneccessary
 	if(strpos($genericotemplate,'@@USER:')!==false){
 		$uservars = get_object_vars($USER);
 		$propstubs = explode('@@USER:',$genericotemplate);
@@ -169,6 +169,20 @@ function filter_generico_callback(array $link){
 				}
 				if($profileprops && array_key_exists($userprop,$profileprops)){
 					$propvalue=$profileprops[$userprop];
+				}else{
+					switch($userprop){
+						case 'picurl':
+							require_once("$CFG->libdir/outputcomponents.php");
+							global $PAGE;
+							$user_picture=new user_picture($USER);
+							$propvalue = $user_picture->get_url($PAGE);
+							break;
+							
+						case 'pic':
+							global $OUTPUT;
+							$propvalue = $OUTPUT->user_picture($USER, array('popup'=>true));
+							break;
+					}
 				}
 			}
 			
