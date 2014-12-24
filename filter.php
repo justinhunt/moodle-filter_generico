@@ -83,7 +83,11 @@ function filter_generico_fetch_filter_properties($filterstring){
 		$propscount = count($matches[1]);
 		for ($cnt =0; $cnt < $propscount; $cnt++){
 			// echo $matches[1][$cnt] . "=" . $matches[2][$cnt] . " ";
-			$itemprops[$matches[1][$cnt]]=$matches[2][$cnt];
+			$newvalue = $matches[2][$cnt];
+			//this could be done better, I am sure. WE are removing the quotes from start and end
+			//this wil however remove multiple quotes id they exist at start and end. NG really
+			$newvalue = trim($newvalue,'"');
+			$itemprops[$matches[1][$cnt]]=$newvalue;
 		}
 	}
 	return $itemprops;
@@ -94,7 +98,7 @@ function filter_generico_fetch_filter_properties($filterstring){
 *
 */
 function filter_generico_callback(array $link){
-	global $CFG, $COURSE, $USER;
+	global $CFG, $COURSE, $USER, $PAGE;
 	
 	 $conf = get_object_vars(get_config('filter_generico'));
 	
@@ -137,6 +141,10 @@ function filter_generico_callback(array $link){
 			}
 		}
 	}
+	
+	//If we have autoid lets deal with that
+	$autoid = time() . (string)rand(100,32767) ;
+	$genericotemplate = str_replace('@@AUTOID@@',$autoid,$genericotemplate);
 	
 	//if we have user variables e.g @@USER:FIRSTNAME@@
 	//It is a bit wordy, because trying to avoid loading a lib
@@ -194,5 +202,72 @@ function filter_generico_callback(array $link){
 		}
 	}
 	
+	//figure out if we require jquery or external CSS/JS/
+	$require_js = $conf['templaterequire_js_' . $tempindex];
+	$require_css = $conf['templaterequire_css_' . $tempindex];
+	$require_jquery = $conf['templaterequire_jquery_' . $tempindex];
+	
+	//figure out if this is https or http. We don't want to scare the browser
+	if(strpos($PAGE->url->out(),'https:')===0){
+		$scheme='https:';
+	}else{
+		$scheme='http:';
+	}
+	
+	//load jquery
+	if($require_jquery){
+		//moodle jquery
+		//$PAGE->requires->jquery();
+		
+		//use this for external JQUery
+		$PAGE->requires->js(new moodle_url($scheme . '//code.jquery.com/jquery-latest.js'));
+	}
+	
+	//massage the js URLdepending on schemes and rel. links etc. Then insert it
+	if($require_js){
+		if(strpos($require_js,'//')===0){
+			$require_js = $scheme . $require_js;
+		}elseif(strpos($require_js,'/')===0){
+			$require_js = $CFG->wwwroot . $require_js;
+		}
+		$PAGE->requires->js(new moodle_url($require_js));
+	}
+	
+	//set up property array for passing to JS
+	$proparray=Array();
+	
+	//massage the CSS URL depending on schemes and rel. links etc. 
+	if(strpos($require_css,'//')===0){
+		$require_css = $scheme . $require_css;
+	}elseif(strpos($require_css,'/')===0){
+		$require_css = $CFG->wwwroot . $require_css;
+	}
+	
+	//if not too late: load css in header
+	// if too late: inject it there via JS
+	$proparray['CSSLINK']=false;
+	if($require_css && !$PAGE->headerprinted){
+		$PAGE->requires->css( new moodle_url($require_css));
+	}else{
+		$proparray['CSSLINK']=$require_css;
+	}
+	
+	
+	//Set up our javascript variables
+	$proparray['TEMPLATEID'] = $tempindex;
+	$proparray['AUTOID'] = $autoid;
+
+		
+	$jsmodule = array(
+			'name'     => 'filter_generico',
+			'fullpath' => '/filter/generico/module.js',
+			'requires' => array()
+		);
+		
+	//setup our JS call
+	$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($proparray),false,$jsmodule);
+
+	
+	//finally return our template text	
 	return $genericotemplate;
 }
