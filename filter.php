@@ -246,7 +246,7 @@ function filter_generico_callback(array $link){
 	//if not too late: load css in header
 	// if too late: inject it there via JS
 	$proparray['CSSLINK']=false;
-	if($require_css && !$PAGE->headerprinted){
+	if($require_css && !$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
 		$PAGE->requires->css( new moodle_url($require_css));
 	}else{
 		$proparray['CSSLINK']=$require_css;
