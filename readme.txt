@@ -8,7 +8,7 @@ Usage
 Define templates at 
 Site Administration / plugins / filters / Generico
 
-A template consists of a "key", a "template," and some "defaults." 
+A template consists of a "key," a "template," some "defaults," and optionally JS and CSS urls to include. 
 The key is just a one word name, that tells Generico which template to use. 
 The template is just passage of text that you want to use, and the parts of the template that you want to mark as variables you surround in @@ marks.
 The defaults are a comma delimited list of variablename=value pairs. Here is an example template.
@@ -28,6 +28,22 @@ The filter string must follow this format,
 
 The wildthings example above is trivial of course. Imagine using it to embed YouTube videos by registering the standard iframe code YouTube gives you, as a template. Then it would only be necessary to insert the id of the video in a generico filter string.
 {GENERICO:type=youtube,id=ABC12345678}
+
+Pre-Set Variables
+===============
+
+It is also possible now to add user profile variables to your templates. Just make the first part of the variable name USER: and the next part the name of the user profile field. It also works with custom profile fields. There are two "special" user profile fields, picurl and pic that respectively output the url of the user's profile pic, and their picture itself.
+
+e.g
+
+User's first name: @@USER:firstname@@
+User's ice cream preference (custom profile field): @@USER:icecreampref@@
+Users profile pic url: @@USER:picurl@@
+
+User's profile pic:  @@USER:pic@@
+
+One more preset variable is AUTOID. This will generate a long random string that you can use as ids to link different parts of the template together. For example you set the id of a div to @@AUTOID@@ and in JS go looking for the @@AUTOID@@ to swap out the div for a player.
+
 
 Installation
 ==============

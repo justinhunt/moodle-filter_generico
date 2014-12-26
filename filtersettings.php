@@ -22,13 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
-if ($ADMIN->fulltree) {
-	$settings=null;
+$settings = null;
+defined('MOODLE_INTERNAL') || die;
+if (is_siteadmin()) {
 
 	//add folder in property tree for settings pages
-	 $ADMIN->add('filtersettings', new admin_category('filter_generico_category', 'Generico'));
+	$ADMIN->add('filtersettings',new admin_category('filter_generico_category', 'Generico'));
 	 $conf = get_config('filter_generico');
 	
 	for($tindex=1;$tindex<11;$tindex++){
@@ -101,5 +101,7 @@ if ($ADMIN->fulltree) {
 					
 		//add page to category
 		$ADMIN->add('filter_generico_category', $settings_page);
+		//$settings->add($settings_page);
 	}
+	
 }
