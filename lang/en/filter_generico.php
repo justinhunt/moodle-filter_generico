@@ -35,6 +35,10 @@ $string['template'] = 'The body of template';
 $string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@';
 $string['templatekey'] = 'The key that identifies template';
 $string['templatekey_desc'] = 'The key should be one word and only contain numbers and letters, underscores, hyphens and dots .';
+$string['templateend'] = 'Template end tags';
+$string['templateend_desc'] = 'If your template encloses user content, eg an info box, put the closing tags here. The user will enter something like {GENERICO:mytag_end} to close out the filter.';
+$string['templatescript'] = 'Template script';
+$string['templatescript_desc'] = 'If your template needs to run custom javascript, enter that here. It will be run once all the elements have loaded on the page.';
 $string['templatedefaults'] = 'The defaults for template';
 $string['templatedefaults_desc'] = 'Define the defaults in comma delimited sets of name=value pairs. eg width=800,height=900,feeling=joy';
 $string['templaterequire_css'] = 'Requires CSS Template';
@@ -43,3 +47,6 @@ $string['templaterequire_jquery'] = 'Requires JQuery Template';
 $string['templaterequire_css_desc'] = 'A link(1 only) to an external CSS file that this template requires. optional.';
 $string['templaterequire_js_desc'] = 'A link(1 only) to an external JS file that this template requires. optional.';
 $string['templaterequire_jquery_desc'] = 'If the template requires JQuery check this.';
+
+$string['uploadjs'] = 'Upload JS';
+$string['uploadjs_desc'] = 'You can upload one js library file which will be loaded for your template. Only one.';

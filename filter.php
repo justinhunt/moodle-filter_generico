@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(dirname(__FILE__).'/lib.php');
+
 class filter_generico extends moodle_text_filter {
 
     /**
@@ -62,37 +64,6 @@ class filter_generico extends moodle_text_filter {
 }//end of class
 
 
-function filter_generico_fetch_filter_properties($filterstring){
-	//this just removes the {GENERICO: .. } 
-	$rawproperties = explode ("{GENERICO:", $filterstring);
-	$rawproperties = $rawproperties[1];
-	$rawproperties = explode ("}", $rawproperties);	
-	$rawproperties = $rawproperties[0];
-
-	//Now we just have our properties string
-	//Lets run our regular expression over them
-	//string should be property=value,property=value
-	//got this regexp from http://stackoverflow.com/questions/168171/regular-expression-for-parsing-name-value-pairs
-	$regexpression='/([^=,]*)=("[^"]*"|[^,"]*)/';
-	$matches; 	
-
-	//here we match the filter string and split into name array (matches[1]) and value array (matches[2])
-	//we then add those to a name value array.
-	$itemprops = array();
-	if (preg_match_all($regexpression, $rawproperties,$matches,PREG_PATTERN_ORDER)){		
-		$propscount = count($matches[1]);
-		for ($cnt =0; $cnt < $propscount; $cnt++){
-			// echo $matches[1][$cnt] . "=" . $matches[2][$cnt] . " ";
-			$newvalue = $matches[2][$cnt];
-			//this could be done better, I am sure. WE are removing the quotes from start and end
-			//this wil however remove multiple quotes id they exist at start and end. NG really
-			$newvalue = trim($newvalue,'"');
-			$itemprops[$matches[1][$cnt]]=$newvalue;
-		}
-	}
-	return $itemprops;
-}
-
 /*
 *	Callback function , exists outside of class definition(because its a callback ...)
 *
@@ -113,16 +84,23 @@ function filter_generico_callback(array $link){
 	if (!empty($filterprops['passthrough'])) return str_replace( ",passthrough=1","",$link[0]);
 	
 	//determine which template we are using
+	$endtag=false;
 	for($tempindex=1;$tempindex<11;$tempindex++){
 			if($filterprops['type']==$conf['templatekey_' . $tempindex]){
 				break;
+			}elseif($filterprops['type']==$conf['templatekey_' . $tempindex] . '_end'){
+				$endtag = true;
 			}
 	}
 	//no key could be found if got all the way to 11
 	if($tempindex==11){return '';}
 	
 	//fetch our template
-	$genericotemplate = $conf['template_' . $tempindex];
+	if($endtag){
+		$genericotemplate = $conf['templateend_' . $tempindex];
+	}else{
+		$genericotemplate = $conf['template_' . $tempindex];
+	}
 	
 	//replace the specified names with spec values
 	foreach($filterprops as $name=>$value){
@@ -134,10 +112,14 @@ function filter_generico_callback(array $link){
 	if(!empty($defaults)){
 		$defaults = "{GENERICO:" . $defaults . "}";
 		$defaultprops=filter_generico_fetch_filter_properties($defaults);
-		//replace our defaults
+		//replace our defaults, if not spec in the the filter string
 		if(!empty($defaultprops)){
 			foreach($defaultprops as $name=>$value){
-				$genericotemplate = str_replace('@@' . $name .'@@',strip_tags($value),$genericotemplate);
+				if(!array_key_exists($name,$filterprops)){
+					$genericotemplate = str_replace('@@' . $name .'@@',strip_tags($value),$genericotemplate);
+					//stash for using in JS later
+					$filterprops[$name]=$value;
+				}
 			}
 		}
 	}
@@ -145,6 +127,8 @@ function filter_generico_callback(array $link){
 	//If we have autoid lets deal with that
 	$autoid = time() . (string)rand(100,32767) ;
 	$genericotemplate = str_replace('@@AUTOID@@',$autoid,$genericotemplate);
+	//stash this for passing to js
+	$filterprops['AUTOID']=$autoid;
 	
 	//if we have user variables e.g @@USER:FIRSTNAME@@
 	//It is a bit wordy, because trying to avoid loading a lib
@@ -198,8 +182,15 @@ function filter_generico_callback(array $link){
 			if(!empty($userprop) && !empty($propvalue)){
 				//echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
 				$genericotemplate = str_replace('@@USER:' . $userprop_allcase .'@@',$propvalue,$genericotemplate);
+				//stash this for passing to js
+				$filterprops['USER:' . $userprop_allcase]=$propvalue;
 			}
 		}
+	}
+	
+	//If this is the end tag we don't need to subseuqent CSS and JS stuff. We already did it.
+	if($endtag){
+		return $genericotemplate;
 	}
 	
 	//figure out if we require jquery or external CSS/JS/
@@ -233,8 +224,11 @@ function filter_generico_callback(array $link){
 		$PAGE->requires->js(new moodle_url($require_js));
 	}
 	
-	//set up property array for passing to JS
-	$proparray=Array();
+	$uploadjsfile = $conf['uploadjs' . $tempindex];
+	if($uploadjsfile){
+		$uploadsjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
+		$PAGE->requires->js($uploadsjsurl);
+	}
 	
 	//massage the CSS URL depending on schemes and rel. links etc. 
 	if(strpos($require_css,'//')===0){
@@ -245,28 +239,29 @@ function filter_generico_callback(array $link){
 	
 	//if not too late: load css in header
 	// if too late: inject it there via JS
-	$proparray['CSSLINK']=false;
+	$filterprops['CSSLINK']=false;
 	if($require_css && !$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
 		$PAGE->requires->css( new moodle_url($require_css));
 	}else{
-		$proparray['CSSLINK']=$require_css;
+		$filterprops['CSSLINK']=$require_css;
 	}
 	
 	
-	//Set up our javascript variables
-	$proparray['TEMPLATEID'] = $tempindex;
-	$proparray['AUTOID'] = $autoid;
+	//Tell javascript which template this is
+	$filterprops['TEMPLATEID'] = $tempindex;
 
 		
 	$jsmodule = array(
 			'name'     => 'filter_generico',
 			'fullpath' => '/filter/generico/module.js',
-			'requires' => array()
+			'requires' => array('json')
 		);
 		
+	//require any scripts from the template
+	$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
+		
 	//setup our JS call
-	$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($proparray),false,$jsmodule);
-
+	$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops),false,$jsmodule);
 	
 	//finally return our template text	
 	return $genericotemplate;

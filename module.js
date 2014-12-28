@@ -11,6 +11,8 @@ M.filter_generico = {
 
 	allopts: {},
 	
+	extscripts: {},
+	
 	csslinks: Array(),
 	
 	gyui: null,
@@ -27,13 +29,19 @@ M.filter_generico = {
 	loadgenerico: function(Y,opts) {
 		//stash our Y and opts for later use
 		this.gyui = Y;
-		
+		console.log(opts);
 		//load our css in head if required
 		//only do it once per extension though
 		if(opts['CSSLINK']){
 			if (this.csslinks.indexOf(opts['TEMPLATEID'])<0){
 				this.csslinks.push(opts['TEMPLATEID']);
 				this.injectcss(opts['CSSLINK']);
+			}
+		}
+		
+		if(typeof filter_generico_extfunctions != 'undefined'){ 
+			if(typeof filter_generico_extfunctions[opts['TEMPLATEID']] == 'function'){ 
+				filter_generico_extfunctions[opts['TEMPLATEID']](opts);
 			}
 		}
 		
