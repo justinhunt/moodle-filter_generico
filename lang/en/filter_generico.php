@@ -50,3 +50,6 @@ $string['templaterequire_jquery_desc'] = 'If the template requires JQuery check 
 
 $string['uploadjs'] = 'Upload JS';
 $string['uploadjs_desc'] = 'You can upload one js library file which will be loaded for your template. Only one.';
+
+$string['uploadcss'] = 'Upload CSS';
+$string['uploadcss_desc'] = 'You can upload one CSS file which will be loaded for your template. Only one.';

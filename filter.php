@@ -224,26 +224,48 @@ function filter_generico_callback(array $link){
 		$PAGE->requires->js(new moodle_url($require_js));
 	}
 	
+	//if we have an uploaded JS file, then lets include that
 	$uploadjsfile = $conf['uploadjs' . $tempindex];
 	if($uploadjsfile){
-		$uploadsjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
-		$PAGE->requires->js($uploadsjsurl);
+		$uploadjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
+		$PAGE->requires->js($uploadjsurl);
 	}
 	
 	//massage the CSS URL depending on schemes and rel. links etc. 
-	if(strpos($require_css,'//')===0){
-		$require_css = $scheme . $require_css;
-	}elseif(strpos($require_css,'/')===0){
-		$require_css = $CFG->wwwroot . $require_css;
+	if(!empty($require_css)){
+		if(strpos($require_css,'//')===0){
+			$require_css = $scheme . $require_css;
+		}elseif(strpos($require_css,'/')===0){
+			$require_css = $CFG->wwwroot . $require_css;
+		}
+	}
+	
+	//if we have an uploaded CSS file, then lets include that
+	$uploadcssfile = $conf['uploadcss' . $tempindex];
+	if($uploadcssfile){
+		$uploadcssurl = filter_generico_setting_file_url($uploadcssfile,'uploadcss' . $tempindex);
 	}
 	
 	//if not too late: load css in header
 	// if too late: inject it there via JS
 	$filterprops['CSSLINK']=false;
-	if($require_css && !$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
-		$PAGE->requires->css( new moodle_url($require_css));
+	$filterprops['CSSUPLOAD']=false;
+	if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
+		if($require_css){
+			$PAGE->requires->css( new moodle_url($require_css));
+		}
+		if($uploadcssfile){
+			$PAGE->requires->css( new moodle_url($uploadcssurl));
+		}
 	}else{
-		$filterprops['CSSLINK']=$require_css;
+		if($require_css){
+			$filterprops['CSSLINK']=$require_css;
+		}
+		if($uploadcssfile){
+			//need a new strategy here!!!
+			$filterprops['CSSUPLOAD']=$uploadcssurl;
+		}
+		
 	}
 	
 	

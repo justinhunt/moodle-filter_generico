@@ -99,17 +99,15 @@ if (is_siteadmin()) {
 		$name = 'filter_generico/uploadjs' . $tindex;
 		$title =get_string('uploadjs', 'filter_generico') . ' ' . $tindex;
 		$description = get_string('uploadjs_desc', 'filter_generico');
-		 $settings_page->add(new admin_setting_configstoredfile($name, $title, $description, 'uploadjs' . $tindex));
-
-
-		//additional CSS (upload)
-			/*
-		$name = 'theme_essential/slide1image';
-    $title = get_string('slide1image', 'theme_essential');
-    $description = get_string('slide1imagedesc', 'theme_essential');
-    $setting = new admin_setting_configstoredfile($name, $title, $description, 'slide1image');
-		*/
+		$settings_page->add(new admin_setting_configstoredfile($name, $title, $description, 'uploadjs' . $tindex));
 		
+		//additional CSS (upload)
+		$name = 'filter_generico/uploadcss' . $tindex;
+		$title =get_string('uploadcss', 'filter_generico') . ' ' . $tindex;
+		$description = get_string('uploadcss_desc', 'filter_generico');
+		$settings_page->add(new admin_setting_configstoredfile($name, $title, $description, 'uploadcss' . $tindex));
+
+
 					
 		//add page to category
 		$ADMIN->add('filter_generico_category', $settings_page);
