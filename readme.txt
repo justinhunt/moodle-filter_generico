@@ -51,7 +51,7 @@ If you are uploading Generico, first expand the zip file and upload the generico
 [PATH TO MOODLE]/filters.
 
 Then visit your Moodle server's Site Administration -> Notifications page. Moodle will guide you through the installation.
-On the final page of the installation you will be able to register templates. You can choose to skip that and do it later from the Generico settings page if you wish.
+On the final page of the installation you will be able to register templates. You should choose to  skip that and do it later from each template's settings page. (Seeing all the templates on one page is too confusing.)
 
 After installing you will need to enable the Generico filter. You can enable the Generico filter when you visit:
 Site Administration / plugins / filters / manage filters
