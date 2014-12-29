@@ -20,8 +20,12 @@ M.filter_generico = {
 	injectcss: function(csslink){
 		var link = document.createElement("link");
 		link.href = csslink;
-		link.type = "text/css";
-		link.rel = "stylesheet";
+		if(csslink.toLowerCase().lastIndexOf('.css')==csslink.length-4){
+			link.type = "text/css";
+			link.rel = "stylesheet";
+		}else{
+			link.rel = 'import';
+		}
 		document.getElementsByTagName("head")[0].appendChild(link);	
 	},
 	
