@@ -125,7 +125,7 @@ function filter_generico_callback(array $link){
 	}
 	
 	//If we have autoid lets deal with that
-	$autoid = time() . (string)rand(100,32767) ;
+	$autoid = 'fg_' . time() . (string)rand(100,32767) ;
 	$genericotemplate = str_replace('@@AUTOID@@',$autoid,$genericotemplate);
 	//stash this for passing to js
 	$filterprops['AUTOID']=$autoid;
