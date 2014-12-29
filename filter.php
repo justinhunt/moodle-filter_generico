@@ -255,7 +255,7 @@ function filter_generico_callback(array $link){
 			$PAGE->requires->css( new moodle_url($require_css));
 		}
 		if($uploadcssfile){
-			$PAGE->requires->css( new moodle_url($uploadcssurl));
+			$PAGE->requires->css($uploadcssurl);
 		}
 	}else{
 		if($require_css){
@@ -263,7 +263,7 @@ function filter_generico_callback(array $link){
 		}
 		if($uploadcssfile){
 			//need a new strategy here!!!
-			$filterprops['CSSUPLOAD']=$uploadcssurl;
+			$filterprops['CSSUPLOAD']=$uploadcssurl->out();
 		}
 		
 	}
