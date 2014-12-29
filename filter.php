@@ -85,15 +85,15 @@ function filter_generico_callback(array $link){
 	
 	//determine which template we are using
 	$endtag=false;
-	for($tempindex=1;$tempindex<11;$tempindex++){
+	for($tempindex=1;$tempindex<=20;$tempindex++){
 			if($filterprops['type']==$conf['templatekey_' . $tempindex]){
 				break;
 			}elseif($filterprops['type']==$conf['templatekey_' . $tempindex] . '_end'){
 				$endtag = true;
 			}
 	}
-	//no key could be found if got all the way to 11
-	if($tempindex==11){return '';}
+	//no key could be found if got all the way to 21
+	if($tempindex==21){return '';}
 	
 	//fetch our template
 	if($endtag){

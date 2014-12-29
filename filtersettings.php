@@ -31,7 +31,7 @@ if (is_siteadmin()) {
 	$ADMIN->add('filtersettings',new admin_category('filter_generico_category', 'Generico'));
 	 $conf = get_config('filter_generico');
 	
-	for($tindex=1;$tindex<11;$tindex++){
+	for($tindex=1;$tindex<=20;$tindex++){
 		 
 		 //template display name
 		 if($conf && property_exists($conf,'templatekey_' . $tindex)){

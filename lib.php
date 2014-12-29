@@ -80,7 +80,7 @@ function filter_generico_fetch_filter_properties($filterstring){
 
 function filter_generico_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
 
-	for($i=1;$i<=10;$i++){
+	for($i=1;$i<=20;$i++){
     	if($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'uploadjs' . $i) {
         	return filter_generico_setting_file_serve($filearea,$args,$forcedownload, $options);
 		} 
