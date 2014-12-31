@@ -71,7 +71,7 @@ function filter_generico_fetch_filter_properties($filterstring){
 			//this could be done better, I am sure. WE are removing the quotes from start and end
 			//this wil however remove multiple quotes id they exist at start and end. NG really
 			$newvalue = trim($newvalue,'"');
-			$itemprops[$matches[1][$cnt]]=$newvalue;
+			$itemprops[trim($matches[1][$cnt])]=$newvalue;
 		}
 	}
 	return $itemprops;
