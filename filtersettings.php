@@ -69,30 +69,28 @@ if (is_siteadmin()) {
 					get_string('templatedefaults', 'filter_generico') . ' ' . $tindex,
 					get_string('templatedefaults_desc', 'filter_generico'),''));
 					
+		//template page JS heading
+		$settings_page->add(new admin_setting_heading('filter_generico/templateheading_js' . $tindex, 
+				get_string('templateheadingjs', 'filter_generico',$tname), ''));
+					
 		//additional JS (external link)
 		 $settings_page->add(new admin_setting_configtext('filter_generico/templaterequire_js_' . $tindex , 
 				get_string('templaterequire_js', 'filter_generico') . ' ' . $tindex,
 				get_string('templaterequire_js_desc', 'filter_generico'), 
 				 '', PARAM_RAW));
-				 
-		//additional CSS (external link)
-		$settings_page->add(new admin_setting_configtext('filter_generico/templaterequire_css_' . $tindex , 
-				get_string('templaterequire_css', 'filter_generico') . ' ' . $tindex,
-				get_string('templaterequire_css_desc', 'filter_generico'), 
-				 '', PARAM_RAW));
-				 
-		//template body script
-		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatescript_' . $tindex,
-					get_string('templatescript', 'filter_generico'),
-					get_string('templatescript_desc', 'filter_generico'),
-					'',PARAM_RAW));
 		
-		//template jquery heading		
+		//template jquery		
 		 $settings_page->add(new admin_setting_configcheckbox('filter_generico/templaterequire_jquery_' . $tindex, 
 				get_string('templaterequire_jquery', 'filter_generico') . ' ' . $tindex,
 				get_string('templaterequire_jquery_desc', 'filter_generico'), 
 				 0));		 
 				 
+		
+		//template body script
+		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatescript_' . $tindex,
+					get_string('templatescript', 'filter_generico'),
+					get_string('templatescript_desc', 'filter_generico'),
+					'',PARAM_RAW));
 		
 		//additional JS (upload)
 		//see here: for integrating this https://moodle.org/mod/forum/discuss.php?d=227249
@@ -100,6 +98,22 @@ if (is_siteadmin()) {
 		$title =get_string('uploadjs', 'filter_generico') . ' ' . $tindex;
 		$description = get_string('uploadjs_desc', 'filter_generico');
 		$settings_page->add(new admin_setting_configstoredfile($name, $title, $description, 'uploadjs' . $tindex));
+				 
+		//template page CSS heading
+		$settings_page->add(new admin_setting_heading('filter_generico/templateheading_css_' . $tindex, 
+				get_string('templateheadingcss', 'filter_generico',$tname), ''));
+				 
+		//additional CSS (external link)
+		$settings_page->add(new admin_setting_configtext('filter_generico/templaterequire_css_' . $tindex , 
+				get_string('templaterequire_css', 'filter_generico') . ' ' . $tindex,
+				get_string('templaterequire_css_desc', 'filter_generico'), 
+				 '', PARAM_RAW));
+				 
+		//template body css
+		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatestyle_' . $tindex,
+					get_string('templatestyle', 'filter_generico'),
+					get_string('templatestyle_desc', 'filter_generico'),
+					'',PARAM_RAW));
 		
 		//additional CSS (upload)
 		$name = 'filter_generico/uploadcss' . $tindex;

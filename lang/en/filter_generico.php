@@ -48,6 +48,13 @@ $string['templaterequire_css_desc'] = 'A link(1 only) to an external CSS file th
 $string['templaterequire_js_desc'] = 'A link(1 only) to an external JS file that this template requires. optional.';
 $string['templaterequire_jquery_desc'] = 'If the template requires JQuery check this.';
 
+$string['templateheadingjs'] = 'Javascript Settings.';
+$string['templateheadingcss'] = 'CSS/Style Settings.';
+
+$string['templatestyle'] = 'Custom CSS';
+$string['templatestyle_desc'] = 'Enter any custom CSS that your template uses here. Template variables will not work here. Just plain old css.';
+
+
 $string['uploadjs'] = 'Upload JS';
 $string['uploadjs_desc'] = 'You can upload one js library file which will be loaded for your template. Only one.';
 

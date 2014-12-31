@@ -90,6 +90,7 @@ function filter_generico_callback(array $link){
 				break;
 			}elseif($filterprops['type']==$conf['templatekey_' . $tempindex] . '_end'){
 				$endtag = true;
+				break;
 			}
 	}
 	//no key could be found if got all the way to 21
@@ -208,13 +209,15 @@ function filter_generico_callback(array $link){
 	//load jquery
 	if($require_jquery){
 		//moodle jquery
-		//$PAGE->requires->jquery();
-		
-		//use this for external JQUery
-		$PAGE->requires->js(new moodle_url($scheme . '//code.jquery.com/jquery-latest.js'));
+		if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
+			$PAGE->requires->jquery();
+		}else{
+			//use this for external JQUery
+			$PAGE->requires->js(new moodle_url($scheme . '//code.jquery.com/jquery-latest.js'));
+		}
 	}
 	
-	//massage the js URLdepending on schemes and rel. links etc. Then insert it
+	//massage the js URL depending on schemes and rel. links etc. Then insert it
 	if($require_js){
 		if(strpos($require_js,'//')===0){
 			$require_js = $scheme . $require_js;
@@ -250,6 +253,15 @@ function filter_generico_callback(array $link){
 	// if too late: inject it there via JS
 	$filterprops['CSSLINK']=false;
 	$filterprops['CSSUPLOAD']=false;
+	$filterprops['CSSCUSTOM']=false;
+	
+	//require any scripts from the template
+	$customcssurl=false;
+	if($conf['templatestyle_' . $tempindex]){
+		$customcssurl =new moodle_url( '/filter/generico/genericocss.php?t=' . $tempindex);
+
+	}
+	
 	if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
 		if($require_css){
 			$PAGE->requires->css( new moodle_url($require_css));
@@ -257,13 +269,18 @@ function filter_generico_callback(array $link){
 		if($uploadcssfile){
 			$PAGE->requires->css($uploadcssurl);
 		}
+		if($customcssurl){
+			$PAGE->requires->css($customcssurl);
+		}
 	}else{
 		if($require_css){
 			$filterprops['CSSLINK']=$require_css;
 		}
 		if($uploadcssfile){
-			//need a new strategy here!!!
 			$filterprops['CSSUPLOAD']=$uploadcssurl->out();
+		}
+		if($customcssurl){
+			$filterprops['CSSCUSTOM']=$customcssurl->out();
 		}
 		
 	}
