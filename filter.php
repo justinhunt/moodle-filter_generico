@@ -208,12 +208,13 @@ function filter_generico_callback(array $link){
 	
 	//load jquery
 	if($require_jquery){
-		//moodle jquery
-		if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
+		//we don't use moodle jquery. To keep things consistent, though the user could point jqueryurl to moodle's one
+		//if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
+		if(false){
 			$PAGE->requires->jquery();
 		}else{
-			//use this for external JQUery
-			$PAGE->requires->js(new moodle_url($scheme . '//code.jquery.com/jquery-latest.js'));
+			//use this for external JQuery
+			$PAGE->requires->js(new moodle_url($scheme . $conf['jqueryurl']));
 		}
 	}
 	

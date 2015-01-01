@@ -33,7 +33,7 @@ M.filter_generico = {
 	loadgenerico: function(Y,opts) {
 		//stash our Y and opts for later use
 		this.gyui = Y;
-		console.log(opts);
+		//console.log(opts);
 		//load our css in head if required
 		//only do it once per extension though
 		if(opts['CSSLINK']){

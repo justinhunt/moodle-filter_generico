@@ -29,21 +29,24 @@ defined('MOODLE_INTERNAL') || die();
 $string['filtername'] = 'Generico';
 $string['pluginname'] = 'Generico';
 $string['filterdescription'] = 'Convert filter strings into templates merged with data';
+$string['commonpageheading'] = 'Common Settings';
+$string['jqueryurl'] = 'JQuery URL';
+$string['jqueryurl_desc'] = 'The URL Generico will use if adding jquery to the host page. Defaults to the CDN hosted version. If you site does not have internet access you will probably need to point this to a location on your Moodle server. Whatever you do dont start with http: or https:. Begin the url with // ';
 $string['templatepageheading'] = 'Template: {$a}';
 $string['templateheading'] = 'Settings for Generico Template {$a}';
-$string['template'] = 'The body of template';
+$string['template'] = 'The body of template {$a}';
 $string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@';
-$string['templatekey'] = 'The key that identifies template';
+$string['templatekey'] = 'The key that identifies template {$a}';
 $string['templatekey_desc'] = 'The key should be one word and only contain numbers and letters, underscores, hyphens and dots .';
-$string['templateend'] = 'Template end tags';
+$string['templateend'] = 'End tags(template {$a})';
 $string['templateend_desc'] = 'If your template encloses user content, eg an info box, put the closing tags here. The user will enter something like {GENERICO:mytag_end} to close out the filter.';
-$string['templatescript'] = 'Template script';
+$string['templatescript'] = 'Custom JS (template {$a})';
 $string['templatescript_desc'] = 'If your template needs to run custom javascript, enter that here. It will be run once all the elements have loaded on the page.';
-$string['templatedefaults'] = 'The defaults for template';
+$string['templatedefaults'] = 'variable defaults (template {$a})';
 $string['templatedefaults_desc'] = 'Define the defaults in comma delimited sets of name=value pairs. eg width=800,height=900,feeling=joy';
-$string['templaterequire_css'] = 'Requires CSS Template';
-$string['templaterequire_js'] = 'Requires JS Template';
-$string['templaterequire_jquery'] = 'Requires JQuery Template';
+$string['templaterequire_css'] = 'Requires CSS (template {$a})';
+$string['templaterequire_js'] = 'Requires JS (template {$a})';
+$string['templaterequire_jquery'] = 'Requires JQuery (template {$a})';
 $string['templaterequire_css_desc'] = 'A link(1 only) to an external CSS file that this template requires. optional.';
 $string['templaterequire_js_desc'] = 'A link(1 only) to an external JS file that this template requires. optional.';
 $string['templaterequire_jquery_desc'] = 'If the template requires JQuery check this.';
@@ -51,12 +54,13 @@ $string['templaterequire_jquery_desc'] = 'If the template requires JQuery check 
 $string['templateheadingjs'] = 'Javascript Settings.';
 $string['templateheadingcss'] = 'CSS/Style Settings.';
 
-$string['templatestyle'] = 'Custom CSS';
+$string['templatestyle'] = 'Custom CSS (template {$a})';
 $string['templatestyle_desc'] = 'Enter any custom CSS that your template uses here. Template variables will not work here. Just plain old css.';
 
 
-$string['uploadjs'] = 'Upload JS';
+$string['uploadjs'] = 'Upload JS (template {$a})';
 $string['uploadjs_desc'] = 'You can upload one js library file which will be loaded for your template. Only one.';
 
-$string['uploadcss'] = 'Upload CSS';
+$string['uploadcss'] = 'Upload CSS(template {$a})';
 $string['uploadcss_desc'] = 'You can upload one CSS file which will be loaded for your template. Only one.';
+
