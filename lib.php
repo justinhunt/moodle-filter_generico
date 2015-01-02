@@ -23,6 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+define('FILTER_GENERICO_TEMPLATE_COUNT', 20);
 
 function filter_generico_fetch_emptyproparray(){
 	$proparray=array();
@@ -80,7 +81,7 @@ function filter_generico_fetch_filter_properties($filterstring){
 
 function filter_generico_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
 
-	for($i=1;$i<=20;$i++){
+	for($i=1;$i<=FILTER_GENERICO_TEMPLATE_COUNT;$i++){
     	if($context->contextlevel == CONTEXT_SYSTEM){
     		if($filearea === 'uploadjs' . $i || $filearea === 'uploadcss' . $i ) {
         		return filter_generico_setting_file_serve($filearea,$args,$forcedownload, $options);
@@ -142,4 +143,56 @@ function filter_generico_setting_file_serve($filearea, $args, $forcedownload, $o
           } else {
              send_file_not_found();
           }
-      }
+}
+
+function filter_generico_fetch_presets(){
+	$ret = array();
+	$templates = array(1,2,3);
+	
+	foreach($templates as $templateno){
+		$presets = array();
+		switch($templateno){
+			case '1':
+				$presets['key'] ='helloworld';
+				$presets['requirecss'] ='';
+				$presets['requirejs'] = '';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = '';
+				$presets['bodyend'] = '';
+				$presets['body'] ='Welcome @@USER:FIRSTNAME@@. You are awesome.
+You look like this
+@@USER:PIC@@
+@@USER:PICURL@@';
+				$presets['script'] = '';
+				$presets['style'] = '';
+				break;
+			case '2':
+				$presets['key'] ='screenr';
+				$presets['requirecss'] ='';
+				$presets['requirejs'] = '';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'width=650,height=396';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<iframe src="http://www.screenr.com/embed/@@id@@" width="@@width@@" height="@@height@@" frameborder="0"></iframe>';
+				$presets['script'] = '';
+				$presets['style'] = '';
+				break;
+
+			case '3':
+				$presets['key'] ='toggle';
+				$presets['requirecss'] ='';
+				$presets['requirejs'] = '';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'linktext=clickme';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<a href="#" onclick="M.filter_generico.gyui.one(\'#@@AUTOID@@\').toggleView(); return false;" >@@linktext@@</a>
+<div id="@@AUTOID@@" class="@@AUTOID@@" hidden="hidden" style="display: none;">';
+				$presets['script'] = '';
+				$presets['style'] = '';
+				break;
+		}
+			//update our return value
+			$ret[$templateno] = $presets;
+	}
+	return $ret;
+}

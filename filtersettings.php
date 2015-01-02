@@ -26,6 +26,9 @@
 $settings = null;
 defined('MOODLE_INTERNAL') || die;
 if (is_siteadmin()) {
+	
+	require_once($CFG->dirroot . '/filter/generico/lib.php');
+	require_once($CFG->dirroot . '/filter/generico/locallib.php');
 
 	//add folder in property tree for settings pages
 	$ADMIN->add('filtersettings',new admin_category('filter_generico_category', 'Generico'));
@@ -40,11 +43,9 @@ if (is_siteadmin()) {
 	//add page to category
 	$ADMIN->add('filter_generico_category', $settings_page);
 
-
-
 				 
 	//Add the template pages
-	for($tindex=1;$tindex<=20;$tindex++){
+	for($tindex=1;$tindex<=FILTER_GENERICO_TEMPLATE_COUNT;$tindex++){
 		 
 		 //template display name
 		 if($conf && property_exists($conf,'templatekey_' . $tindex)){
@@ -60,6 +61,12 @@ if (is_siteadmin()) {
 		//template page heading
 		$settings_page->add(new admin_setting_heading('filter_generico/templateheading_' . $tindex, 
 				get_string('templateheading', 'filter_generico',$tname), ''));
+				
+		//presets
+		$presets = filter_generico_fetch_presets();
+		$settings_page->add(new admin_setting_genericopresets('filter_generico/templatepresets_' . $tindex, 
+				get_string('presets', 'filter_generico'), get_string('presets_desc', 'filter_generico'),$tindex,$presets));
+			
 				
 		//template key
 		 $settings_page->add(new admin_setting_configtext('filter_generico/templatekey_' . $tindex , 

@@ -64,3 +64,5 @@ $string['uploadjs_desc'] = 'You can upload one js library file which will be loa
 $string['uploadcss'] = 'Upload CSS(template {$a})';
 $string['uploadcss_desc'] = 'You can upload one CSS file which will be loaded for your template. Only one.';
 
+$string['presets'] = 'Autofill template with a Preset';
+$string['presets_desc'] = 'Generico comes with some default presets you can use out of the box, or to help you get started with your own template. Choose one of those here, or just create your own template from scratch.';
