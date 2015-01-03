@@ -133,7 +133,7 @@ class admin_setting_genericopresets extends admin_setting {
 	protected function fetch_presets(){
 
 	$ret = array();
-	$templates = array(1,2,3,4,5,6,7,8,9,10);
+	$templates = array(1,2,3,4,5,6,7,8,9,10,11);
 	
 	foreach($templates as $templateno){
 		$presets = array();
@@ -431,12 +431,14 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js';
 				$presets['jquery'] = 1;
-				$presets['defaults'] = 'data=http://mywebsite.com';
+				$presets['defaults'] = 'data=http://mywebsite.com,size=100';
 				$presets['bodyend'] = '';
 				$presets['body'] ='<div id="@@AUTOID@@"></div>';
 				$presets['script'] = '$("#" + @@AUTOID@@).qrcode({
     "render": "div",
-    "size": 100,
+    "size": @@size@@,
+	"height": @@size@@,
+	"width": @@size@@,
     "color": "#3a3",
     "text": "@@data@@"
 });';
@@ -458,19 +460,19 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['style'] = '';
 				break;
 
-			/*	
+				
 			case '11':
-				$presets['key'] ='something';
+				$presets['key'] ='tts';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['jquery'] = 0;
-				$presets['defaults'] = '';
+				$presets['defaults'] = 'text="say something",lang="en"';
 				$presets['bodyend'] = '';
-				$presets['body'] ='';
+				$presets['body'] ='<a href="//translate.google.com/translate_tts?ie=UTF-8&q=@@text@@&tl=@@lang@@">@@text@@</a>';
 				$presets['script'] = '';
 				$presets['style'] = '';
 				break;
-		*/
+		
 		
 		
 		}
