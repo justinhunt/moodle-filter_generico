@@ -133,7 +133,7 @@ class admin_setting_genericopresets extends admin_setting {
 	protected function fetch_presets(){
 
 	$ret = array();
-	$templates = array(1,2,3,4,5,6,7,8,9,10,11);
+	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12);
 	
 	foreach($templates as $templateno){
 		$presets = array();
@@ -481,6 +481,19 @@ $( "#" + @@AUTOID@@).tabs();';
   <source src="//translate.google.com/translate_tts?ie=UTF-8&q=@@text@@&tl=@@lang@@" type="audio/mpeg">
 </audio>';
 */
+
+		case '12':
+				$presets['key'] ='galleria';
+				$presets['requirecss'] ='//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.css';
+				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/galleria.min.js';
+				$presets['jquery'] = 1;
+				$presets['defaults'] = '';
+				$presets['bodyend'] = '</div>';
+				$presets['body'] ='<div class="galleria">';
+				$presets['script'] = 'Galleria.loadTheme("https://cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.js");
+Galleria.run(".galleria");';
+				$presets['style'] = '.galleria{ width: 450px; height: 400px; background: #000 }';
+				break;
 		
 		}
 			//update our return value
