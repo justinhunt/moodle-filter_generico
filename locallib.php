@@ -468,7 +468,9 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="say something",lang="en"';
 				$presets['bodyend'] = '';
-				$presets['body'] ='<a href="//translate.google.com/translate_tts?ie=UTF-8&q=@@text@@&tl=@@lang@@">@@text@@</a>';
+				$presets['body'] ='<a onclick="this.firstChild.play()"><audio>
+  <source src="//translate.google.com/translate_tts?ie=UTF-8&q=@@text@@&tl=@@lang@@" type="audio/mpeg">
+</audio>@@text@@</a>';
 				$presets['script'] = '';
 				$presets['style'] = '';
 				break;
