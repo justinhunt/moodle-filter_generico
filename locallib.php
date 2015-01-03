@@ -134,7 +134,7 @@ class admin_setting_genericopresets extends admin_setting {
 	protected function fetch_presets(){
 
 	$ret = array();
-	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12);
+	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12,13);
 	
 	foreach($templates as $templateno){
 		$presets = array();
@@ -494,6 +494,32 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['script'] = 'Galleria.loadTheme("https://cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.js");
 Galleria.run(".galleria");';
 				$presets['style'] = '.galleria{ width: 450px; height: 400px; background: #000 }';
+				break;
+				
+		case '13':
+				$presets['key'] ='videogallery';
+				$presets['requirecss'] ='';
+				$presets['requirejs'] = 'https://jwpsrv.com/library/YOURJWPLAYERID.js';
+				$presets['jquery'] = 1;
+				$presets['defaults'] = '';
+				$presets['bodyend'] = '</div>';
+				$presets['body'] ='<div id="@@AUTOID@@">';
+				$presets['script'] = 'var playlist=[];
+$("a", $("#" + @@AUTOID@@)).each(function () {
+    playlist.push({file: this.href, title: this.text});
+});
+$("#" + @@AUTOID@@).empty();
+jwplayer("@@AUTOID@@").setup({
+playlist: playlist,
+width: 720,
+height: 270,
+listbar: {
+        position: "right",
+        layout: "basic",
+        size: 240
+ }
+});';
+				$presets['style'] = '';
 				break;
 		
 		}
