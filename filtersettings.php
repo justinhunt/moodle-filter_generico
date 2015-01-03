@@ -63,9 +63,8 @@ if (is_siteadmin()) {
 				get_string('templateheading', 'filter_generico',$tname), ''));
 				
 		//presets
-		$presets = filter_generico_fetch_presets();
 		$settings_page->add(new admin_setting_genericopresets('filter_generico/templatepresets_' . $tindex, 
-				get_string('presets', 'filter_generico'), get_string('presets_desc', 'filter_generico'),$tindex,$presets));
+				get_string('presets', 'filter_generico'), get_string('presets_desc', 'filter_generico'),$tindex));
 			
 				
 		//template key
