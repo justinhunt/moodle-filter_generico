@@ -108,6 +108,7 @@ class admin_setting_genericopresets extends admin_setting {
 		$js .="requirejs.value=presets[presetindex]['requirejs'];";
 		$js .="defaults.value=presets[presetindex]['defaults'];";
 		$js .="jquery.value=presets[presetindex]['jquery'];";
+		$js .="jquery.checked=presets[presetindex]['jquery'] ? true : false;";
 		$js .="body.value=presets[presetindex]['body'];";
 		$js .="bodyend.value=presets[presetindex]['bodyend'];";
 		$js .="script.value=presets[presetindex]['script'];";
