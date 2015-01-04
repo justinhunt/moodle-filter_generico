@@ -134,7 +134,7 @@ class admin_setting_genericopresets extends admin_setting {
 	protected function fetch_presets(){
 
 	$ret = array();
-	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14);
+	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17);
 	
 	foreach($templates as $templateno){
 		$presets = array();
@@ -183,130 +183,13 @@ You look like this
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
 				$presets['jquery'] = 0;
-				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jun,fub,march",data="1,2,3"';
+				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
 				$presets['bodyend'] = '';
 				$presets['body'] ='<canvas id="@@AUTOID@@" width="@@width@@" height="@@height@@"></canvas>';
 				$presets['style'] = '';
 				$presets['script'] = 'var ctx = document.getElementById("@@AUTOID@@").getContext("2d");
 var cjoptions = {
-    // Boolean - Whether to animate the chart
-    animation: true,
 
-    // Number - Number of animation steps
-    animationSteps: 60,
-
-    // String - Animation easing effect
-    animationEasing: "easeOutQuart",
-
-    // Boolean - If we should show the scale at all
-    showScale: true,
-
-    // Boolean - If we want to override with a hard coded scale
-    scaleOverride: false,
-
-    // ** Required if scaleOverride is true **
-    // Number - The number of steps in a hard coded scale
-    scaleSteps: null,
-    // Number - The value jump in the hard coded scale
-    scaleStepWidth: null,
-    // Number - The scale starting value
-    scaleStartValue: null,
-
-    // String - Colour of the scale line
-    scaleLineColor: "rgba(0,0,0,.1)",
-
-    // Number - Pixel width of the scale line
-    scaleLineWidth: 1,
-
-    // Boolean - Whether to show labels on the scale
-    scaleShowLabels: true,
-
-    // Interpolated JS string - can access value
-    scaleLabel: "<%=value%>",
-
-    // Boolean - Whether the scale should stick to integers, not floats even if drawing space is there
-    scaleIntegersOnly: true,
-
-    // Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
-    scaleBeginAtZero: false,
-
-    // String - Scale label font declaration for the scale label
-    scaleFontFamily: "\'Helvetica Neue\', \'Helvetica\', \'Arial\', sans-serif",
-
-    // Number - Scale label font size in pixels
-    scaleFontSize: 12,
-
-    // String - Scale label font weight style
-    scaleFontStyle: "normal",
-
-    // String - Scale label font colour
-    scaleFontColor: "#666",
-
-    // Boolean - whether or not the chart should be responsive and resize when the browser does.
-    responsive: false,
-
-    // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-    maintainAspectRatio: true,
-
-    // Boolean - Determines whether to draw tooltips on the canvas or not
-    showTooltips: true,
-
-    // Array - Array of string names to attach tooltip events
-    tooltipEvents: ["mousemove", "touchstart", "touchmove"],
-
-    // String - Tooltip background colour
-    tooltipFillColor: "rgba(0,0,0,0.8)",
-
-    // String - Tooltip label font declaration for the scale label
-    tooltipFontFamily: "\'Helvetica Neue\', \'Helvetica\', \'Arial\', sans-serif",
-
-    // Number - Tooltip label font size in pixels
-    tooltipFontSize: 14,
-
-    // String - Tooltip font weight style
-    tooltipFontStyle: "normal",
-
-    // String - Tooltip label font colour
-    tooltipFontColor: "#fff",
-
-    // String - Tooltip title font declaration for the scale label
-    tooltipTitleFontFamily: "\'Helvetica Neue\', \'Helvetica\', \'Arial\', sans-serif",
-
-    // Number - Tooltip title font size in pixels
-    tooltipTitleFontSize: 14,
-
-    // String - Tooltip title font weight style
-    tooltipTitleFontStyle: "bold",
-
-    // String - Tooltip title font colour
-    tooltipTitleFontColor: "#fff",
-
-    // Number - pixel width of padding around tooltip text
-    tooltipYPadding: 6,
-
-    // Number - pixel width of padding around tooltip text
-    tooltipXPadding: 6,
-
-    // Number - Size of the caret on the tooltip
-    tooltipCaretSize: 8,
-
-    // Number - Pixel radius of the tooltip border
-    tooltipCornerRadius: 6,
-
-    // Number - Pixel offset from point x to tooltip edge
-    tooltipXOffset: 10,
-
-    // String - Template string for single tooltips
-    tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
-
-    // String - Template string for single tooltips
-    multiTooltipTemplate: "<%= value %>",
-
-    // Function - Will fire on animation progression.
-    onAnimationProgress: function(){},
-
-    // Function - Will fire on animation completion.
-    onAnimationComplete: function(){},
 
   ///Boolean - Whether grid lines are shown across the chart
     scaleShowGridLines : true,
@@ -367,8 +250,135 @@ var cjdata = {
 
 var myLineChart = new Chart(ctx).Line(cjdata, cjoptions);';
 				break;
+				
+		case '5':
+				$presets['key'] ='barchart';
+				$presets['requirecss'] ='';
+				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<canvas id="@@AUTOID@@" width="@@width@@" height="@@height@@"></canvas>';
+				$presets['style'] = '';
+				$presets['script'] = 'var ctx = document.getElementById("@@AUTOID@@").getContext("2d");
+var cjoptions = {
+
+
+  ///Boolean - Whether grid lines are shown across the chart
+    scaleShowGridLines : true,
+
+    //String - Colour of the grid lines
+    scaleGridLineColor : "rgba(0,0,0,.05)",
+
+    //Number - Width of the grid lines
+    scaleGridLineWidth : 1,
+
+    //Boolean - Whether the line is curved between points
+    bezierCurve : true,
+
+    //Number - Tension of the bezier curve between points
+    bezierCurveTension : 0.4,
+
+    //Boolean - Whether to show a dot for each point
+    pointDot : true,
+
+    //Number - Radius of each point dot in pixels
+    pointDotRadius : 4,
+
+    //Number - Pixel width of point dot stroke
+    pointDotStrokeWidth : 1,
+
+    //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+    pointHitDetectionRadius : 20,
+
+    //Boolean - Whether to show a stroke for datasets
+    datasetStroke : true,
+
+    //Number - Pixel width of dataset stroke
+    datasetStrokeWidth : 2,
+
+    //Boolean - Whether to fill the dataset with a colour
+    datasetFill : true,
+
+    //String - A legend template
+    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+
+}
+
+var cjdata = {
+    labels: "@@labels@@".split(","),
+    datasets: [
+        {
+            label: "@@datalabel@@",
+            fillColor: "rgba(220,220,220,0.2)",
+            strokeColor: "rgba(220,220,220,1)",
+            pointColor: "rgba(220,220,220,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: "@@data@@".split(",")
+        }
+    ]
+};
+
+var myBarChart = new Chart(ctx).Bar(cjdata, cjoptions);';
+				break;
+			
+			case '6':
+				$presets['key'] ='piechart';
+				$presets['requirecss'] ='';
+				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<canvas id="@@AUTOID@@" width="@@width@@" height="@@height@@"></canvas>';
+				$presets['style'] = '';
+				$presets['script'] = 'var ctx = document.getElementById("@@AUTOID@@").getContext("2d");
+var cjoptions = {
+
+
+   //Boolean - Whether we should show a stroke on each segment
+    segmentShowStroke : true,
+
+    //String - The colour of each segment stroke
+    segmentStrokeColor : "#fff",
+
+    //Number - The width of each segment stroke
+    segmentStrokeWidth : 2,
+
+    //Number - The percentage of the chart that we cut out of the middle
+    percentageInnerCutout : 50, // This is 0 for Pie charts
+
+    //Number - Amount of animation steps
+    animationSteps : 100,
+
+    //String - Animation easing effect
+    animationEasing : "easeOutBounce",
+
+    //Boolean - Whether we animate the rotation of the Doughnut
+    animateRotate : true,
+
+    //Boolean - Whether we animate scaling the Doughnut from the centre
+    animateScale : false,
+
+    //String - A legend template
+    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+
+};
+var colors = ["#F7464A","#46BFBD","#FDA25C","#F7404A","#464FBD","#FD445C","#FDB45C","#F7464A","#46BFBD","#FDA25C","#F7404A","#464FBD","#FD445C","#FDB45C"];
+var highlights=["#FDB45C","#5AD3D1","#FF5870","#FD445C","#5A63D1","#FF5870","#FFC870","#FDB45C","#5AD3D1","#FF5870","#FD445C","#5A63D1","#FF5870","#FFC870"];
+var labels= "@@labels@@".split(",");
+var values= "@@data@@".split(",");
+var cjdata=[];
+for(var i=0;i<labels.length;i++){
+	cjdata.push({label: labels[i],color: colors[i],highlight: highlights[i],value: parseInt(values[i])});
+
+}
+
+var myPieChart = new Chart(ctx).Pie(cjdata, cjoptions);';
+				break;
 		
-			case '5':
+			case '7':
 				$presets['key'] ='tabs';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
@@ -385,7 +395,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['style'] = '';
 				break;
 				
-			case '6':
+			case '8':
 				$presets['key'] ='tabitem';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
@@ -400,7 +410,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				break;
 				
 				
-			case '7':
+			case '9':
 				$presets['key'] ='accordian';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
@@ -417,7 +427,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['style'] = '';
 				break;
 				
-			case '8':
+			case '10':
 				$presets['key'] ='accordianitem';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
@@ -430,7 +440,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['style'] = '';
 				break;
 				
-			case '9':
+			case '11':
 				$presets['key'] ='qrcode';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js';
@@ -449,7 +459,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['style'] = '';
 				break;
 				
-			case '10':
+			case '12':
 				$presets['key'] ='lightboxyoutube';
 				$presets['requirecss'] ='//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.css';
 				$presets['requirejs'] = '//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.js';
@@ -465,7 +475,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				break;
 
 				
-			case '11':
+			case '13':
 				$presets['key'] ='tts';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
@@ -486,8 +496,8 @@ $( "#" + @@AUTOID@@).tabs();';
 </audio>';
 */
 
-		case '12':
-				$presets['key'] ='galleria';
+		case '14':
+				$presets['key'] ='imagegallery';
 				$presets['requirecss'] ='//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.css';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/galleria.min.js';
 				$presets['jquery'] = 1;
@@ -499,7 +509,7 @@ Galleria.run(".galleria");';
 				$presets['style'] = '.galleria{ width: 450px; height: 400px; background: #000 }';
 				break;
 				
-		case '13':
+		case '15':
 				$presets['key'] ='videogallery';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = 'https://jwpsrv.com/library/YOURJWPLAYERID.js';
@@ -525,7 +535,7 @@ listbar: {
 				$presets['style'] = '';
 				break;
 				
-		case '14':
+		case '16':
 				$presets['key'] ='fontawesome';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
@@ -537,11 +547,94 @@ listbar: {
 				$presets['style'] = '';
 				break;
 		
-		}
-			//update our return value
-			$ret[$templateno] = $presets;
+		case '17':
+				$presets['key'] ='infobox';
+				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
+				$presets['requirejs'] = '';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'text="Your message goes here."';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<div class="filter_generico_info">
+    <i class="fa fa-info-circle"></i>
+    @@text@@
+</div>';
+				$presets['script'] = '';
+				$presets['style'] = '.filter_generico_info {
+	margin: 10px 0px;
+    padding:12px;
+    color: #00529B;
+    background-color: #BDE5F8;
+    border: 1px solid;
+    border-radius:.5em;
+}
+.isa_info i {
+    margin:10px 22px;
+    font-size:2em;
+    vertical-align:middle;
+}';
+				break;
+				
+		case '18':
+				$presets['key'] ='warningbox';
+				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
+				$presets['requirejs'] = '';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'text="Your message goes here."';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<div class="filter_generico_warning">
+    <i class="fa fa-warning"></i>
+    @@text@@
+</div>';
+				$presets['script'] = '';
+				$presets['style'] = '.filter_generico_warning {
+	margin: 10px 0px;
+    padding:12px;
+    color: #9F6000;
+    background-color: #FEEFB3;
+    border: 1px solid;
+    border-radius:.5em;
+}
+.isa_warning i {
+    margin:10px 22px;
+    font-size:2em;
+    vertical-align:middle;
+}';
+				break;
+
+		case '19':
+				$presets['key'] ='errorbox';
+				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
+				$presets['requirejs'] = '';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'text="Your message goes here."';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<div class="filter_generico_error">
+    <i class="fa fa-times-circle"></i>
+    @@text@@
+</div>';
+				$presets['script'] = '';
+				$presets['style'] = '.filter_generico_error {
+	margin: 10px 0px;
+    padding:12px;
+    color: #D8000C;
+    background-color: #FFBABA;
+    border: 1px solid;
+    border-radius:.5em;
+}
+.isa_error i {
+    margin:10px 22px;
+    font-size:2em;
+    vertical-align:middle;
+}';
+				break;
+		
+		}	
+		
+		
+	  //update our return value
+	    $ret[$templateno] = $presets;
 	}
 	return $ret;
 	
-	}
 }
+}//end of class
