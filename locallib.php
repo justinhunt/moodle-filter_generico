@@ -134,7 +134,7 @@ class admin_setting_genericopresets extends admin_setting {
 	protected function fetch_presets(){
 
 	$ret = array();
-	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12,13);
+	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14);
 	
 	foreach($templates as $templateno){
 		$presets = array();
@@ -373,15 +373,15 @@ var myLineChart = new Chart(ctx).Line(cjdata, cjoptions);';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
 				$presets['jquery'] = 1;
-				$presets['defaults'] = 'titles="Tab 1,Tab 2,Tab 3"';
+				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
 				$presets['body'] ='<div id="@@AUTOID@@"><ul></ul>';
-				$presets['script'] = 'var titles = @@titles@@.split(",");
-var theul = $("#" + @@AUTOID@@ + " ul"); 
-$.each(titles, function( index, value ) {
-  theul.append("<li><a href=\'#jqtab_" + (index+1) + "\'><span>"+value+"</span></a></li>");
+				$presets['script']='var theul = $("#" + @@AUTOID@@ + " ul");
+$(".filter_generico_tabitem", $("#" + @@AUTOID@@)).each(function () {
+    theul.append("<li><a href=\'#" + this.id + "\'><span>"+this.title+"</span></a></li>");
 });
 $( "#" + @@AUTOID@@).tabs();';
+
 				$presets['style'] = '';
 				break;
 				
@@ -390,12 +390,15 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['jquery'] = 0;
-				$presets['defaults'] = 'tabnumber=1';
+				//$presets['defaults'] = 'tabnumber=1';
 				$presets['bodyend'] = '</div>';
-				$presets['body'] =' <div id="jqtab_@@tabnumber@@">';
+				//$presets['body'] =' <div id="jqtab_@@tabnumber@@">';
+				$presets['body']='<div id="@@AUTOID@@" class="filter_generico_tabitem" title="@@title@@">';
+				$presets['defaults']='title="mybaby"';
 				$presets['script'] = '';
 				$presets['style'] = '';
 				break;
+				
 				
 			case '7':
 				$presets['key'] ='accordian';
@@ -519,6 +522,18 @@ listbar: {
         size: 240
  }
 });';
+				$presets['style'] = '';
+				break;
+				
+		case '14':
+				$presets['key'] ='fontawesome';
+				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
+				$presets['requirejs'] = '';
+				$presets['jquery'] = 0;
+				$presets['defaults'] = 'icon="fa-cog",removeX="Xfa-spin Xfa-rotate-90",removeY="Yfa-lg Yfa-2x",removeZ="Zpull-left Zfa-border"';
+				$presets['bodyend'] = '';
+				$presets['body'] ='<span class="fa @@icon@@ @@removeX@@ @@removeY@@ @@removeZ@@"></span>';
+				$presets['script'] = '';
 				$presets['style'] = '';
 				break;
 		
