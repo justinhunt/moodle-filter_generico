@@ -35,7 +35,11 @@ if (is_siteadmin()) {
 	$conf = get_config('filter_generico');
 	
 	//add the common settings page
-   	$settings_page = new admin_settingpage('filter_generico_commonsettingspage' ,get_string('commonpageheading', 'filter_generico'));
+	// we changed this to use the default settings id for the top page. This way in the settings link on the manage filters
+	 //page, we will arrive here. Else the link will show there, but it will error out if clicked.
+   	//$settings_page = new admin_settingpage('filter_generico_commonsettingspage' ,get_string('commonpageheading', 'filter_generico'));
+	$settings_page = new admin_settingpage('filtersettinggenerico' ,get_string('commonpageheading', 'filter_generico'));
+	
 	$settings_page->add(new admin_setting_configtext('filter_generico/jqueryurl', 
 				get_string('jqueryurl', 'filter_generico'),
 				get_string('jqueryurl_desc', 'filter_generico'), 
