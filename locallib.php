@@ -468,7 +468,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['bodyend'] = '';
 				$presets['body'] ='<a href="#" data-featherlight="#@@AUTOID@@"><img src="http://img.youtube.com/vi/@@videoid@@/hqdefault.jpg" width="@@width@@" height="@@height@@"/></a>
 <div style="display: none;">
-<div  id="@@AUTOID@@"><iframe width="@@videowidth@@" height="@@videoeheight@@" src="//www.youtube.com/embed/@@videoid@@" frameborder="0" allowfullscreen></iframe></div>
+<div  id="@@AUTOID@@"><iframe width="@@videowidth@@" height="@@videoeheight@@" src="//www.youtube.com/embed/@@videoid@@?rel=0" frameborder="0" allowfullscreen></iframe></div>
 </div>';
 				$presets['script'] = '';
 				$presets['style'] = '';
