@@ -171,7 +171,7 @@ You look like this
 				$presets['requirejs'] = '';
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'linktext=clickme';
-				$presets['bodyend'] = '';
+				$presets['bodyend'] = '</div>';
 				$presets['body'] ='<a href="#" onclick="M.filter_generico.gyui.one(\'#@@AUTOID@@\').toggleView(); return false;" >@@linktext@@</a>
 <div id="@@AUTOID@@" class="@@AUTOID@@" hidden="hidden" style="display: none;">';
 				$presets['script'] = '';
