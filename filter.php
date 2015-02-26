@@ -117,6 +117,10 @@ function filter_generico_callback(array $link){
 		if(!empty($defaultprops)){
 			foreach($defaultprops as $name=>$value){
 				if(!array_key_exists($name,$filterprops)){
+					//if we have options as defaults, lets just take the first one
+					if(strpos($value,'|')!==false){
+						$value=explode('|',$value)[0];
+					}
 					$genericotemplate = str_replace('@@' . $name .'@@',strip_tags($value),$genericotemplate);
 					//stash for using in JS later
 					$filterprops[$name]=$value;
