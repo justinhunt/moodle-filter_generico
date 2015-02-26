@@ -540,9 +540,9 @@ listbar: {
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
 				$presets['jquery'] = 0;
-				$presets['defaults'] = 'icon="fa-cog",removeX="Xfa-spin Xfa-rotate-90",removeY="Yfa-lg Yfa-2x",removeZ="Zpull-left Zfa-border"';
+				$presets['defaults'] = 'icon="fa-cog",orientation="fa-spin|fa-rotate-90|fa-rotate-180|fa-rotate-270",size="fa-lg|fa-2x",layout="pull-left|fa-border"';
 				$presets['bodyend'] = '';
-				$presets['body'] ='<span class="fa @@icon@@ @@removeX@@ @@removeY@@ @@removeZ@@"></span>';
+				$presets['body'] ='<span class="fa @@icon@@ @@orientation@@ @@size@@ @@layout@@"></span>';
 				$presets['script'] = '';
 				$presets['style'] = '';
 				break;
