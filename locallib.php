@@ -97,7 +97,7 @@ class admin_setting_genericopresets extends admin_setting {
 		$js .="var requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + $this->templateindex);";
 		$js .="var defaults = document.getElementById('id_s_filter_generico_templatedefaults_' + $this->templateindex);";
 		$js .="var jquery = document.getElementById('id_s_filter_generico_templaterequire_jquery_' + $this->templateindex);";
-		$js .="var amd = document.getElementById('id_s_filter_generico_templaterequire_amd_' + $this->templateindex);";
+		$js .="var amd = document.getElementById('id_s_filter_generico_template_amd_' + $this->templateindex);"; 
 		$js .="var body = document.getElementById('id_s_filter_generico_template_' + $this->templateindex);";
 		$js .="var bodyend = document.getElementById('id_s_filter_generico_templateend_' + $this->templateindex);";
 		$js .="var script = document.getElementById('id_s_filter_generico_templatescript_' + $this->templateindex);";
