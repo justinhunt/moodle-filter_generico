@@ -32,6 +32,9 @@ $tindex = required_param('t',PARAM_TEXT);
 $conf = get_config('filter_generico');
 $template=$conf->{'template_' . $tindex};
 
+//are we AMD and Moodle 2.9 or more?
+$require_amd = $conf->{'template_amd_' . $tindex} && $CFG->version>=2015051100;
+
 //get presets
 $thescript=$conf->{'templatescript_' . $tindex};
 $defaults=$conf->{'templatedefaults_' . $tindex};
@@ -58,7 +61,60 @@ foreach($uniquevariables as $propname){
 	$thescript = str_replace('@@' . $propname .'@@',"opts['" . $propname . "']",$thescript);
 }
 
-$thefunction = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
-$thefunction .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. "};";
+if($require_amd){
+
+	//figure out if this is https or http. We don't want to scare the browser
+	$scheme='http:';
+	if(strpos(strtolower($CFG->wwwroot),'https')===0){$scheme='https:';}
+
+
+	//this is for loading as dependencies the uploaded or linked files
+	//massage the js URL depending on schemes and rel. links etc. Then insert it
+		$requiredjs = $conf->{'templaterequire_js_' . $tindex};
+		if($requiredjs){
+			if(strpos($requiredjs,'//')===0){
+				$requiredjs = $scheme . $requiredjs;
+			}elseif(strpos($requiredjs,'/')===0){
+				$requiredjs = $CFG->wwwroot . $requiredjs;
+			}
+			//remove .js from end
+			//$requiredjs = substr($requiredjs, 0, -3);
+		}
+	
+		//if we have an uploaded JS file, then lets include that
+		$uploadjsfile = $conf->{'uploadjs' . $tindex};
+		if($uploadjsfile){
+			$uploadjs = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tindex);
+		}
+
+	//Create the dependency stuff in the output js
+	$requires = array("'" . 'jquery' . "'", "'" . 'jqueryui' . "'");
+	$params = array('$','jqui');
+	//$requires = array("'" . 'jquery' . "'");
+	//$params = array('$');
+
+	if($requiredjs && false){
+		$requires[] =  "'" . $requiredjs . "'";
+		//$requires[] = "'recjs" . $tindex . "'";
+		$params[] = "recjs" . $tindex;
+	
+	}elseif($uploadjsfile){
+		$requires[] =  "'" . $uploadjs . "'";
+		//$requires[] ="'uploadjs" . $tindex . "'";
+		$params[] = "uploadjs" . $tindex;
+	
+	}
+
+	$thefunction = "define('filter_generico_d" . $tindex . "',[" . implode(',',$requires) . "], function(" . implode(',',$params) . "){ ";
+	$thefunction .= "return function(opts){" . $thescript. "}; });";
+
+//If not AMD
+}else{
+
+	$thefunction = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
+	$thefunction .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. "};";
+
+}
+
 header('Content-Type: application/javascript');
-echo $thefunction;
+echo  $thefunction;

@@ -101,6 +101,12 @@ if (is_siteadmin()) {
 				get_string('templaterequire_js', 'filter_generico',$tindex),
 				get_string('templaterequire_js_desc', 'filter_generico'), 
 				 '', PARAM_RAW,50));
+				 
+		//template amd		
+		 $settings_page->add(new admin_setting_configcheckbox('filter_generico/template_amd_' . $tindex, 
+				get_string('templaterequire_amd', 'filter_generico',$tindex),
+				get_string('templaterequire_amd_desc', 'filter_generico'), 
+				 1));
 		
 		//template jquery		
 		 $settings_page->add(new admin_setting_configcheckbox('filter_generico/templaterequire_jquery_' . $tindex, 

@@ -97,6 +97,7 @@ class admin_setting_genericopresets extends admin_setting {
 		$js .="var requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + $this->templateindex);";
 		$js .="var defaults = document.getElementById('id_s_filter_generico_templatedefaults_' + $this->templateindex);";
 		$js .="var jquery = document.getElementById('id_s_filter_generico_templaterequire_jquery_' + $this->templateindex);";
+		$js .="var amd = document.getElementById('id_s_filter_generico_templaterequire_amd_' + $this->templateindex);";
 		$js .="var body = document.getElementById('id_s_filter_generico_template_' + $this->templateindex);";
 		$js .="var bodyend = document.getElementById('id_s_filter_generico_templateend_' + $this->templateindex);";
 		$js .="var script = document.getElementById('id_s_filter_generico_templatescript_' + $this->templateindex);";
@@ -108,6 +109,7 @@ class admin_setting_genericopresets extends admin_setting {
 		$js .="requirejs.value=presets[presetindex]['requirejs'];";
 		$js .="defaults.value=presets[presetindex]['defaults'];";
 		$js .="jquery.value=presets[presetindex]['jquery'];";
+		$js .="amd.value=presets[presetindex]['amd'];";
 		$js .="jquery.checked=presets[presetindex]['jquery'] ? true : false;";
 		$js .="body.value=presets[presetindex]['body'];";
 		$js .="bodyend.value=presets[presetindex]['bodyend'];";
@@ -143,6 +145,7 @@ class admin_setting_genericopresets extends admin_setting {
 				$presets['key'] ='helloworld';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '';
@@ -157,6 +160,7 @@ You look like this
 				$presets['key'] ='screenr';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=650,height=396';
 				$presets['bodyend'] = '';
@@ -169,12 +173,15 @@ You look like this
 				$presets['key'] ='toggle';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'linktext=clickme';
 				$presets['bodyend'] = '</div>';
-				$presets['body'] ='<a href="#" onclick="M.filter_generico.gyui.one(\'#@@AUTOID@@\').toggleView(); return false;" >@@linktext@@</a>
-<div id="@@AUTOID@@" class="@@AUTOID@@" hidden="hidden" style="display: none;">';
-				$presets['script'] = '';
+				
+				$presets['body']='<a href="#" id="@@AUTOID@@">@@linktext@@</a>
+						<div id="@@AUTOID@@_target" class="@@AUTOID@@_target" hidden="hidden" style="display: none;">';
+				$presets['script'] = '$("#"  + @@AUTOID@@).click(function(){
+					$("#" + @@AUTOID@@ + "_target").toggle(); });';
 				$presets['style'] = '';
 				break;
 			
@@ -182,6 +189,7 @@ You look like this
 				$presets['key'] ='linechart';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
 				$presets['bodyend'] = '';
@@ -255,6 +263,7 @@ var myLineChart = new Chart(ctx).Line(cjdata, cjoptions);';
 				$presets['key'] ='barchart';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
 				$presets['bodyend'] = '';
@@ -328,6 +337,7 @@ var myBarChart = new Chart(ctx).Bar(cjdata, cjoptions);';
 				$presets['key'] ='piechart';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
 				$presets['bodyend'] = '';
@@ -382,6 +392,7 @@ var myPieChart = new Chart(ctx).Pie(cjdata, cjoptions);';
 				$presets['key'] ='tabs';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -399,6 +410,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='tabitem';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				//$presets['defaults'] = 'tabnumber=1';
 				$presets['bodyend'] = '</div>';
@@ -414,6 +426,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='accordian';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -431,6 +444,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='accordianitem';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -444,6 +458,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='qrcode';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = 'data=http://mywebsite.com,size=100';
 				$presets['bodyend'] = '';
@@ -463,15 +478,36 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='lightboxyoutube';
 				$presets['requirecss'] ='//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.css';
 				$presets['requirejs'] = '//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 1;
-				$presets['defaults'] = 'width=320,height=240,videowidth=420,videoheight=315';
+				$presets['defaults'] = 'width=160,height=120,videowidth=640,videoheight=480';
 				$presets['bodyend'] = '';
-				$presets['body'] ='<a href="#" data-featherlight="#@@AUTOID@@"><img src="http://img.youtube.com/vi/@@videoid@@/hqdefault.jpg" width="@@width@@" height="@@height@@"/></a>
+				$presets['body'] ='<a href="#" data-featherlight="#@@AUTOID@@"><div class="filter_generico_ytl"><img src="http://img.youtube.com/vi/@@videoid@@/hqdefault.jpg" width="@@width@@" height="@@height@@"/ ></div></a>
 <div style="display: none;">
-<div  id="@@AUTOID@@"><iframe width="@@videowidth@@" height="@@videoeheight@@" src="//www.youtube.com/embed/@@videoid@@?rel=0" frameborder="0" allowfullscreen></iframe></div>
+<div  id="@@AUTOID@@"><iframe width="@@videowidth@@" height="@@videoheight@@" src="//www.youtube.com/embed/@@videoid@@?rel=0" frameborder="0" allowfullscreen></iframe></div>
 </div>';
 				$presets['script'] = '';
-				$presets['style'] = '';
+				$presets['style'] = '.filter_generico_ytl img{display: block;}
+.filter_generico_ytl { 
+position: relative; 
+display: inline-block;
+}
+.filter_generico_ytl:after {
+content: ">";
+  font-size: 20px;
+  line-height: 30px;
+  color: #FFFFFF;
+  text-align: center;
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  width: 20%;
+  height: 32px;
+  z-index: 2;
+  background: #FF0000;
+  border-radius: 8px;
+  pointer-events: none;
+}';
 				break;
 
 				
@@ -479,6 +515,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='tts';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="say something",lang="en"';
 				$presets['bodyend'] = '';
@@ -500,6 +537,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='imagegallery';
 				$presets['requirecss'] ='//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.css';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/galleria.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -513,6 +551,7 @@ Galleria.run(".galleria");';
 				$presets['key'] ='videogallery';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = 'https://jwpsrv.com/library/YOURJWPLAYERID.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -539,6 +578,7 @@ listbar: {
 				$presets['key'] ='fontawesome';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'icon="fa-cog",orientation="fa-spin|fa-rotate-90|fa-rotate-180|fa-rotate-270",size="fa-lg|fa-2x",layout="pull-left|fa-border"';
 				$presets['bodyend'] = '';
@@ -551,6 +591,7 @@ listbar: {
 				$presets['key'] ='infobox';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="Your message goes here."';
 				$presets['bodyend'] = '';
@@ -578,6 +619,7 @@ listbar: {
 				$presets['key'] ='warningbox';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="Your message goes here."';
 				$presets['bodyend'] = '';
@@ -605,6 +647,7 @@ listbar: {
 				$presets['key'] ='errorbox';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="Your message goes here."';
 				$presets['bodyend'] = '';

@@ -198,10 +198,14 @@ function filter_generico_callback(array $link){
 		return $genericotemplate;
 	}
 	
-	//figure out if we require jquery or external CSS/JS/
+	//get the conf info we need for this template
+	$thescript = $conf['templatescript_' . $tempindex];
+	$defaults=$conf['templatedefaults_' . $tempindex];
 	$require_js = $conf['templaterequire_js_' . $tempindex];
 	$require_css = $conf['templaterequire_css_' . $tempindex];
 	$require_jquery = $conf['templaterequire_jquery_' . $tempindex];
+	//are we AMD and Moodle 2.9 or more?
+	$require_amd = $conf['template_amd_' . $tempindex] && $CFG->version>=2015051100;
 	
 	//figure out if this is https or http. We don't want to scare the browser
 	if(strpos($PAGE->url->out(),'https:')===0){
@@ -211,7 +215,8 @@ function filter_generico_callback(array $link){
 	}
 	
 	//load jquery
-	if($require_jquery){
+	//We ALWAYS load jquery using require js  so this can be deleted soon I hopw
+	if($require_jquery ){
 		//we don't use moodle jquery. To keep things consistent, though the user could point jqueryurl to moodle's one
 		//if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
 		if(false){
@@ -223,22 +228,39 @@ function filter_generico_callback(array $link){
 	}
 	
 	//massage the js URL depending on schemes and rel. links etc. Then insert it
-	if($require_js){
-		if(strpos($require_js,'//')===0){
-			$require_js = $scheme . $require_js;
-		}elseif(strpos($require_js,'/')===0){
-			$require_js = $CFG->wwwroot . $require_js;
+	//with AMD we set these as dependencies, so we don't need this song and dance
+	if(!$require_amd){
+		$filterprops['JSLINK']=false;
+		if($require_js){
+			if(strpos($require_js,'//')===0){
+				$require_js = $scheme . $require_js;
+			}elseif(strpos($require_js,'/')===0){
+				$require_js = $CFG->wwwroot . $require_js;
+			}
+			
+			//for load method: NO AMD
+			$PAGE->requires->js(new moodle_url($require_js));
+		
+			//for load method: AMD
+			//$require_js = substr($require_js, 0, -3);
+			$filterprops['JSLINK'] = $require_js;
 		}
-		$PAGE->requires->js(new moodle_url($require_js));
-	}
 	
-	//if we have an uploaded JS file, then lets include that
-	$uploadjsfile = $conf['uploadjs' . $tempindex];
-	if($uploadjsfile){
-		$uploadjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
-		$PAGE->requires->js($uploadjsurl);
+		//if we have an uploaded JS file, then lets include that
+		$filterprops['JSUPLOAD']=false;
+		$uploadjsfile = $conf['uploadjs' . $tempindex];
+		if($uploadjsfile){
+			$uploadjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
+			
+			//for load method: NO AMD
+			$PAGE->requires->js($uploadjsurl);
+			
+			//for load method: AMD
+			//$uploadjsurl = substr($uploadjsurl, 0, -3);
+			$filterprops['JSUPLOAD'] = $uploadjsurl;
+		}
 	}
-	
+
 	//massage the CSS URL depending on schemes and rel. links etc. 
 	if(!empty($require_css)){
 		if(strpos($require_css,'//')===0){
@@ -303,9 +325,15 @@ function filter_generico_callback(array $link){
 		
 	//require any scripts from the template
 	$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
-		
-	//setup our JS call
-	$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops),false,$jsmodule);
+	
+	//AMD or not, and then load our js for this template on the page
+	if($require_amd){
+		//for AMD
+		$PAGE->requires->js_call_amd('filter_generico/generico_amd','loadgenerico', array($filterprops));	
+	}else{		
+		//for no AMD
+		$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops),false,$jsmodule);
+	}
 	
 	//finally return our template text	
 	return $genericotemplate;
