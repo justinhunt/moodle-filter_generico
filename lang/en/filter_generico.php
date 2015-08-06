@@ -49,7 +49,7 @@ $string['templaterequire_js'] = 'Requires JS (template {$a})';
 $string['templaterequire_jquery'] = 'Requires JQuery (template {$a})';
 $string['templaterequire_css_desc'] = 'A link(1 only) to an external CSS file that this template requires. optional.';
 $string['templaterequire_js_desc'] = 'A link(1 only) to an external JS file that this template requires. optional.';
-$string['templaterequire_jquery_desc'] = 'If the template requires JQuery check this. Since AMD already loads jquery, and your theme may already load JQuery, you may not need to check this.';
+$string['templaterequire_jquery_desc'] = 'Its best NOT to check this. Many non AMD templates require JQuery. Checking here will load JQuery, but not very well. Your theme may already load JQuery anyway. If not, add this string to Site Administration -> Appearance -> Additional HTML (within HEAD):<br/> &lt;script src="https://code.jquery.com/jquery-1.11.2.min.js"&gt;&lt;/script&gt;';
 
 $string['templateheadingjs'] = 'Javascript Settings.';
 $string['templateheadingcss'] = 'CSS/Style Settings.';

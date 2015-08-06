@@ -216,7 +216,7 @@ function filter_generico_callback(array $link){
 	
 	//load jquery
 	//We ALWAYS load jquery using require js  so this can be deleted soon I hopw
-	if($require_jquery ){
+	if($require_jquery && !$require_amd){
 		//we don't use moodle jquery. To keep things consistent, though the user could point jqueryurl to moodle's one
 		//if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
 		if(false){

@@ -180,8 +180,8 @@ You look like this
 				
 				$presets['body']='<a href="#" id="@@AUTOID@@">@@linktext@@</a>
 						<div id="@@AUTOID@@_target" class="@@AUTOID@@_target" hidden="hidden" style="display: none;">';
-				$presets['script'] = '$("#"  + @@AUTOID@@).click(function(){
-					$("#" + @@AUTOID@@ + "_target").toggle(); });';
+				$presets['script'] = '$("#"  + @@AUTOID@@).click(function(e){
+					$("#" + @@AUTOID@@ + "_target").toggle(); return false;});';
 				$presets['style'] = '';
 				break;
 			
@@ -538,7 +538,7 @@ content: ">";
 				$presets['requirecss'] ='//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.css';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/galleria.min.js';
 				$presets['amd'] = 0;
-				$presets['jquery'] = 1;
+				$presets['jquery'] = 0;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
 				$presets['body'] ='<div class="galleria">';

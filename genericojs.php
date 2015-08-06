@@ -93,7 +93,7 @@ if($require_amd){
 	//$requires = array("'" . 'jquery' . "'");
 	//$params = array('$');
 
-	if($requiredjs && false){
+	if($requiredjs){
 		$requires[] =  "'" . $requiredjs . "'";
 		//$requires[] = "'recjs" . $tindex . "'";
 		$params[] = "recjs" . $tindex;
