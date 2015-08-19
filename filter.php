@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 class filter_generico extends moodle_text_filter {
 
@@ -323,14 +324,22 @@ function filter_generico_callback(array $link){
 			'requires' => array('json')
 		);
 		
-	//require any scripts from the template
-	$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
-	
+
 	//AMD or not, and then load our js for this template on the page
 	if($require_amd){
+
+		$generator = new amd_script_generator($tempindex);
+		$template_amd_script = $generator->get_template_script();
+		
+		//load define for this template. Later it will be called from loadgenerico
+		$PAGE->requires->js_amd_inline($template_amd_script);
 		//for AMD
 		$PAGE->requires->js_call_amd('filter_generico/generico_amd','loadgenerico', array($filterprops));	
 	}else{		
+
+		//require any scripts from the template
+		$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
+	
 		//for no AMD
 		$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops),false,$jsmodule);
 	}
