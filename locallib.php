@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/adminlib.php');
 
 
-class amd_script_generator {
+class filter_generico_template_script_generator {
 	/** @var mixed int index of template*/
     public $templateindex;
     
@@ -52,10 +52,6 @@ class amd_script_generator {
 		$thescript=$conf->{'templatescript_' . $tindex};
 		$defaults=$conf->{'templatedefaults_' . $tindex};
 
-		//we no longer do this. We used the actual used variables
-		////merge defaults with blank proparray  to get all fields
-		//$defaultsarray = filter_generico_fetch_filter_properties('{GENERICO:' . $defaults);
-		//$proparray=array_merge(filter_generico_fetch_emptyproparray(), $defaultsarray);
 
 		//fetch all the variables we use (make sure we have no duplicates)
 		$allvariables = filter_generico_fetch_variables($thescript. $template);

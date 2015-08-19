@@ -328,7 +328,7 @@ function filter_generico_callback(array $link){
 	//AMD or not, and then load our js for this template on the page
 	if($require_amd){
 
-		$generator = new amd_script_generator($tempindex);
+		$generator = new filter_generico_template_script_generator($tempindex);
 		$template_amd_script = $generator->get_template_script();
 		
 		//load define for this template. Later it will be called from loadgenerico
