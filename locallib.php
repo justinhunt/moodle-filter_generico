@@ -115,13 +115,13 @@ class filter_generico_template_script_generator {
 			}
 
 			$thefunction = "define('filter_generico_d" . $tindex . "',[" . implode(',',$requires) . "], function(" . implode(',',$params) . "){ ";
-			$thefunction .= "return function(opts){" . $thescript. "}; });";
+			$thefunction .= "return function(opts){" . $thescript. " \r\n}; });";
 
 		//If not AMD
 		}else{
 
 			$thefunction = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
-			$thefunction .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. "};";
+			$thefunction .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. " \r\n};";
 
 		}
 		return $thefunction;

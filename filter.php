@@ -136,15 +136,57 @@ function filter_generico_callback(array $link){
 	//stash this for passing to js
 	$filterprops['AUTOID']=$autoid;
 	
+	
+		//if we have course variables e.g @@COURSE:ID@@
+		if(strpos($genericotemplate,'@@COURSE:')!==false){
+			$coursevars = get_object_vars($COURSE);
+			$coursepropstubs = explode('@@COURSE:',$genericotemplate);
+			
+			//Course Props
+			$profileprops=false;
+			$count=0;
+			foreach($coursepropstubs as $propstub){
+				//we don't want the first one, its junk
+				$count++;
+				if($count==1){continue;}
+				//init our prop value
+				$propvalue=false;
+				
+				//fetch the property name
+				//user can use any case, but we work with lower case version
+				$end = strpos($propstub,'@@');
+				$courseprop_allcase = substr($propstub,0,$end);
+				$courseprop=strtolower($courseprop_allcase);
+				
+				//check if it exists in course
+				if(array_key_exists($courseprop,$coursevars)){
+					$propvalue=$coursevars[$courseprop];
+				}elseif($courseprop=='contextid'){
+					$context = context_course::instance($COURSE->id);
+					if($context){
+						$propvalue=$context->id;
+					}
+				}
+				//if we have a propname and a propvalue, do the replace
+				if(!empty($courseprop) && !empty($propvalue)){
+					$genericotemplate = str_replace('@@COURSE:' . $courseprop_allcase .'@@',$propvalue,$genericotemplate);
+					//stash this for passing to js
+					$filterprops['COURSE:' . $courseprop_allcase]=$propvalue;
+				}
+			}
+		}
+	
 	//if we have user variables e.g @@USER:FIRSTNAME@@
 	//It is a bit wordy, because trying to avoid loading a lib
 	//or making a DB call if unneccessary
 	if(strpos($genericotemplate,'@@USER:')!==false){
 		$uservars = get_object_vars($USER);
-		$propstubs = explode('@@USER:',$genericotemplate);
+		$userpropstubs = explode('@@USER:',$genericotemplate);
+		
+		//User Props
 		$profileprops=false;
 		$count=0;
-		foreach($propstubs as $propstub){
+		foreach($userpropstubs as $propstub){
 			//we don't want the first one, its junk
 			$count++;
 			if($count==1){continue;}
