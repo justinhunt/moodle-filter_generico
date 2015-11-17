@@ -51,6 +51,9 @@ $string['templaterequire_css_desc'] = 'A link(1 only) to an external CSS file th
 $string['templaterequire_js_desc'] = 'A link(1 only) to an external JS file that this template requires. optional.';
 $string['templaterequire_jquery_desc'] = 'Its best NOT to check this. Many non AMD templates require JQuery. Checking here will load JQuery, but not very well. Your theme may already load JQuery anyway. If not, add this string to Site Administration -> Appearance -> Additional HTML (within HEAD):<br/> &lt;script src="https://code.jquery.com/jquery-1.11.2.min.js"&gt;&lt;/script&gt;';
 
+$string['templatecount'] = 'Template Count';
+$string['templatecount_desc'] = 'The number of templates you can have. Default is 20.';
+
 $string['templateheadingjs'] = 'Javascript Settings.';
 $string['templateheadingcss'] = 'CSS/Style Settings.';
 

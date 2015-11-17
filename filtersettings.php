@@ -40,6 +40,11 @@ if (is_siteadmin()) {
    	//$settings_page = new admin_settingpage('filter_generico_commonsettingspage' ,get_string('commonpageheading', 'filter_generico'));
 	$settings_page = new admin_settingpage('filtersettinggenerico' ,get_string('commonpageheading', 'filter_generico'));
 	
+	$settings_page->add(new admin_setting_configtext('filter_generico/templatecount', 
+				get_string('templatecount', 'filter_generico'),
+				get_string('templatecount_desc', 'filter_generico'), 
+				 FILTER_GENERICO_TEMPLATE_COUNT, PARAM_INT,20));
+	
 	$settings_page->add(new admin_setting_configtext('filter_generico/jqueryurl', 
 				get_string('jqueryurl', 'filter_generico'),
 				get_string('jqueryurl_desc', 'filter_generico'), 
@@ -49,7 +54,12 @@ if (is_siteadmin()) {
 
 				 
 	//Add the template pages
-	for($tindex=1;$tindex<=FILTER_GENERICO_TEMPLATE_COUNT;$tindex++){
+	if($conf && property_exists($conf,'templatecount')){
+		$templatecount = $conf->templatecount;
+	}else{
+		$templatecount = FILTER_GENERICO_TEMPLATE_COUNT;
+	}
+	for($tindex=1;$tindex<=$templatecount;$tindex++){
 		 
 		 //template display name
 		 if($conf && property_exists($conf,'templatekey_' . $tindex)){

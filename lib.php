@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-define('FILTER_GENERICO_TEMPLATE_COUNT', 25);
+define('FILTER_GENERICO_TEMPLATE_COUNT', 20);
 
 function filter_generico_fetch_emptyproparray(){
 	$proparray=array();
@@ -80,8 +80,9 @@ function filter_generico_fetch_filter_properties($filterstring){
 
 
 function filter_generico_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-
-	for($i=1;$i<=FILTER_GENERICO_TEMPLATE_COUNT;$i++){
+	$config = get_config('filter_generico');
+	
+	for($i=1;$i<=$config->templatecount;$i++){
     	if($context->contextlevel == CONTEXT_SYSTEM){
     		if($filearea === 'uploadjs' . $i || $filearea === 'uploadcss' . $i ) {
         		return filter_generico_setting_file_serve($filearea,$args,$forcedownload, $options);
