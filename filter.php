@@ -86,7 +86,7 @@ function filter_generico_callback(array $link){
 	
 	//determine which template we are using
 	$endtag=false;
-	for($tempindex=1;$tempindex<=20;$tempindex++){
+	for($tempindex=1;$tempindex<=FILTER_GENERICO_TEMPLATE_COUNT;$tempindex++){
 			if($filterprops['type']==$conf['templatekey_' . $tempindex]){
 				break;
 			}elseif($filterprops['type']==$conf['templatekey_' . $tempindex] . '_end'){

@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-define('FILTER_GENERICO_TEMPLATE_COUNT', 20);
+define('FILTER_GENERICO_TEMPLATE_COUNT', 25);
 
 function filter_generico_fetch_emptyproparray(){
 	$proparray=array();
