@@ -95,7 +95,7 @@ function filter_generico_callback(array $link){
 			}
 	}
 	//no key could be found if got all the way to 21
-	if($tempindex==21){return '';}
+	if($tempindex==$conf['templatecount']+1){return '';}
 	
 	//fetch our template
 	if($endtag){
