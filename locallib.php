@@ -25,6 +25,111 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/adminlib.php');
 
+
+class filter_generico_template_script_generator {
+	/** @var mixed int index of template*/
+    public $templateindex;
+    
+	 /**
+     * Constructor
+     */
+    public function __construct($templateindex) {
+        $this->templateindex = $templateindex;
+    }
+    
+
+    public function get_template_script(){
+    	global $CFG;
+    	
+    	$tindex = $this->templateindex;
+		$conf = get_config('filter_generico');
+		$template=$conf->{'template_' . $tindex};
+
+		//are we AMD and Moodle 2.9 or more?
+		$require_amd = $conf->{'template_amd_' . $tindex} && $CFG->version>=2015051100;
+
+		//get presets
+		$thescript=$conf->{'templatescript_' . $tindex};
+		$defaults=$conf->{'templatedefaults_' . $tindex};
+
+
+		//fetch all the variables we use (make sure we have no duplicates)
+		$allvariables = filter_generico_fetch_variables($thescript. $template);
+		$uniquevariables = array_unique($allvariables);
+
+		//these props are in the opts array in the allopts[] array on the page
+		//since we are writing the JS we write the opts['name'] into the js, but 
+		//have to remove quotes from template eg "@@VAR@@" => opts['var'] //NB no quotes.
+		//thats worth knowing for the admin who writed the JS load code for the template.
+		foreach($uniquevariables as $propname){
+			//case: single quotes
+			$thescript = str_replace("'@@" . $propname ."@@'",'opts["' . $propname . '"]',$thescript);
+			//case: double quotes
+			$thescript = str_replace('"@@' . $propname .'@@"',"opts['" . $propname . "']",$thescript);
+			//case: no quotes
+			$thescript = str_replace('@@' . $propname .'@@',"opts['" . $propname . "']",$thescript);
+		}
+
+		if($require_amd){
+
+			//figure out if this is https or http. We don't want to scare the browser
+			$scheme='http:';
+			if(strpos(strtolower($CFG->wwwroot),'https')===0){$scheme='https:';}
+
+
+			//this is for loading as dependencies the uploaded or linked files
+			//massage the js URL depending on schemes and rel. links etc. Then insert it
+				$requiredjs = $conf->{'templaterequire_js_' . $tindex};
+				if($requiredjs){
+					if(strpos($requiredjs,'//')===0){
+						$requiredjs = $scheme . $requiredjs;
+					}elseif(strpos($requiredjs,'/')===0){
+						$requiredjs = $CFG->wwwroot . $requiredjs;
+					}
+					//remove .js from end
+					//$requiredjs = substr($requiredjs, 0, -3);
+				}
+	
+				//if we have an uploaded JS file, then lets include that
+				$uploadjsfile = $conf->{'uploadjs' . $tindex};
+				if($uploadjsfile){
+					$uploadjs = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tindex);
+				}
+
+			//Create the dependency stuff in the output js
+			$requires = array("'" . 'jquery' . "'", "'" . 'jqueryui' . "'");
+			$params = array('$','jqui');
+			//$requires = array("'" . 'jquery' . "'");
+			//$params = array('$');
+
+			if($requiredjs){
+				$requires[] =  "'" . $requiredjs . "'";
+				//$requires[] = "'recjs" . $tindex . "'";
+				$params[] = "recjs" . $tindex;
+	
+			}elseif($uploadjsfile){
+				$requires[] =  "'" . $uploadjs . "'";
+				//$requires[] ="'uploadjs" . $tindex . "'";
+				$params[] = "uploadjs" . $tindex;
+	
+			}
+
+			$thefunction = "define('filter_generico_d" . $tindex . "',[" . implode(',',$requires) . "], function(" . implode(',',$params) . "){ ";
+			$thefunction .= "return function(opts){" . $thescript. " \r\n}; });";
+
+		//If not AMD
+		}else{
+
+			$thefunction = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
+			$thefunction .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. " \r\n};";
+
+		}
+		return $thefunction;
+    }//end of function
+
+}//end of class
+
+
 /**
  * No setting - just heading and text.
  *
@@ -97,6 +202,7 @@ class admin_setting_genericopresets extends admin_setting {
 		$js .="var requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + $this->templateindex);";
 		$js .="var defaults = document.getElementById('id_s_filter_generico_templatedefaults_' + $this->templateindex);";
 		$js .="var jquery = document.getElementById('id_s_filter_generico_templaterequire_jquery_' + $this->templateindex);";
+		$js .="var amd = document.getElementById('id_s_filter_generico_template_amd_' + $this->templateindex);"; 
 		$js .="var body = document.getElementById('id_s_filter_generico_template_' + $this->templateindex);";
 		$js .="var bodyend = document.getElementById('id_s_filter_generico_templateend_' + $this->templateindex);";
 		$js .="var script = document.getElementById('id_s_filter_generico_templatescript_' + $this->templateindex);";
@@ -108,7 +214,9 @@ class admin_setting_genericopresets extends admin_setting {
 		$js .="requirejs.value=presets[presetindex]['requirejs'];";
 		$js .="defaults.value=presets[presetindex]['defaults'];";
 		$js .="jquery.value=presets[presetindex]['jquery'];";
+		$js .="amd.value=presets[presetindex]['amd'];";
 		$js .="jquery.checked=presets[presetindex]['jquery'] ? true : false;";
+		$js .="amd.checked=presets[presetindex]['amd'] ? true : false;";
 		$js .="body.value=presets[presetindex]['body'];";
 		$js .="bodyend.value=presets[presetindex]['bodyend'];";
 		$js .="script.value=presets[presetindex]['script'];";
@@ -143,6 +251,7 @@ class admin_setting_genericopresets extends admin_setting {
 				$presets['key'] ='helloworld';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '';
@@ -157,6 +266,7 @@ You look like this
 				$presets['key'] ='screenr';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=650,height=396';
 				$presets['bodyend'] = '';
@@ -169,12 +279,15 @@ You look like this
 				$presets['key'] ='toggle';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'linktext=clickme';
 				$presets['bodyend'] = '</div>';
-				$presets['body'] ='<a href="#" onclick="M.filter_generico.gyui.one(\'#@@AUTOID@@\').toggleView(); return false;" >@@linktext@@</a>
-<div id="@@AUTOID@@" class="@@AUTOID@@" hidden="hidden" style="display: none;">';
-				$presets['script'] = '';
+				
+				$presets['body']='<a href="#" id="@@AUTOID@@">@@linktext@@</a>
+						<div id="@@AUTOID@@_target" class="@@AUTOID@@_target" hidden="hidden" style="display: none;">';
+				$presets['script'] = '$("#"  + @@AUTOID@@).click(function(e){
+					$("#" + @@AUTOID@@ + "_target").toggle(); return false;});';
 				$presets['style'] = '';
 				break;
 			
@@ -182,6 +295,7 @@ You look like this
 				$presets['key'] ='linechart';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
 				$presets['bodyend'] = '';
@@ -255,6 +369,7 @@ var myLineChart = new Chart(ctx).Line(cjdata, cjoptions);';
 				$presets['key'] ='barchart';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
 				$presets['bodyend'] = '';
@@ -328,6 +443,7 @@ var myBarChart = new Chart(ctx).Bar(cjdata, cjoptions);';
 				$presets['key'] ='piechart';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
 				$presets['bodyend'] = '';
@@ -382,6 +498,7 @@ var myPieChart = new Chart(ctx).Pie(cjdata, cjoptions);';
 				$presets['key'] ='tabs';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -399,6 +516,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='tabitem';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				//$presets['defaults'] = 'tabnumber=1';
 				$presets['bodyend'] = '</div>';
@@ -414,6 +532,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='accordian';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -431,6 +550,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='accordianitem';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -444,6 +564,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='qrcode';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = 'data=http://mywebsite.com,size=100';
 				$presets['bodyend'] = '';
@@ -463,15 +584,36 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='lightboxyoutube';
 				$presets['requirecss'] ='//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.css';
 				$presets['requirejs'] = '//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.js';
+				$presets['amd'] = 0;
 				$presets['jquery'] = 1;
-				$presets['defaults'] = 'width=320,height=240,videowidth=420,videoheight=315';
+				$presets['defaults'] = 'width=160,height=120,videowidth=640,videoheight=480';
 				$presets['bodyend'] = '';
-				$presets['body'] ='<a href="#" data-featherlight="#@@AUTOID@@"><img src="http://img.youtube.com/vi/@@videoid@@/hqdefault.jpg" width="@@width@@" height="@@height@@"/></a>
+				$presets['body'] ='<a href="#" data-featherlight="#@@AUTOID@@"><div class="filter_generico_ytl"><img src="http://img.youtube.com/vi/@@videoid@@/hqdefault.jpg" width="@@width@@" height="@@height@@"/ ></div></a>
 <div style="display: none;">
-<div  id="@@AUTOID@@"><iframe width="@@videowidth@@" height="@@videoeheight@@" src="//www.youtube.com/embed/@@videoid@@?rel=0" frameborder="0" allowfullscreen></iframe></div>
+<div  id="@@AUTOID@@"><iframe width="@@videowidth@@" height="@@videoheight@@" src="//www.youtube.com/embed/@@videoid@@?rel=0" frameborder="0" allowfullscreen></iframe></div>
 </div>';
 				$presets['script'] = '';
-				$presets['style'] = '';
+				$presets['style'] = '.filter_generico_ytl img{display: block;}
+.filter_generico_ytl { 
+position: relative; 
+display: inline-block;
+}
+.filter_generico_ytl:after {
+content: ">";
+  font-size: 20px;
+  line-height: 30px;
+  color: #FFFFFF;
+  text-align: center;
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  width: 20%;
+  height: 32px;
+  z-index: 2;
+  background: #FF0000;
+  border-radius: 8px;
+  pointer-events: none;
+}';
 				break;
 
 				
@@ -479,6 +621,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='tts';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="say something",lang="en"';
 				$presets['bodyend'] = '';
@@ -500,7 +643,8 @@ $( "#" + @@AUTOID@@).tabs();';
 				$presets['key'] ='imagegallery';
 				$presets['requirecss'] ='//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.css';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/galleria.min.js';
-				$presets['jquery'] = 1;
+				$presets['amd'] = 0;
+				$presets['jquery'] = 0;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
 				$presets['body'] ='<div class="galleria">';
@@ -513,6 +657,7 @@ Galleria.run(".galleria");';
 				$presets['key'] ='videogallery';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = 'https://jwpsrv.com/library/YOURJWPLAYERID.js';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 1;
 				$presets['defaults'] = '';
 				$presets['bodyend'] = '</div>';
@@ -539,6 +684,7 @@ listbar: {
 				$presets['key'] ='fontawesome';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'icon="fa-cog",orientation="fa-spin|fa-rotate-90|fa-rotate-180|fa-rotate-270",size="fa-lg|fa-2x",layout="pull-left|fa-border"';
 				$presets['bodyend'] = '';
@@ -551,6 +697,7 @@ listbar: {
 				$presets['key'] ='infobox';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="Your message goes here."';
 				$presets['bodyend'] = '';
@@ -578,6 +725,7 @@ listbar: {
 				$presets['key'] ='warningbox';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="Your message goes here."';
 				$presets['bodyend'] = '';
@@ -605,6 +753,7 @@ listbar: {
 				$presets['key'] ='errorbox';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
+				$presets['amd'] = 1;
 				$presets['jquery'] = 0;
 				$presets['defaults'] = 'text="Your message goes here."';
 				$presets['bodyend'] = '';

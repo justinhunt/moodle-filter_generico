@@ -49,7 +49,10 @@ $string['templaterequire_js'] = 'Requires JS (template {$a})';
 $string['templaterequire_jquery'] = 'Requires JQuery (template {$a})';
 $string['templaterequire_css_desc'] = 'A link(1 only) to an external CSS file that this template requires. optional.';
 $string['templaterequire_js_desc'] = 'A link(1 only) to an external JS file that this template requires. optional.';
-$string['templaterequire_jquery_desc'] = 'If the template requires JQuery check this.';
+$string['templaterequire_jquery_desc'] = 'Its best NOT to check this. Many non AMD templates require JQuery. Checking here will load JQuery, but not very well. Your theme may already load JQuery anyway. If not, add this string to Site Administration -> Appearance -> Additional HTML (within HEAD):<br/> &lt;script src="https://code.jquery.com/jquery-1.11.2.min.js"&gt;&lt;/script&gt;';
+
+$string['templatecount'] = 'Template Count';
+$string['templatecount_desc'] = 'The number of templates you can have. Default is 20.';
 
 $string['templateheadingjs'] = 'Javascript Settings.';
 $string['templateheadingcss'] = 'CSS/Style Settings.';
@@ -57,6 +60,8 @@ $string['templateheadingcss'] = 'CSS/Style Settings.';
 $string['templatestyle'] = 'Custom CSS (template {$a})';
 $string['templatestyle_desc'] = 'Enter any custom CSS that your template uses here. Template variables will not work here. Just plain old css.';
 
+$string['templaterequire_amd'] = 'Load via AMD';
+$string['templaterequire_amd_desc'] = 'AMD is a javascript loading mechanism. If you upload or link to javascript libraries in your template, you might have to uncheck this. It only applies if on Moodle 2.9 or greater';
 
 $string['uploadjs'] = 'Upload JS (template {$a})';
 $string['uploadjs_desc'] = 'You can upload one js library file which will be loaded for your template. Only one.';

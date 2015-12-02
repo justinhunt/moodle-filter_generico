@@ -26,39 +26,10 @@
 //define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 $tindex = required_param('t',PARAM_TEXT);
-
-$conf = get_config('filter_generico');
-$template=$conf->{'template_' . $tindex};
-
-//get presets
-$thescript=$conf->{'templatescript_' . $tindex};
-$defaults=$conf->{'templatedefaults_' . $tindex};
-
-//we no longer do this. We used the actual used variables
-////merge defaults with blank proparray  to get all fields
-//$defaultsarray = filter_generico_fetch_filter_properties('{GENERICO:' . $defaults);
-//$proparray=array_merge(filter_generico_fetch_emptyproparray(), $defaultsarray);
-
-//fetch all the variables we use (make sure we have no duplicates)
-$allvariables = filter_generico_fetch_variables($thescript. $template);
-$uniquevariables = array_unique($allvariables);
-
-//these props are in the opts array in the allopts[] array on the page
-//since we are writing the JS we write the opts['name'] into the js, but 
-//have to remove quotes from template eg "@@VAR@@" => opts['var'] //NB no quotes.
-//thats worth knowing for the admin who writed the JS load code for the template.
-foreach($uniquevariables as $propname){
-	//case: single quotes
-	$thescript = str_replace("'@@" . $propname ."@@'",'opts["' . $propname . '"]',$thescript);
-	//case: double quotes
-	$thescript = str_replace('"@@' . $propname .'@@"',"opts['" . $propname . "']",$thescript);
-	//case: no quotes
-	$thescript = str_replace('@@' . $propname .'@@',"opts['" . $propname . "']",$thescript);
-}
-
-$thefunction = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
-$thefunction .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. "};";
+$generator = new filter_generico_template_script_generator($tindex);
+$template_script = $generator->get_template_script();
 header('Content-Type: application/javascript');
-echo $thefunction;
+echo  $template_script;

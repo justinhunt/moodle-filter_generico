@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 class filter_generico extends moodle_text_filter {
 
@@ -85,7 +86,7 @@ function filter_generico_callback(array $link){
 	
 	//determine which template we are using
 	$endtag=false;
-	for($tempindex=1;$tempindex<=20;$tempindex++){
+	for($tempindex=1;$tempindex<=$conf['templatecount'];$tempindex++){
 			if($filterprops['type']==$conf['templatekey_' . $tempindex]){
 				break;
 			}elseif($filterprops['type']==$conf['templatekey_' . $tempindex] . '_end'){
@@ -94,7 +95,7 @@ function filter_generico_callback(array $link){
 			}
 	}
 	//no key could be found if got all the way to 21
-	if($tempindex==21){return '';}
+	if($tempindex==$conf['templatecount']+1){return '';}
 	
 	//fetch our template
 	if($endtag){
@@ -135,15 +136,57 @@ function filter_generico_callback(array $link){
 	//stash this for passing to js
 	$filterprops['AUTOID']=$autoid;
 	
+	
+		//if we have course variables e.g @@COURSE:ID@@
+		if(strpos($genericotemplate,'@@COURSE:')!==false){
+			$coursevars = get_object_vars($COURSE);
+			$coursepropstubs = explode('@@COURSE:',$genericotemplate);
+			
+			//Course Props
+			$profileprops=false;
+			$count=0;
+			foreach($coursepropstubs as $propstub){
+				//we don't want the first one, its junk
+				$count++;
+				if($count==1){continue;}
+				//init our prop value
+				$propvalue=false;
+				
+				//fetch the property name
+				//user can use any case, but we work with lower case version
+				$end = strpos($propstub,'@@');
+				$courseprop_allcase = substr($propstub,0,$end);
+				$courseprop=strtolower($courseprop_allcase);
+				
+				//check if it exists in course
+				if(array_key_exists($courseprop,$coursevars)){
+					$propvalue=$coursevars[$courseprop];
+				}elseif($courseprop=='contextid'){
+					$context = context_course::instance($COURSE->id);
+					if($context){
+						$propvalue=$context->id;
+					}
+				}
+				//if we have a propname and a propvalue, do the replace
+				if(!empty($courseprop) && !empty($propvalue)){
+					$genericotemplate = str_replace('@@COURSE:' . $courseprop_allcase .'@@',$propvalue,$genericotemplate);
+					//stash this for passing to js
+					$filterprops['COURSE:' . $courseprop_allcase]=$propvalue;
+				}
+			}
+		}
+	
 	//if we have user variables e.g @@USER:FIRSTNAME@@
 	//It is a bit wordy, because trying to avoid loading a lib
 	//or making a DB call if unneccessary
 	if(strpos($genericotemplate,'@@USER:')!==false){
 		$uservars = get_object_vars($USER);
-		$propstubs = explode('@@USER:',$genericotemplate);
+		$userpropstubs = explode('@@USER:',$genericotemplate);
+		
+		//User Props
 		$profileprops=false;
 		$count=0;
-		foreach($propstubs as $propstub){
+		foreach($userpropstubs as $propstub){
 			//we don't want the first one, its junk
 			$count++;
 			if($count==1){continue;}
@@ -198,10 +241,14 @@ function filter_generico_callback(array $link){
 		return $genericotemplate;
 	}
 	
-	//figure out if we require jquery or external CSS/JS/
+	//get the conf info we need for this template
+	$thescript = $conf['templatescript_' . $tempindex];
+	$defaults=$conf['templatedefaults_' . $tempindex];
 	$require_js = $conf['templaterequire_js_' . $tempindex];
 	$require_css = $conf['templaterequire_css_' . $tempindex];
 	$require_jquery = $conf['templaterequire_jquery_' . $tempindex];
+	//are we AMD and Moodle 2.9 or more?
+	$require_amd = $conf['template_amd_' . $tempindex] && $CFG->version>=2015051100;
 	
 	//figure out if this is https or http. We don't want to scare the browser
 	if(strpos($PAGE->url->out(),'https:')===0){
@@ -211,7 +258,8 @@ function filter_generico_callback(array $link){
 	}
 	
 	//load jquery
-	if($require_jquery){
+	//We ALWAYS load jquery using require js  so this can be deleted soon I hopw
+	if($require_jquery && !$require_amd){
 		//we don't use moodle jquery. To keep things consistent, though the user could point jqueryurl to moodle's one
 		//if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
 		if(false){
@@ -223,22 +271,39 @@ function filter_generico_callback(array $link){
 	}
 	
 	//massage the js URL depending on schemes and rel. links etc. Then insert it
-	if($require_js){
-		if(strpos($require_js,'//')===0){
-			$require_js = $scheme . $require_js;
-		}elseif(strpos($require_js,'/')===0){
-			$require_js = $CFG->wwwroot . $require_js;
+	//with AMD we set these as dependencies, so we don't need this song and dance
+	if(!$require_amd){
+		$filterprops['JSLINK']=false;
+		if($require_js){
+			if(strpos($require_js,'//')===0){
+				$require_js = $scheme . $require_js;
+			}elseif(strpos($require_js,'/')===0){
+				$require_js = $CFG->wwwroot . $require_js;
+			}
+			
+			//for load method: NO AMD
+			$PAGE->requires->js(new moodle_url($require_js));
+		
+			//for load method: AMD
+			//$require_js = substr($require_js, 0, -3);
+			$filterprops['JSLINK'] = $require_js;
 		}
-		$PAGE->requires->js(new moodle_url($require_js));
-	}
 	
-	//if we have an uploaded JS file, then lets include that
-	$uploadjsfile = $conf['uploadjs' . $tempindex];
-	if($uploadjsfile){
-		$uploadjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
-		$PAGE->requires->js($uploadjsurl);
+		//if we have an uploaded JS file, then lets include that
+		$filterprops['JSUPLOAD']=false;
+		$uploadjsfile = $conf['uploadjs' . $tempindex];
+		if($uploadjsfile){
+			$uploadjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
+			
+			//for load method: NO AMD
+			$PAGE->requires->js($uploadjsurl);
+			
+			//for load method: AMD
+			//$uploadjsurl = substr($uploadjsurl, 0, -3);
+			$filterprops['JSUPLOAD'] = $uploadjsurl;
+		}
 	}
-	
+
 	//massage the CSS URL depending on schemes and rel. links etc. 
 	if(!empty($require_css)){
 		if(strpos($require_css,'//')===0){
@@ -301,11 +366,25 @@ function filter_generico_callback(array $link){
 			'requires' => array('json')
 		);
 		
-	//require any scripts from the template
-	$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
+
+	//AMD or not, and then load our js for this template on the page
+	if($require_amd){
+
+		$generator = new filter_generico_template_script_generator($tempindex);
+		$template_amd_script = $generator->get_template_script();
 		
-	//setup our JS call
-	$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops),false,$jsmodule);
+		//load define for this template. Later it will be called from loadgenerico
+		$PAGE->requires->js_amd_inline($template_amd_script);
+		//for AMD
+		$PAGE->requires->js_call_amd('filter_generico/generico_amd','loadgenerico', array($filterprops));	
+	}else{		
+
+		//require any scripts from the template
+		$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
+	
+		//for no AMD
+		$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops),false,$jsmodule);
+	}
 	
 	//finally return our template text	
 	return $genericotemplate;
