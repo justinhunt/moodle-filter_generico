@@ -1,6 +1,6 @@
 Generico Filter
 ===============
-Generico is a filter that will allow up to ten templates to be registered.
+Generico is a filter that will allow any number of templates to be registered.
 When Moodle encounters a filter string it will use the data in the filter string to fill out the template, and insert it into the page.
 
 Usage
