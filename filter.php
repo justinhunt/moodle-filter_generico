@@ -372,11 +372,17 @@ function filter_generico_callback(array $link){
 
 		$generator = new filter_generico_template_script_generator($tempindex);
 		$template_amd_script = $generator->get_template_script();
+
+		//props can't be passed at much length , Moodle complains about too many
+		//so we do this ... lets hope it don't break things
+		$jsonstring = json_encode($filterprops);
+		$props_html = \html_writer::tag('input', '', array('id' => 'filter_generico_amdopts_' . $filterprops['AUTOID'], 'type' => 'hidden', 'value' => $jsonstring));
+		$templatebody = $props_html . $genericotemplate;
 		
 		//load define for this template. Later it will be called from loadgenerico
 		$PAGE->requires->js_amd_inline($template_amd_script);
 		//for AMD
-		$PAGE->requires->js_call_amd('filter_generico/generico_amd','loadgenerico', array($filterprops));	
+		$PAGE->requires->js_call_amd('filter_generico/generico_amd','loadgenerico', array(array('AUTOID'=>$filterprops['AUTOID'])));
 	}else{		
 
 		//require any scripts from the template
