@@ -377,7 +377,7 @@ function filter_generico_callback(array $link){
 		//so we do this ... lets hope it don't break things
 		$jsonstring = json_encode($filterprops);
 		$props_html = \html_writer::tag('input', '', array('id' => 'filter_generico_amdopts_' . $filterprops['AUTOID'], 'type' => 'hidden', 'value' => $jsonstring));
-		$templatebody = $props_html . $genericotemplate;
+		$genericotemplate = $props_html . $genericotemplate;
 		
 		//load define for this template. Later it will be called from loadgenerico
 		$PAGE->requires->js_amd_inline($template_amd_script);

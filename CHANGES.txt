@@ -1,0 +1,7 @@
+Change List
+=========
+Version 2015121801
+Fixed bug that broke AMD generico templates
+Version 2015121401
+Support for passing AMD params by HTML
+
