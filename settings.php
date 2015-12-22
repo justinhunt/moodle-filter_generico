@@ -26,7 +26,7 @@
 $settings = null;
 defined('MOODLE_INTERNAL') || die;
 if (is_siteadmin()) {
-	
+	global $PAGE;
 	require_once($CFG->dirroot . '/filter/generico/lib.php');
 	require_once($CFG->dirroot . '/filter/generico/locallib.php');
 
@@ -79,8 +79,7 @@ if (is_siteadmin()) {
 		//presets
 		$settings_page->add(new admin_setting_genericopresets('filter_generico/templatepresets_' . $tindex, 
 				get_string('presets', 'filter_generico'), get_string('presets_desc', 'filter_generico'),$tindex));
-			
-				
+
 		//template key
 		 $settings_page->add(new admin_setting_configtext('filter_generico/templatekey_' . $tindex , 
 				get_string('templatekey', 'filter_generico',$tindex),

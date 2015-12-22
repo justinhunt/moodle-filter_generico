@@ -189,8 +189,8 @@ class admin_setting_genericopresets extends admin_setting {
      * @return string Returns an HTML string
      */
     public function output_html($data, $query='') {
-        global $OUTPUT;
-     
+        global $PAGE;
+     /*
         //make our js
         $jscallback = 'filter_generico_fillfields_' . $this->templateindex ;
 		$js ="<script>";
@@ -223,7 +223,7 @@ class admin_setting_genericopresets extends admin_setting {
 		$js .="style.value=presets[presetindex]['style'];";
 		$js .="}";
 		$js .="</script>";
-		
+		*/
         //build our select form
         $keys = array_keys($this->presetdata);
         $usearray = array();
@@ -231,13 +231,28 @@ class admin_setting_genericopresets extends admin_setting {
         foreach($keys as $key){
         	$usearray[$key]=$this->presetdata[$key]['key'];
         }
+		/*
         $select = html_writer::select($usearray,'filter_generico/presets','','--custom--', array('onchange'=>$jscallback . '(this.value)'));
-	
 		return format_admin_setting($this, $this->visiblename,
         '<div class="form-text defaultsnext">'. $js . $select . '</div>',
         $this->information, true, '','', $query);
+*/
+		//$presets = json_encode($this->presetdata);
+		$presetsjson = json_encode($this->presetdata);
+		$presetscontrol = html_writer::tag('input', '', array('id' => 'id_s_filter_generico_presetdata_' . $this->templateindex, 'type' => 'hidden', 'value' => $presetsjson));
 
-    }
+
+		//Add javascript handler for presets
+		$PAGE->requires->js_call_amd('filter_generico/generico_presets_amd','init',array(array('templateindex'=>$this->templateindex)));
+
+		$select = html_writer::select($usearray,'filter_generico/presets','','--custom--');
+		return format_admin_setting($this, $this->visiblename,
+			'<div class="form-text defaultsnext">'. $presetscontrol . $select . '</div>',
+			$this->information, true, '','', $query);
+
+
+
+	}
 	
 	protected function fetch_presets(){
 

@@ -381,9 +381,11 @@ function filter_generico_callback(array $link){
 		
 		//load define for this template. Later it will be called from loadgenerico
 		$PAGE->requires->js_amd_inline($template_amd_script);
-		//for AMD
+		//for AMD generico script
 		$PAGE->requires->js_call_amd('filter_generico/generico_amd','loadgenerico', array(array('AUTOID'=>$filterprops['AUTOID'])));
-	}else{		
+
+
+	}else{
 
 		//require any scripts from the template
 		$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
