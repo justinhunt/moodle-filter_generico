@@ -8,9 +8,12 @@ define(['jquery','core/log'], function($, log) {
   return {
 
 	  presetdata: false,
+	  
+	  dataitems: ['key', 'requirecss', 'requirejs', 'defaults', 'jquery',
+			  'amd', 'body', 'bodyend', 'script', 'style'],
 
-	  populateform: function (templateindex, presetindex, presetdata) {
-		  var controls = {};
+	  fetchcontrols: function(templateindex) {
+	  	  var controls = {};
 		  controls.key = document.getElementById('id_s_filter_generico_templatekey_' + templateindex);
 		  controls.requirecss = document.getElementById('id_s_filter_generico_templaterequire_css_' + templateindex);
 		  controls.requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + templateindex);
@@ -22,6 +25,42 @@ define(['jquery','core/log'], function($, log) {
 		  controls.script = document.getElementById('id_s_filter_generico_templatescript_' + templateindex);
 		  controls.style = document.getElementById('id_s_filter_generico_templatestyle_' + templateindex);
 		  controls.presetdata = document.getElementById('id_s_filter_generico_presetdata_' + templateindex);
+		  return controls;
+	  },
+	  
+	  fetchjsonbundle: function(templateindex, controls){
+			var bundle={};
+			 $.each(this.dataitems,
+			  function (index, item) {
+				  bundle[item] =controls[item].value;
+			  }
+		    );
+		    var jsonbundle = JSON.stringify(bundle);
+		    return jsonbundle;
+    		window.open("data:text/json;charset=utf-8," + encodeURIComponent(bundlejson));
+	  },
+	  
+	  exportbundle: function(templateindex){
+			var controls = this.fetchcontrols(templateindex);
+			var jsonbundle = this.fetchjsonbundle(templateindex,controls);
+			
+			var pom = document.createElement('a');
+			pom.setAttribute('href', "data:text/json;charset=utf-8," + encodeURIComponent(jsonbundle));
+			pom.setAttribute('download', controls['key'].value + '.txt');
+
+			if (document.createEvent) {
+				var event = document.createEvent('MouseEvents');
+				event.initEvent('click', true, true);
+				pom.dispatchEvent(event);
+			}
+			else {
+				pom.click();
+			}
+	  },
+
+	  populateform: function (templateindex, presetindex, presetdata) {
+		  //get all our html controls
+		  var controls = this.fetchcontrols(templateindex);
 
 		  //what a rip off there was no selection!!!
 		  if(!presetindex && !presetdata){return;}
@@ -31,10 +70,8 @@ define(['jquery','core/log'], function($, log) {
 		   //this is a normal selection
 		  	presetdata  =this.presetdata;
 		  }
-
-		  var dataitems = ['key', 'requirecss', 'requirejs', 'defaults', 'jquery',
-			  'amd', 'body', 'bodyend', 'script', 'style'];
-		  $.each(dataitems,
+		  
+		  $.each(this.dataitems,
 			  function (index, item) {
 				 // log.debug(item + ':' + presetindex + ':' + presetdata[presetindex][item]);
 				  controls[item].value = presetdata[presetindex][item];
@@ -65,18 +102,29 @@ define(['jquery','core/log'], function($, log) {
 				amdpresets.populateform(opts['templateindex'],$(this).val());
 			});
 			
+			//drag drop square events
+			var ddsquareid='#id_s_filter_generico_dragdropsquare_' + opts['templateindex']
+			
+			//export the current bundle
+			$(ddsquareid).on("click", function(event) {
+				amdpresets.exportbundle(opts['templateindex']);
+			});
+			
+			
 			//handle the drop event. First cancel dragevents which prevent drop firing
-			$("select[name='filter_generico/presets']").on("dragover", function(event) {
+			$(ddsquareid).on("dragover", function(event) {
 				event.preventDefault();  
 				event.stopPropagation();
 				$(this).addClass('dragging');
 			});
-			$("select[name='filter_generico/presets']").on("dragleave", function(event) {
+			
+			$(ddsquareid).on("dragleave", function(event) {
 				event.preventDefault();  
 				event.stopPropagation();
 				$(this).removeClass('dragging');
 			});
-			$("select[name='filter_generico/presets']").on('drop', function(event) {
+			
+			$(ddsquareid).on('drop', function(event) {
 
  				//stop the browser from opening the file
  				event.preventDefault();
