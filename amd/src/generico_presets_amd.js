@@ -24,9 +24,14 @@ define(['jquery','core/log'], function($, log) {
 		  controls.presetdata = document.getElementById('id_s_filter_generico_presetdata_' + templateindex);
 
 		  //what a rip off there was no selection!!!
-		  if(!presetindex){return;}
+		  if(!presetindex && !presetdata){return;}
+		  if(presetindex==0 && presetdata){
+		  	//this is good, we have something from dopopulate
+		  }else{
+		   //this is a normal selection
+		  	presetdata  =this.presetdata;
+		  }
 
-		  var presetdata  =this.presetdata;
 		  var dataitems = ['key', 'requirecss', 'requirejs', 'defaults', 'jquery',
 			  'amd', 'body', 'bodyend', 'script', 'style'];
 		  $.each(dataitems,
@@ -42,7 +47,7 @@ define(['jquery','core/log'], function($, log) {
 	  },
 
 	  dopopulate: function(templateindex, templatedata){
-		this.populateform(templateindex,0,array(templatedata));
+		this.populateform(templateindex,0,new Array(templatedata));
 	  },
 		
 		// load all generico stuff and stash all our variables
@@ -55,8 +60,47 @@ define(['jquery','core/log'], function($, log) {
 			}
 
 			var amdpresets = this;
+			//handle the select box change event
 			$("select[name='filter_generico/presets']").change(function(){
 				amdpresets.populateform(opts['templateindex'],$(this).val());
+			});
+			
+			//handle the drop event. First cancel dragevents which prevent drop firing
+			$("select[name='filter_generico/presets']").on("dragover", function(event) {
+				event.preventDefault();  
+				event.stopPropagation();
+				$(this).addClass('dragging');
+			});
+			$("select[name='filter_generico/presets']").on("dragleave", function(event) {
+				event.preventDefault();  
+				event.stopPropagation();
+				$(this).removeClass('dragging');
+			});
+			$("select[name='filter_generico/presets']").on('drop', function(event) {
+
+ 				//stop the browser from opening the file
+ 				event.preventDefault();
+				 //Now we need to get the files that were dropped
+				 //The normal method would be to use event.dataTransfer.files
+				 //but as jquery creates its own event object you ave to access 
+				 //the browser even through originalEvent.  which looks like this
+				 var files = event.originalEvent.dataTransfer.files;
+				 
+				 //if we have files, read and process them
+				 if(files.length){
+				 	var f = files[0];
+				 	if (f) {
+					  var r = new FileReader();
+					  r.onload = function(e) { 
+						  var contents = e.target.result;
+						  var templatedata = JSON.parse(contents);
+						  amdpresets.dopopulate(opts['templateindex'],templatedata);
+					  }
+					  r.readAsText(f);
+					} else { 
+					  alert("Failed to load file");
+					}//end of if f
+				}//end of if files
 			});
 		}//end of function
 

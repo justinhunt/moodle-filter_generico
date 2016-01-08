@@ -243,7 +243,8 @@ class admin_setting_genericopresets extends admin_setting {
 
 
 		//Add javascript handler for presets
-		$PAGE->requires->js_call_amd('filter_generico/generico_presets_amd','init',array(array('templateindex'=>$this->templateindex)));
+		$PAGE->requires->js_call_amd('filter_generico/generico_presets_amd',
+		  	'init',array(array('templateindex'=>$this->templateindex)));
 
 		$select = html_writer::select($usearray,'filter_generico/presets','','--custom--');
 		return format_admin_setting($this, $this->visiblename,
