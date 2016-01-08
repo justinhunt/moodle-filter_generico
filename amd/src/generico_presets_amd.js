@@ -42,6 +42,7 @@ define(['jquery','core/log'], function($, log) {
 	  
 	  exportbundle: function(templateindex){
 			var controls = this.fetchcontrols(templateindex);
+			if(controls.key.value==''){return;}
 			var jsonbundle = this.fetchjsonbundle(templateindex,controls);
 			
 			var pom = document.createElement('a');
@@ -78,8 +79,8 @@ define(['jquery','core/log'], function($, log) {
 			  }
 		  );
 		  //"value" and "checked" are separate
-		  controls['jquery'].checked = this.presetdata[presetindex]['jquery'] ? true : false;
-		  controls['amd'].checked = this.presetdata[presetindex]['amd'] ? true : false;
+		  controls['jquery'].checked = (presetdata[presetindex]['jquery'] && presetdata[presetindex]['jquery']!='0') ? true : false;
+		  controls['amd'].checked = (presetdata[presetindex]['amd'] && presetdata[presetindex]['amd']!='0' )? true : false;
 
 	  },
 
@@ -115,13 +116,13 @@ define(['jquery','core/log'], function($, log) {
 			$(ddsquareid).on("dragover", function(event) {
 				event.preventDefault();  
 				event.stopPropagation();
-				$(this).addClass('dragging');
+				$(this).addClass('filter_generico_dragging');
 			});
 			
 			$(ddsquareid).on("dragleave", function(event) {
 				event.preventDefault();  
 				event.stopPropagation();
-				$(this).removeClass('dragging');
+				$(this).removeClass('filter_generico_dragging');
 			});
 			
 			$(ddsquareid).on('drop', function(event) {
@@ -142,13 +143,16 @@ define(['jquery','core/log'], function($, log) {
 					  r.onload = function(e) { 
 						  var contents = e.target.result;
 						  var templatedata = JSON.parse(contents);
-						  amdpresets.dopopulate(opts['templateindex'],templatedata);
+						  if(templatedata.key){
+						  	amdpresets.dopopulate(opts['templateindex'],templatedata);
+						  }
 					  }
 					  r.readAsText(f);
 					} else { 
 					  alert("Failed to load file");
 					}//end of if f
 				}//end of if files
+				$(this).removeClass('filter_generico_dragging');
 			});
 		}//end of function
 

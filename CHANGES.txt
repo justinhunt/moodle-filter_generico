@@ -1,5 +1,8 @@
 Change List
 =========
+
+Version 2015121802
+Added drag and drop/ click to export "bundles" for sharing templates
 Version 2015121801
 Fixed bug that broke AMD generico templates
 Version 2015121401

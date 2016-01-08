@@ -248,11 +248,11 @@ class admin_setting_genericopresets extends admin_setting {
 
 		$select = html_writer::select($usearray,'filter_generico/presets','','--custom--');
 		
-		$dragdropsquare = html_writer::tag('div','',array('id' => 'id_s_filter_generico_dragdropsquare_' . $this->templateindex,
+		$dragdropsquare = html_writer::tag('div',get_string('bundle','filter_generico'),array('id' => 'id_s_filter_generico_dragdropsquare_' . $this->templateindex,
 			'class' => 'filter_generico_dragdropsquare'));
 		
 		return format_admin_setting($this, $this->visiblename,
-			'<div class="form-text defaultsnext">'. $presetscontrol . $select . $dragdropsquare . '</div>',
+			$dragdropsquare . '<div class="form-text defaultsnext">'. $presetscontrol . $select .  '</div>',
 			$this->information, true, '','', $query);
 
 
