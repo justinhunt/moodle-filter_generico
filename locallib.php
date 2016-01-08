@@ -102,15 +102,19 @@ class filter_generico_template_script_generator {
 			//$requires = array("'" . 'jquery' . "'");
 			//$params = array('$');
 
+			//current key
+			$currentkey = $conf->{'templatekey_' . $tindex};
+			
 			if($requiredjs){
 				$requires[] =  "'" . $requiredjs . "'";
 				//$requires[] = "'recjs" . $tindex . "'";
-				$params[] = "recjs" . $tindex;
-	
-			}elseif($uploadjsfile){
+				$params[] = "requiredjs_" . $currentkey;
+			}
+			
+			if($uploadjsfile){
 				$requires[] =  "'" . $uploadjs . "'";
 				//$requires[] ="'uploadjs" . $tindex . "'";
-				$params[] = "uploadjs" . $tindex;
+				$params[] = "uploadjs_" . $currentKey;
 	
 			}
 
