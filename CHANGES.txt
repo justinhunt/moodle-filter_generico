@@ -1,6 +1,7 @@
 Change List
 =========
-
+Version 2015121803
+fixed a bug in the handle system
 Version 2015121802
 Added drag and drop/ click to export "bundles" for sharing templates
 Version 2015121801
