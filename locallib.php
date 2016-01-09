@@ -114,7 +114,7 @@ class filter_generico_template_script_generator {
 			if($uploadjsfile){
 				$requires[] =  "'" . $uploadjs . "'";
 				//$requires[] ="'uploadjs" . $tindex . "'";
-				$params[] = "uploadjs_" . $currentKey;
+				$params[] = "uploadjs_" . $currentkey;
 	
 			}
 
