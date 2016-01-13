@@ -117,17 +117,18 @@ if (is_siteadmin()) {
 				get_string('templaterequire_js_desc', 'filter_generico'), 
 				 '', PARAM_RAW,50));
 				 
-		//template amd		
-		 $settings_page->add(new admin_setting_configcheckbox('filter_generico/template_amd_' . $tindex, 
+		//template amd
+		$yesno = array('0'=>get_string('no'),'1'=>get_string('yes'));
+		 $settings_page->add(new admin_setting_configselect('filter_generico/template_amd_' . $tindex,
 				get_string('templaterequire_amd', 'filter_generico',$tindex),
 				get_string('templaterequire_amd_desc', 'filter_generico'), 
-				 1));
+				 1,$yesno));
 		
 		//template jquery		
-		 $settings_page->add(new admin_setting_configcheckbox('filter_generico/templaterequire_jquery_' . $tindex, 
+		 $settings_page->add(new admin_setting_configselect('filter_generico/templaterequire_jquery_' . $tindex,
 				get_string('templaterequire_jquery', 'filter_generico',$tindex),
 				get_string('templaterequire_jquery_desc', 'filter_generico'), 
-				 0));		 
+				 0,$yesno));
 				 
 		
 		//template body script
