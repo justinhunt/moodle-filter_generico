@@ -1,11 +1,17 @@
 Change List
 =========
+Version 2016011100
+Added a new field for instructions for each template in the Generico Filter. If not blank, this will be displayed in the popup dialog for each template when using the Generico Atto plugin.
+
 Version 2015121803
 fixed a bug in the handle system
+
 Version 2015121802
 Added drag and drop/ click to export "bundles" for sharing templates
+
 Version 2015121801
 Fixed bug that broke AMD generico templates
+
 Version 2015121401
 Support for passing AMD params by HTML
 

@@ -59,7 +59,7 @@ function filter_generico_fetch_filter_properties($filterstring){
 	//string should be property=value,property=value
 	//got this regexp from http://stackoverflow.com/questions/168171/regular-expression-for-parsing-name-value-pairs
 	$regexpression='/([^=,]*)=("[^"]*"|[^,"]*)/';
-	$matches; 	
+	$matches=array();
 
 	//here we match the filter string and split into name array (matches[1]) and value array (matches[2])
 	//we then add those to a name value array.

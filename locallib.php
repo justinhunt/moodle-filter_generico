@@ -194,40 +194,7 @@ class admin_setting_genericopresets extends admin_setting {
      */
     public function output_html($data, $query='') {
         global $PAGE;
-     /*
-        //make our js
-        $jscallback = 'filter_generico_fillfields_' . $this->templateindex ;
-		$js ="<script>";
-		$js .="function $jscallback(presetindex){";
-		$js .="if(!presetindex){return;}";
-		$js .="var presets = " . json_encode($this->presetdata) .";";
-		$js .="var key = document.getElementById('id_s_filter_generico_templatekey_' + $this->templateindex);";
-		$js .="var requirecss = document.getElementById('id_s_filter_generico_templaterequire_css_' + $this->templateindex);";
-		$js .="var requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + $this->templateindex);";
-		$js .="var defaults = document.getElementById('id_s_filter_generico_templatedefaults_' + $this->templateindex);";
-		$js .="var jquery = document.getElementById('id_s_filter_generico_templaterequire_jquery_' + $this->templateindex);";
-		$js .="var amd = document.getElementById('id_s_filter_generico_template_amd_' + $this->templateindex);"; 
-		$js .="var body = document.getElementById('id_s_filter_generico_template_' + $this->templateindex);";
-		$js .="var bodyend = document.getElementById('id_s_filter_generico_templateend_' + $this->templateindex);";
-		$js .="var script = document.getElementById('id_s_filter_generico_templatescript_' + $this->templateindex);";
-		$js .="var style = document.getElementById('id_s_filter_generico_templatestyle_' + $this->templateindex);";
 
-
-		$js .="key.value=presets[presetindex]['key'];";
-		$js .="requirecss.value=presets[presetindex]['requirecss'];";
-		$js .="requirejs.value=presets[presetindex]['requirejs'];";
-		$js .="defaults.value=presets[presetindex]['defaults'];";
-		$js .="jquery.value=presets[presetindex]['jquery'];";
-		$js .="amd.value=presets[presetindex]['amd'];";
-		$js .="jquery.checked=presets[presetindex]['jquery'] ? true : false;";
-		$js .="amd.checked=presets[presetindex]['amd'] ? true : false;";
-		$js .="body.value=presets[presetindex]['body'];";
-		$js .="bodyend.value=presets[presetindex]['bodyend'];";
-		$js .="script.value=presets[presetindex]['script'];";
-		$js .="style.value=presets[presetindex]['style'];";
-		$js .="}";
-		$js .="</script>";
-		*/
         //build our select form
         $keys = array_keys($this->presetdata);
         $usearray = array();
@@ -235,13 +202,7 @@ class admin_setting_genericopresets extends admin_setting {
         foreach($keys as $key){
         	$usearray[$key]=$this->presetdata[$key]['key'];
         }
-		/*
-        $select = html_writer::select($usearray,'filter_generico/presets','','--custom--', array('onchange'=>$jscallback . '(this.value)'));
-		return format_admin_setting($this, $this->visiblename,
-        '<div class="form-text defaultsnext">'. $js . $select . '</div>',
-        $this->information, true, '','', $query);
-*/
-		//$presets = json_encode($this->presetdata);
+
 		$presetsjson = json_encode($this->presetdata);
 		$presetscontrol = html_writer::tag('input', '', array('id' => 'id_s_filter_generico_presetdata_' . $this->templateindex, 'type' => 'hidden', 'value' => $presetsjson));
 
@@ -273,6 +234,7 @@ class admin_setting_genericopresets extends admin_setting {
 		switch($templateno){
 			case '1':
 				$presets['key'] ='helloworld';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -288,6 +250,7 @@ You look like this
 				break;
 			case '2':
 				$presets['key'] ='screenr';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -301,6 +264,7 @@ You look like this
 
 			case '3':
 				$presets['key'] ='toggle';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -317,6 +281,7 @@ You look like this
 			
 			case '4':
 				$presets['key'] ='linechart';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
 				$presets['amd'] = 0;
@@ -391,6 +356,7 @@ var myLineChart = new Chart(ctx).Line(cjdata, cjoptions);';
 				
 		case '5':
 				$presets['key'] ='barchart';
+			    $presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
 				$presets['amd'] = 0;
@@ -465,6 +431,7 @@ var myBarChart = new Chart(ctx).Bar(cjdata, cjoptions);';
 			
 			case '6':
 				$presets['key'] ='piechart';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
 				$presets['amd'] = 0;
@@ -520,6 +487,7 @@ var myPieChart = new Chart(ctx).Pie(cjdata, cjoptions);';
 		
 			case '7':
 				$presets['key'] ='tabs';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
 				$presets['amd'] = 1;
@@ -538,6 +506,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				
 			case '8':
 				$presets['key'] ='tabitem';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -554,6 +523,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				
 			case '9':
 				$presets['key'] ='accordian';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
 				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
 				$presets['amd'] = 1;
@@ -572,6 +542,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				
 			case '10':
 				$presets['key'] ='accordianitem';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -586,6 +557,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				
 			case '11':
 				$presets['key'] ='qrcode';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js';
 				$presets['amd'] = 1;
@@ -606,6 +578,7 @@ $( "#" + @@AUTOID@@).tabs();';
 				
 			case '12':
 				$presets['key'] ='lightboxyoutube';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.css';
 				$presets['requirejs'] = '//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.js';
 				$presets['amd'] = 0;
@@ -643,6 +616,7 @@ content: ">";
 				
 			case '13':
 				$presets['key'] ='tts';
+				$presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -665,6 +639,7 @@ content: ">";
 
 		case '14':
 				$presets['key'] ='imagegallery';
+			    $presets['instructions'] ='';
 				$presets['requirecss'] ='//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.css';
 				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/galleria.min.js';
 				$presets['amd'] = 0;
@@ -679,6 +654,7 @@ Galleria.run(".galleria");';
 				
 		case '15':
 				$presets['key'] ='videogallery';
+			    $presets['instructions'] ='';
 				$presets['requirecss'] ='';
 				$presets['requirejs'] = 'https://jwpsrv.com/library/YOURJWPLAYERID.js';
 				$presets['amd'] = 1;
@@ -706,6 +682,7 @@ listbar: {
 				
 		case '16':
 				$presets['key'] ='fontawesome';
+			    $presets['instructions'] ='';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -719,6 +696,7 @@ listbar: {
 		
 		case '17':
 				$presets['key'] ='infobox';
+			    $presets['instructions'] ='';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -747,6 +725,7 @@ listbar: {
 				
 		case '18':
 				$presets['key'] ='warningbox';
+			    $presets['instructions'] ='';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;
@@ -775,6 +754,7 @@ listbar: {
 
 		case '19':
 				$presets['key'] ='errorbox';
+			    $presets['instructions'] ='';
 				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
 				$presets['requirejs'] = '';
 				$presets['amd'] = 1;

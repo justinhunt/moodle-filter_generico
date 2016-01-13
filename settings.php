@@ -85,6 +85,12 @@ if (is_siteadmin()) {
 				get_string('templatekey', 'filter_generico',$tindex),
 				get_string('templatekey_desc', 'filter_generico'), 
 				 '', PARAM_ALPHANUMEXT));
+
+		//template instructions
+		$settings_page->add(new admin_setting_configtextarea('filter_generico/templateinstructions_' . $tindex,
+			get_string('templateinstructions', 'filter_generico',$tindex),
+			get_string('templateinstructions_desc', 'filter_generico'),
+			'',PARAM_RAW));
 		
 		//template body
 		 $settings_page->add(new admin_setting_configtextarea('filter_generico/template_' . $tindex,

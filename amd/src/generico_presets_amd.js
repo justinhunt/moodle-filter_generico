@@ -9,12 +9,13 @@ define(['jquery','core/log'], function($, log) {
 
 	  presetdata: false,
 	  
-	  dataitems: ['key', 'requirecss', 'requirejs', 'defaults', 'jquery',
+	  dataitems: ['key', 'instructions','requirecss', 'requirejs', 'defaults', 'jquery',
 			  'amd', 'body', 'bodyend', 'script', 'style'],
 
 	  fetchcontrols: function(templateindex) {
 	  	  var controls = {};
 		  controls.key = document.getElementById('id_s_filter_generico_templatekey_' + templateindex);
+		  controls.instructions = document.getElementById('id_s_filter_generico_templateinstructions_' + templateindex);
 		  controls.requirecss = document.getElementById('id_s_filter_generico_templaterequire_css_' + templateindex);
 		  controls.requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + templateindex);
 		  controls.defaults = document.getElementById('id_s_filter_generico_templatedefaults_' + templateindex);
@@ -74,8 +75,12 @@ define(['jquery','core/log'], function($, log) {
 		  
 		  $.each(this.dataitems,
 			  function (index, item) {
-				 // log.debug(item + ':' + presetindex + ':' + presetdata[presetindex][item]);
-				  controls[item].value = presetdata[presetindex][item];
+				  // log.debug(item + ':' + presetindex + ':' + presetdata[presetindex][item]);
+				  //first check we have a data item for this control(old bundles don7 have instructions etc)
+				  //then set the data
+				  if (presetdata[presetindex].hasOwnProperty(item)) {
+				   controls[item].value = presetdata[presetindex][item];
+			      }
 			  }
 		  );
 		  //"value" and "checked" are separate

@@ -2,6 +2,8 @@ Generico Filter
 ===============
 Generico is a filter that will allow any number of templates to be registered.
 When Moodle encounters a filter string it will use the data in the filter string to fill out the template, and insert it into the page.
+This versoion of Generico will only run on Moodle 2.9 and newer. If your version of Moodle is older than that, please visit https://moodle.org/plugins/filter_generico to get a version compatible with your version of Moodle.
+
 
 Usage
 ===============
