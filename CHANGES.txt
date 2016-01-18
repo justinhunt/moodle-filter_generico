@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016011800
+Added support for DATASET variable
+
 Version 2016011100
 Added a new field for instructions for each template in the Generico Filter. If not blank, this will be displayed in the popup dialog for each template when using the Generico Atto plugin.
 

@@ -70,7 +70,7 @@ class filter_generico extends moodle_text_filter {
 *
 */
 function filter_generico_callback(array $link){
-	global $CFG, $COURSE, $USER, $PAGE;
+	global $CFG, $COURSE, $USER, $PAGE, $DB;
 	
 	 $conf = get_object_vars(get_config('filter_generico'));
 	
@@ -103,10 +103,15 @@ function filter_generico_callback(array $link){
 	}else{
 		$genericotemplate = $conf['template_' . $tempindex];
 	}
+
+	//fetch dataset info
+	$dataset_body = $conf['dataset_' . $tempindex];
+	$dataset_vars = $conf['datasetvars_' . $tempindex];
 	
 	//replace the specified names with spec values
 	foreach($filterprops as $name=>$value){
 		$genericotemplate = str_replace('@@' . $name .'@@',$value,$genericotemplate);
+		$dataset_vars  = str_replace('@@' . $name .'@@',$value,$dataset_vars);
 	}
 	
 	//fetch defaults for this template
@@ -123,6 +128,7 @@ function filter_generico_callback(array $link){
 						$value=explode('|',$value)[0];
 					}
 					$genericotemplate = str_replace('@@' . $name .'@@',strip_tags($value),$genericotemplate);
+					$dataset_vars  = str_replace('@@' . $name .'@@',strip_tags($value),$dataset_vars);
 					//stash for using in JS later
 					$filterprops[$name]=$value;
 				}
@@ -137,12 +143,17 @@ function filter_generico_callback(array $link){
 	$filterprops['AUTOID']=$autoid;
 	
 	
-		//if we have course variables e.g @@COURSE:ID@@
-		if(strpos($genericotemplate,'@@COURSE:')!==false){
+	//if we have course variables e.g @@COURSE:ID@@
+	if(strpos($genericotemplate . ' ' . $dataset_vars ,'@@COURSE:')!==false){
 			$coursevars = get_object_vars($COURSE);
 			$coursepropstubs = explode('@@COURSE:',$genericotemplate);
-			
-			//Course Props
+		    $d_stubs = explode('@@COURSE:',$dataset_vars);
+		    if($d_stubs){
+			 	$coursepropstubs = array_merge($coursepropstubs,$d_stubs);
+		    }
+
+
+		//Course Props
 			$profileprops=false;
 			$count=0;
 			foreach($coursepropstubs as $propstub){
@@ -170,18 +181,23 @@ function filter_generico_callback(array $link){
 				//if we have a propname and a propvalue, do the replace
 				if(!empty($courseprop) && !empty($propvalue)){
 					$genericotemplate = str_replace('@@COURSE:' . $courseprop_allcase .'@@',$propvalue,$genericotemplate);
+					$dataset_vars  = str_replace('@@COURSE:' . $courseprop_allcase .'@@',$propvalue,$dataset_vars);
 					//stash this for passing to js
 					$filterprops['COURSE:' . $courseprop_allcase]=$propvalue;
 				}
 			}
-		}
-	
+	}//end of if @@COURSE
+
 	//if we have user variables e.g @@USER:FIRSTNAME@@
 	//It is a bit wordy, because trying to avoid loading a lib
 	//or making a DB call if unneccessary
-	if(strpos($genericotemplate,'@@USER:')!==false){
+	if(strpos($genericotemplate . ' ' . $dataset_vars ,'@@USER:')!==false){
 		$uservars = get_object_vars($USER);
 		$userpropstubs = explode('@@USER:',$genericotemplate);
+		$d_stubs = explode('@@USER:',$dataset_vars);
+		if($d_stubs){
+			$userpropstubs = array_merge($userpropstubs,$d_stubs);
+		}
 		
 		//User Props
 		$profileprops=false;
@@ -230,13 +246,42 @@ function filter_generico_callback(array $link){
 			if(!empty($userprop) && !empty($propvalue)){
 				//echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
 				$genericotemplate = str_replace('@@USER:' . $userprop_allcase .'@@',$propvalue,$genericotemplate);
+				$dataset_vars  = str_replace('@@USER:' . $userprop_allcase .'@@',$propvalue,$dataset_vars);
 				//stash this for passing to js
 				$filterprops['USER:' . $userprop_allcase]=$propvalue;
 			}
 		}
-	}
+	}//end of of we @@USER
+
+	//if we have a dataset body
+	//we split the $data_vars string passed in by user (which should have had all the replacing done)
+	//into the vars array. This is passed to get_records_sql and the returned result is stored
+	//in filter props. If its a single record, its available to the body area.
+	//otherwise it needs to be accessewd from javascript in the DATASET variable
+	$filterprops['DATASET']=false;
+	if($dataset_body){
+		$vars = array();
+		if($dataset_vars){
+			$vars=explode(',',$dataset_vars);
+		}
+		try {
+			$alldata = $DB->get_records_sql($dataset_body, $vars);
+			if($alldata) {
+				$filterprops['DATASET'] = $alldata;
+				//replace the specified names with spec values, if its a one element array
+				if (sizeof($filterprops['DATASET']) == 1) {
+					$thedata = get_object_vars(array_pop($alldata));
+					foreach ($thedata as $name => $value) {
+						$genericotemplate = str_replace('@@DATASET:' . $name . '@@', $value, $genericotemplate);
+					}
+				}
+			}
+		}catch(Exception $e){
+			//do nothing;
+		}
+	}//end of if dataset
 	
-	//If this is the end tag we don't need to subseuqent CSS and JS stuff. We already did it.
+	//If this is the end tag we don't need to subsequent CSS and JS stuff. We already did it.
 	if($endtag){
 		return $genericotemplate;
 	}

@@ -166,8 +166,18 @@ if (is_siteadmin()) {
 		$description = get_string('uploadcss_desc', 'filter_generico');
 		$settings_page->add(new admin_setting_configstoredfile($name, $title, $description, 'uploadcss' . $tindex));
 
+		//dataset
+		$settings_page->add(new admin_setting_configtextarea('filter_generico/dataset_' . $tindex,
+			get_string('dataset', 'filter_generico',$tindex),
+			get_string('dataset_desc', 'filter_generico'),
+			'',PARAM_RAW));
 
-					
+		//dataset vars
+		$settings_page->add(new admin_setting_configtext('filter_generico/datasetvars_' . $tindex ,
+			get_string('datasetvars', 'filter_generico',$tindex),
+			get_string('datasetvars_desc', 'filter_generico'),
+			'', PARAM_RAW,50));
+
 		//add page to category
 		$ADMIN->add('filter_generico_category', $settings_page);
 		//$settings->add($settings_page);

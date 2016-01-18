@@ -74,4 +74,10 @@ $string['uploadcss_desc'] = 'You can upload one CSS file which will be loaded fo
 $string['presets'] = 'Autofill template with a Preset';
 $string['presets_desc'] = 'Generico comes with some default presets you can use out of the box, or to help you get started with your own template. Choose one of those here, or just create your own template from scratch. You can export a template as a bundle by clicking on the green box above. You can import a bundle by dragging it onto the green box.';
 
+$string['dataset'] = 'Dataset';
+$string['dataset_desc'] = 'Generico allows you to pull a dataset from the database for use in your template. This is an advanced feature. Enter the sql portion of a $DB->get_records_sql call here.';
+$string['datasetvars'] = 'Dataset Variables';
+$string['datasetvars_desc'] = 'Put a comma separated list of variables that make up the vars for the SQL. You can and probably will want to use variables here.';
+
+
 $string['bundle'] = 'Bundle';
