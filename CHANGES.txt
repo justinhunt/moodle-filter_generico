@@ -1,5 +1,10 @@
 Change List
 =========
+
+Version 2016021500
+Added a MOODLEPAGEID variable just for getting the ?id=XX value
+Could do a bit better by doing flexible url parsing ..next time
+
 Version 2016011800
 Added support for DATASET variable
 
