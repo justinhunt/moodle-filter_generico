@@ -146,6 +146,7 @@ function filter_generico_callback(array $link){
 	//this is a bit of a special case.
 	$moodlepageid = optional_param('id',0,PARAM_INT);
 	$genericotemplate = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$genericotemplate);
+	$dataset_vars  = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$dataset_vars);
 	//stash this for passing to js
 	$filterprops['MOODLEPAGEID']=$moodlepageid;
 
