@@ -85,9 +85,6 @@ define(['jquery','core/log'], function($, log) {
 			      }
 			  }
 		  );
-		  //"value" and "checked" are separate
-		 // controls['jquery'].checked = (presetdata[presetindex]['jquery'] && presetdata[presetindex]['jquery']!='0') ? true : false;
-		 // controls['amd'].checked = (presetdata[presetindex]['amd'] && presetdata[presetindex]['amd']!='0' )? true : false;
 
 	  },
 
