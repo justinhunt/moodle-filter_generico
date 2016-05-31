@@ -108,6 +108,12 @@ function filter_generico_callback(array $link){
 	$dataset_body = $conf['dataset_' . $tempindex];
 	$dataset_vars = $conf['datasetvars_' . $tempindex];
 	
+	//js custom script
+	//we really just want to be sure anything that appears in custom script
+	//is stored in $filterprops and passed to js. we dont replace it server side because
+	//of caching
+	$js_custom_script = $conf['templatescript_' . $tempindex];
+	
 	//replace the specified names with spec values
 	foreach($filterprops as $name=>$value){
 		$genericotemplate = str_replace('@@' . $name .'@@',$value,$genericotemplate);
@@ -149,7 +155,12 @@ function filter_generico_callback(array $link){
 	$dataset_vars  = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$dataset_vars);
 	//stash this for passing to js
 	$filterprops['MOODLEPAGEID']=$moodlepageid;
-
+	
+	//we should stash our wwwroot too
+	$genericotemplate = str_replace('@@WWWROOT@@',$CFG->wwwroot,$genericotemplate);
+	$dataset_vars  = str_replace('@@WWWROOT@@',$CFG->wwwroot,$dataset_vars);
+	//actually this is available from JS anyway M.cfg.wwwroot . But lets make it easy for people
+	$filterprops['WWWROOT']=$CFG->wwwroot;
 	
 	
 	//if we have course variables e.g @@COURSE:ID@@
@@ -159,6 +170,10 @@ function filter_generico_callback(array $link){
 		    $d_stubs = explode('@@COURSE:',$dataset_vars);
 		    if($d_stubs){
 			 	$coursepropstubs = array_merge($coursepropstubs,$d_stubs);
+		    }
+			$j_stubs=explode('@@COURSE:',$js_custom_script);
+			if($j_stubs){
+			 	$coursepropstubs = array_merge($coursepropstubs,$j_stubs);
 		    }
 
 
@@ -200,12 +215,16 @@ function filter_generico_callback(array $link){
 	//if we have user variables e.g @@USER:FIRSTNAME@@
 	//It is a bit wordy, because trying to avoid loading a lib
 	//or making a DB call if unneccessary
-	if(strpos($genericotemplate . ' ' . $dataset_vars ,'@@USER:')!==false){
+	if(strpos($genericotemplate . ' ' . $dataset_vars . ' ' . $js_custom_script ,'@@USER:')!==false){
 		$uservars = get_object_vars($USER);
 		$userpropstubs = explode('@@USER:',$genericotemplate);
 		$d_stubs = explode('@@USER:',$dataset_vars);
 		if($d_stubs){
 			$userpropstubs = array_merge($userpropstubs,$d_stubs);
+		}
+		$j_stubs = explode('@@USER:',$js_custom_script);
+		if($j_stubs){
+			$userpropstubs = array_merge($userpropstubs,$j_stubs);
 		}
 		
 		//User Props
