@@ -50,9 +50,12 @@ function filter_generico_fetch_variables($template){
 function filter_generico_fetch_filter_properties($filterstring){
 	//this just removes the {GENERICO: .. } 
 	$rawproperties = explode ("{GENERICO:", $filterstring);
+	//here we remove any html tags we find. They should not be in here
 	$rawproperties = $rawproperties[1];
 	$rawproperties = explode ("}", $rawproperties);	
-	$rawproperties = $rawproperties[0];
+	//here we remove any html tags we find. They should not be in here
+	//and we return the guts of the filter string for parsing
+	$rawproperties = strip_tags($rawproperties[0]);
 
 	//Now we just have our properties string
 	//Lets run our regular expression over them
