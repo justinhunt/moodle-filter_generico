@@ -3,6 +3,8 @@ Change List
 
 Version 2016061200
 Made a better parse implementation so that evil inivisible html that gets into the filter strings is stripped out
+Added a new variable WWWROOT that fetches the url of the moodle site. This is already available in js as M.cfg.wwwroot but this variable helps you get it into the template body without messing around with js.
+Improved detection of variabls used in the template when processing. Sometimes they would be missed if they were not defaults or in the body previously.
 
 Version 2016021500
 Added a MOODLEPAGEID variable just for getting the ?id=XX value
