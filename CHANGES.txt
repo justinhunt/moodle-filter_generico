@@ -1,6 +1,9 @@
 Change List
 =========
 
+Version 2016061200
+Made a better parse implementation so that evil inivisible html that gets into the filter strings is stripped out
+
 Version 2016021500
 Added a MOODLEPAGEID variable just for getting the ?id=XX value
 Could do a bit better by doing flexible url parsing ..next time
