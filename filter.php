@@ -149,12 +149,60 @@ function filter_generico_callback(array $link){
 	$filterprops['AUTOID']=$autoid;
 
 	//If template requires a MOODLEPAGEID lets give them one
-	//this is a bit of a special case.
+	//this is legacy really. Now we have @@URLPARAM we could do it that way
 	$moodlepageid = optional_param('id',0,PARAM_INT);
 	$genericotemplate = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$genericotemplate);
 	$dataset_vars  = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$dataset_vars);
 	//stash this for passing to js
 	$filterprops['MOODLEPAGEID']=$moodlepageid;
+	
+	
+	//if we have urlparam variables e.g @@URLPARAM:id@@
+	if(strpos($genericotemplate . ' ' . $dataset_vars . ' ' . $js_custom_script ,'@@URLPARAM:')!==false){
+		$urlparamstubs = explode('@@URLPARAM:',$genericotemplate);
+		$dv_stubs = explode('@@URLPARAM:',$dataset_vars);
+		if($dv_stubs){
+			$urlparamstubs = array_merge($urlparamstubs,$dv_stubs);
+		}
+		$js_stubs = explode('@@URLPARAM:',$js_custom_script);
+		if($js_stubs){
+			$urlparamstubs = array_merge($urlparamstubs,$js_stubs);
+		}
+		
+		//URL Props
+		$count=0;
+		foreach($urlparamstubs as $propstub){
+			//we don't want the first one, its junk
+			$count++;
+			if($count==1){continue;}
+			//init our prop value
+			$propvalue=false;
+			
+			//fetch the property name
+			//user can use any case, but we work with lower case version
+			$end = strpos($propstub,'@@');
+			$urlprop_allcase = substr($propstub,0,$end);
+			if(empty($urlprop_allcase)){continue;}
+			$urlprop=strtolower($urlprop_allcase);
+			
+			//check if it exists in the params to the url and if so, set it.
+			$undefined = 'filter_generico_nothing';
+			$thevalue = optional_param($urlprop_allcase,$undefined,PARAM_TEXT);
+			if($thevalue!=$undefined){
+				$propvalue=$thevalue;
+			}
+			
+			//if we have a propname and a propvalue, do the replace
+			if(!empty($urlprop) && !empty($propvalue)){
+				//echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
+				$genericotemplate = str_replace('@@URLPARAM:' . $urlprop_allcase .'@@',$propvalue,$genericotemplate);
+				$dataset_vars  = str_replace('@@URLPARAM:' . $urlprop_allcase .'@@',$propvalue,$dataset_vars);
+				//stash this for passing to js
+				$filterprops['URLPARAM:' . $urlprop_allcase]=$propvalue;
+			}
+		}
+	}//end of if we have@@URLPARAM
+	
 	
 	//we should stash our wwwroot too
 	$genericotemplate = str_replace('@@WWWROOT@@',$CFG->wwwroot,$genericotemplate);
