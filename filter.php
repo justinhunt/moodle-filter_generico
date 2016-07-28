@@ -169,38 +169,28 @@ function filter_generico_callback(array $link){
 			$urlparamstubs = array_merge($urlparamstubs,$js_stubs);
 		}
 		
-		//URL Props
+		//URL Param Props
 		$count=0;
 		foreach($urlparamstubs as $propstub){
-			//we don't want the first one, its junk
-			$count++;
-			if($count==1){continue;}
-			//init our prop value
-			$propvalue=false;
-			
-			//fetch the property name
-			//user can use any case, but we work with lower case version
-			$end = strpos($propstub,'@@');
-			$urlprop_allcase = substr($propstub,0,$end);
-			if(empty($urlprop_allcase)){continue;}
-			$urlprop=strtolower($urlprop_allcase);
-			
-			//check if it exists in the params to the url and if so, set it.
-			$undefined = 'filter_generico_nothing';
-			$thevalue = optional_param($urlprop_allcase,$undefined,PARAM_TEXT);
-			if($thevalue!=$undefined){
-				$propvalue=$thevalue;
-			}
-			
-			//if we have a propname and a propvalue, do the replace
-			if(!empty($urlprop) && !empty($propvalue)){
-				//echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
-				$genericotemplate = str_replace('@@URLPARAM:' . $urlprop_allcase .'@@',$propvalue,$genericotemplate);
-				$dataset_vars  = str_replace('@@URLPARAM:' . $urlprop_allcase .'@@',$propvalue,$dataset_vars);
+				//we don't want the first one, its junk
+				$count++;
+				if($count==1){continue;}
+				//init our prop value
+				$propvalue=false;
+				
+				//fetch the property name
+				//user can use any case, but we work with lower case version
+				$end = strpos($propstub,'@@');
+				$urlprop = substr($propstub,0,$end);
+				if(empty($urlprop)){continue;}
+				
+				//check if it exists in the params to the url and if so, set it.
+				$propvalue = optional_param($urlprop,'',PARAM_TEXT);
+				$genericotemplate = str_replace('@@URLPARAM:' . $urlprop .'@@',$propvalue,$genericotemplate);
+				$dataset_vars  = str_replace('@@URLPARAM:' . $urlprop .'@@',$propvalue,$dataset_vars);
 				//stash this for passing to js
-				$filterprops['URLPARAM:' . $urlprop_allcase]=$propvalue;
-			}
-		}
+				$filterprops['URLPARAM:' . $urlprop]=$propvalue;				
+		}//end of for each
 	}//end of if we have@@URLPARAM
 	
 	
