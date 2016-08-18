@@ -80,6 +80,7 @@ class filter_generico_template_script_generator {
 			//this is for loading as dependencies the uploaded or linked files
 			//massage the js URL depending on schemes and rel. links etc. Then insert it
 				$requiredjs = $conf->{'templaterequire_js_' . $tindex};
+				$requiredjs_shim =trim($conf->{'templaterequire_js_shim_' . $tindex});
 				if($requiredjs){
 					if(strpos($requiredjs,'//')===0){
 						$requiredjs = $scheme . $requiredjs;
@@ -92,44 +93,135 @@ class filter_generico_template_script_generator {
 	
 				//if we have an uploaded JS file, then lets include that
 				$uploadjsfile = $conf->{'uploadjs' . $tindex};
+				$uploadjs_shim =trim($conf->{'uploadjs_shim_' . $tindex
 				if($uploadjsfile){
 					$uploadjs = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tindex);
 				}
 
 			//Create the dependency stuff in the output js
-			$requires = array("'" . 'jquery' . "'", "'" . 'jqueryui' . "'");
-			$params = array('$','jqui');
-			//$requires = array("'" . 'jquery' . "'");
-			//$params = array('$');
+			$requires = array();
+			$params = array();
+			
+			//these arrays are used for shimming
+			$shimkeys= array();
+			$shimpaths= array();
+			$shimexports= array();
 
 			//current key
 			$currentkey = $conf->{'templatekey_' . $tindex};
 			
+			//if we have a url based required js
+			//either load it, or shim and load it
 			if($requiredjs){
-				$requires[] =  "'" . $requiredjs . "'";
-				//$requires[] = "'recjs" . $tindex . "'";
-				$params[] = "requiredjs_" . $currentkey;
+				if($requiredjs_shim!=''){
+					$shimkeys[] = $currentkey . '-requiredjs'; 
+					
+					//remove .js from end of js filepath if its there
+					if(strrpos($requiredjs,'.js')==(strlen($requiredjs) -3)){
+						$requiredjs = substr($requiredjs, 0, -3);
+					}
+					
+					$shimpaths[]= $requiredjs;
+					$shimexports[]=$requiredjs_shim;
+					$requires[] = "'" . $currentkey . '-requiredjs' . "'";
+					$params[]=$requiredjs_shim;
+				}else{
+					$requires[] =  "'" . $requiredjs . "'";
+					$params[] = "requiredjs_" . $currentkey;
+				}
 			}
 			
+			//if we have an uploadedjs library
+			//either load it, or shim and load it			
 			if($uploadjsfile){
-				$requires[] =  "'" . $uploadjs . "'";
-				//$requires[] ="'uploadjs" . $tindex . "'";
-				$params[] = "uploadjs_" . $currentkey;
-	
+				if($uploadjs_shim!=''){
+					$shimkeys[] = $currentkey . '-uploadjs';
+					
+					//remove .js from end of js filepath if its there
+					if(strrpos($uploadjs,'.js')==(strlen($uploadjs) -3)){
+						$uploadjs = substr($uploadjs, 0, -3);
+					}
+					
+					$shimpaths[]="'" . $uploadjs . "'";					
+					$shimexports[]=$uploadjs_shim;
+					$requires[] = $currentkey . '-uploadjs';
+					$params[]=$uploadjs_shim;
+				}else{
+					$requires[] =  "'" . $uploadjs . "'";
+					$params[] = "uploadjs_" . $currentkey;
+				}
 			}
-
+			
+			//if we have a shim, lets build the javascript for that
+			//actually we build a php object first, and then we will json_encode it
+			$theshim = $this->build_shim_function($currentkey, $shimkeys, $shimpaths, $shimexports);
+			
+			
+			//load a different jquery based on path if we are shimming
+			//this is because, sigh, Moodle used no conflict for jquery, but
+			//shimmed plugins rely on jquery n global scope
+			//see: http://www.requirejs.org/docs/jquery.html#noconflictmap
+			//so we add a separate load of jquery with name '[currentkey]-jquery' and export it as '$', and don't use the 
+			//already set up (by mooodle and AMD) 'jquery' path.
+			//we add jquery to beginning of requires and params using unshift. But the end would be find too
+			if(!empty($shimkeys)){
+				array_unshift($requires,"'" . $currentkey . '-jquery' . "'");
+				array_unshift($params,'$');
+			}else{
+				array_unshift($requires,"'" . 'jquery' . "'");
+				array_unshift($params,'$');
+				array_unshift($requires,"'" . 'jqueryui' . "'");
+				array_unshift($params,'jqui');
+			}
+			
+			//Assemble the final javascript to pass to browser
 			$thefunction = "define('filter_generico_d" . $tindex . "',[" . implode(',',$requires) . "], function(" . implode(',',$params) . "){ ";
 			$thefunction .= "return function(opts){" . $thescript. " \r\n}; });";
-
-		//If not AMD
+			$return_js = $theshim . $thefunction;
+			
+		//If not AMD return regular JS
 		}else{
-
-			$thefunction = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
-			$thefunction .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. " \r\n};";
-
+		
+			$return_js = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
+			$return_js .= "filter_generico_extfunctions['" . $ext . "']= function(opts) {" . $thescript. " \r\n};";
 		}
-		return $thefunction;
+    	return $return_js;
     }//end of function
+	
+	protected function build_shim_function($currentkey, $shimkeys, $shimpaths, $shimexports){
+		global $CFG;
+		
+		$theshim="";
+		$theshimtemplate = "requirejs.config(@@THESHIMCONFIG@@);";
+		if(!empty($shimkeys)){
+			$paths = new stdClass();
+			$shim = new stdClass();
+			
+			//Add a path to  a separetely loaded jquery for shimmed libraries
+			$paths->{$currentkey . '-jquery'} = $CFG->wwwroot  . '/filter/generico/jquery/jquery-1.12.4.min'; 
+			$jquery_shimconfig = new stdClass();
+			$jquery_shimconfig->exports = '$';
+			$shim->{$currentkey . '-jquery'}=$jquery_shimconfig;
+			
+			for($i=0;$i<count($shimkeys);$i++){
+				$paths->{$shimkeys[$i]} = $shimpaths[$i];
+				$oneshimconfig = new stdClass();
+				$oneshimconfig->exports = $shimexports[$i];
+				$oneshimconfig->deps = array($currentkey . '-jquery');
+				$shim->{$shimkeys[$i]} = $oneshimconfig;
+			}
+			
+			//buuld the actual function that will set up our shim
+			//we use php object -> json to kep it simple.
+			//But its still not simple
+			$theshimobject = new stdClass();
+			$theshimobject->paths=$paths;
+			$theshimobject->shim =$shim;
+			$theshimconfig=json_encode($theshimobject,JSON_UNESCAPED_SLASHES);
+			$theshim = str_replace('@@THESHIMCONFIG@@', $theshimconfig,$theshimtemplate);
+		}
+		return $theshim;
+	}
 
 }//end of class
 
@@ -223,571 +315,62 @@ class admin_setting_genericopresets extends admin_setting {
 
 
 	}
+
+	protected function parse_preset_template(\SplFileInfo $fileinfo){
+		$file=$fileinfo->openFile("r");
+		$content = "";
+		while(!$file->eof()){
+			$content .= $file->fgets();
+		}
+		$preset_object = json_decode($content);
+		if($preset_object && is_object($preset_object)){
+			return get_object_vars($preset_object);
+		}else{
+			return false;
+		}
+	}//end of parse preset template
+
+
+	protected function fetch_presets(){          
+		global $CFG;
+		$ret = array();
+		$dir = new \DirectoryIterator($CFG->dirroot . '/filter/generico/presets');
+		foreach($dir as $fileinfo){
+			if(!$fileinfo->isDot()){
+			  $preset = $this->parse_preset_template($fileinfo);
+			  if($preset){
+				$ret[]=$preset;
+			  }
+			}
+		}
+	   return $ret;
+	}//end of fetch presets function
 	
-	protected function fetch_presets(){
-
-	$ret = array();
-	$templates = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
+	public static function set_preset_to_config($preset, $templateindex){
+		$fields = array();
+		$fields['name']='templatename';
+		$fields['key']='templatekey';
+		$fields['instructions']='templateinstructions';
+		$fields['body']='template';
+		$fields['bodyend']='templateend';
+		$fields['requirecss']='templaterequire_css';
+		$fields['requirejs']='templaterequire_js';
+		$fields['shim']='templaterequire_js_shim';
+		$fields['defaults']='templatedefaults';
+		$fields['amd']='template_amd';
+		$fields['script']='templatescript';
+		$fields['style']='templatestyle';
+		$fields['dataset']='dataset';
+		$fields['datavars']='datavars';
+		
+		foreach($fields as $fieldkey=>$fieldname){
+			if(array_key_exists($fieldkey,$preset)){
+				$fieldvalue=$preset[$fieldkey];
+			}else{
+				$fieldvalue='';
+			}
+			set_config($fieldname . '_' . $templateindex, $fieldvalue, 'filter_generico');
+		}
+	}//End of set_preset_to_config
 	
-	foreach($templates as $templateno){
-		$presets = array();
-		switch($templateno){
-			case '1':
-				$presets['key'] ='helloworld';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = '';
-				$presets['bodyend'] = '';
-				$presets['body'] ='Welcome @@USER:FIRSTNAME@@. You are awesome.
-You look like this
-@@USER:PIC@@
-@@USER:PICURL@@';
-				$presets['script'] = '';
-				$presets['style'] = '';
-				break;
-			case '2':
-				$presets['key'] ='screenr';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'width=650,height=396';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<iframe src="http://www.screenr.com/embed/@@id@@" width="@@width@@" height="@@height@@" frameborder="0"></iframe>';
-				$presets['script'] = '';
-				$presets['style'] = '';
-				break;
-
-			case '3':
-				$presets['key'] ='toggle';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'linktext=clickme';
-				$presets['bodyend'] = '</div>';
-				
-				$presets['body']='<a href="#" id="@@AUTOID@@">@@linktext@@</a>
-						<div id="@@AUTOID@@_target" class="@@AUTOID@@_target" hidden="hidden" style="display: none;">';
-				$presets['script'] = '$("#"  + @@AUTOID@@).click(function(e){
-					$("#" + @@AUTOID@@ + "_target").toggle(); return false;});';
-				$presets['style'] = '';
-				break;
-			
-			case '4':
-				$presets['key'] ='linechart';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
-				$presets['amd'] = 0;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<canvas id="@@AUTOID@@" width="@@width@@" height="@@height@@"></canvas>';
-				$presets['style'] = '';
-				$presets['script'] = 'var ctx = document.getElementById("@@AUTOID@@").getContext("2d");
-var cjoptions = {
-
-
-  ///Boolean - Whether grid lines are shown across the chart
-    scaleShowGridLines : true,
-
-    //String - Colour of the grid lines
-    scaleGridLineColor : "rgba(0,0,0,.05)",
-
-    //Number - Width of the grid lines
-    scaleGridLineWidth : 1,
-
-    //Boolean - Whether the line is curved between points
-    bezierCurve : true,
-
-    //Number - Tension of the bezier curve between points
-    bezierCurveTension : 0.4,
-
-    //Boolean - Whether to show a dot for each point
-    pointDot : true,
-
-    //Number - Radius of each point dot in pixels
-    pointDotRadius : 4,
-
-    //Number - Pixel width of point dot stroke
-    pointDotStrokeWidth : 1,
-
-    //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-    pointHitDetectionRadius : 20,
-
-    //Boolean - Whether to show a stroke for datasets
-    datasetStroke : true,
-
-    //Number - Pixel width of dataset stroke
-    datasetStrokeWidth : 2,
-
-    //Boolean - Whether to fill the dataset with a colour
-    datasetFill : true,
-
-    //String - A legend template
-    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
-
-}
-
-var cjdata = {
-    labels: "@@labels@@".split(","),
-    datasets: [
-        {
-            label: "@@datalabel@@",
-            fillColor: "rgba(220,220,220,0.2)",
-            strokeColor: "rgba(220,220,220,1)",
-            pointColor: "rgba(220,220,220,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(220,220,220,1)",
-            data: "@@data@@".split(",")
-        }
-    ]
-};
-
-var myLineChart = new Chart(ctx).Line(cjdata, cjoptions);';
-				break;
-				
-		case '5':
-				$presets['key'] ='barchart';
-			    $presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
-				$presets['amd'] = 0;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<canvas id="@@AUTOID@@" width="@@width@@" height="@@height@@"></canvas>';
-				$presets['style'] = '';
-				$presets['script'] = 'var ctx = document.getElementById("@@AUTOID@@").getContext("2d");
-var cjoptions = {
-
-
-  ///Boolean - Whether grid lines are shown across the chart
-    scaleShowGridLines : true,
-
-    //String - Colour of the grid lines
-    scaleGridLineColor : "rgba(0,0,0,.05)",
-
-    //Number - Width of the grid lines
-    scaleGridLineWidth : 1,
-
-    //Boolean - Whether the line is curved between points
-    bezierCurve : true,
-
-    //Number - Tension of the bezier curve between points
-    bezierCurveTension : 0.4,
-
-    //Boolean - Whether to show a dot for each point
-    pointDot : true,
-
-    //Number - Radius of each point dot in pixels
-    pointDotRadius : 4,
-
-    //Number - Pixel width of point dot stroke
-    pointDotStrokeWidth : 1,
-
-    //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-    pointHitDetectionRadius : 20,
-
-    //Boolean - Whether to show a stroke for datasets
-    datasetStroke : true,
-
-    //Number - Pixel width of dataset stroke
-    datasetStrokeWidth : 2,
-
-    //Boolean - Whether to fill the dataset with a colour
-    datasetFill : true,
-
-    //String - A legend template
-    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
-
-}
-
-var cjdata = {
-    labels: "@@labels@@".split(","),
-    datasets: [
-        {
-            label: "@@datalabel@@",
-            fillColor: "rgba(220,220,220,0.2)",
-            strokeColor: "rgba(220,220,220,1)",
-            pointColor: "rgba(220,220,220,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(220,220,220,1)",
-            data: "@@data@@".split(",")
-        }
-    ]
-};
-
-var myBarChart = new Chart(ctx).Bar(cjdata, cjoptions);';
-				break;
-			
-			case '6':
-				$presets['key'] ='piechart';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js';
-				$presets['amd'] = 0;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'width=600,height=400,datalabel=mydata,labels="jan,feb,march",data="1,2,3"';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<canvas id="@@AUTOID@@" width="@@width@@" height="@@height@@"></canvas>';
-				$presets['style'] = '';
-				$presets['script'] = 'var ctx = document.getElementById("@@AUTOID@@").getContext("2d");
-var cjoptions = {
-
-
-   //Boolean - Whether we should show a stroke on each segment
-    segmentShowStroke : true,
-
-    //String - The colour of each segment stroke
-    segmentStrokeColor : "#fff",
-
-    //Number - The width of each segment stroke
-    segmentStrokeWidth : 2,
-
-    //Number - The percentage of the chart that we cut out of the middle
-    percentageInnerCutout : 50, // This is 0 for Pie charts
-
-    //Number - Amount of animation steps
-    animationSteps : 100,
-
-    //String - Animation easing effect
-    animationEasing : "easeOutBounce",
-
-    //Boolean - Whether we animate the rotation of the Doughnut
-    animateRotate : true,
-
-    //Boolean - Whether we animate scaling the Doughnut from the centre
-    animateScale : false,
-
-    //String - A legend template
-    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
-
-};
-var colors = ["#F7464A","#46BFBD","#FDA25C","#F7404A","#464FBD","#FD445C","#FDB45C","#F7464A","#46BFBD","#FDA25C","#F7404A","#464FBD","#FD445C","#FDB45C"];
-var highlights=["#FDB45C","#5AD3D1","#FF5870","#FD445C","#5A63D1","#FF5870","#FFC870","#FDB45C","#5AD3D1","#FF5870","#FD445C","#5A63D1","#FF5870","#FFC870"];
-var labels= "@@labels@@".split(",");
-var values= "@@data@@".split(",");
-var cjdata=[];
-for(var i=0;i<labels.length;i++){
-	cjdata.push({label: labels[i],color: colors[i],highlight: highlights[i],value: parseInt(values[i])});
-
-}
-
-var myPieChart = new Chart(ctx).Pie(cjdata, cjoptions);';
-				break;
-		
-			case '7':
-				$presets['key'] ='tabs';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
-				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 1;
-				$presets['defaults'] = '';
-				$presets['bodyend'] = '</div>';
-				$presets['body'] ='<div id="@@AUTOID@@"><ul></ul>';
-				$presets['script']='var theul = $("#" + @@AUTOID@@ + " ul");
-$(".filter_generico_tabitem", $("#" + @@AUTOID@@)).each(function () {
-    theul.append("<li><a href=\'#" + this.id + "\'><span>"+this.title+"</span></a></li>");
-});
-$( "#" + @@AUTOID@@).tabs();';
-
-				$presets['style'] = '';
-				break;
-				
-			case '8':
-				$presets['key'] ='tabitem';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				//$presets['defaults'] = 'tabnumber=1';
-				$presets['bodyend'] = '</div>';
-				//$presets['body'] =' <div id="jqtab_@@tabnumber@@">';
-				$presets['body']='<div id="@@AUTOID@@" class="filter_generico_tabitem" title="@@title@@">';
-				$presets['defaults']='title="mybaby"';
-				$presets['script'] = '';
-				$presets['style'] = '';
-				break;
-				
-				
-			case '9':
-				$presets['key'] ='accordian';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='//code.jquery.com/ui/1.11.2/themes/redmond/jquery-ui.css';
-				$presets['requirejs'] = '//code.jquery.com/ui/1.11.2/jquery-ui.min.js';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 1;
-				$presets['defaults'] = '';
-				$presets['bodyend'] = '</div>';
-				$presets['body'] ='<div id="@@AUTOID@@">';
-				$presets['script'] = ' $(function() {
-    $( "#" + @@AUTOID@@).accordion({
-  header: "h3",
-  heightStyle: "content"
- })
-});';
-				$presets['style'] = '';
-				break;
-				
-			case '10':
-				$presets['key'] ='accordianitem';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = '';
-				$presets['bodyend'] = '</div>';
-				$presets['body'] ='<h3>@@titletext@@</h3>
-<div>';
-				$presets['script'] = '';
-				$presets['style'] = '';
-				break;
-				
-			case '11':
-				$presets['key'] ='qrcode';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 1;
-				$presets['defaults'] = 'data=http://mywebsite.com,size=100';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<div id="@@AUTOID@@"></div>';
-				$presets['script'] = '$("#" + @@AUTOID@@).qrcode({
-    "render": "div",
-    "size": @@size@@,
-	"height": @@size@@,
-	"width": @@size@@,
-    "color": "#3a3",
-    "text": "@@data@@"
-});';
-				$presets['style'] = '';
-				break;
-				
-			case '12':
-				$presets['key'] ='lightboxyoutube';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.css';
-				$presets['requirejs'] = '//cdn.rawgit.com/noelboss/featherlight/1.0.3/release/featherlight.min.js';
-				$presets['amd'] = 0;
-				$presets['jquery'] = 1;
-				$presets['defaults'] = 'width=160,height=120,videowidth=640,videoheight=480';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<a href="#" data-featherlight="#@@AUTOID@@"><div class="filter_generico_ytl"><img src="http://img.youtube.com/vi/@@videoid@@/hqdefault.jpg" width="@@width@@" height="@@height@@"/ ></div></a>
-<div style="display: none;">
-<div  id="@@AUTOID@@"><iframe width="@@videowidth@@" height="@@videoheight@@" src="//www.youtube.com/embed/@@videoid@@?rel=0" frameborder="0" allowfullscreen></iframe></div>
-</div>';
-				$presets['script'] = '';
-				$presets['style'] = '.filter_generico_ytl img{display: block;}
-.filter_generico_ytl { 
-position: relative; 
-display: inline-block;
-}
-.filter_generico_ytl:after {
-content: ">";
-  font-size: 20px;
-  line-height: 30px;
-  color: #FFFFFF;
-  text-align: center;
-  position: absolute;
-  top: 40%;
-  left: 40%;
-  width: 20%;
-  height: 32px;
-  z-index: 2;
-  background: #FF0000;
-  border-radius: 8px;
-  pointer-events: none;
-}';
-				break;
-
-				
-			case '13':
-				$presets['key'] ='tts';
-				$presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'text="say something",lang="en"';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<a href="//translate.google.com/translate_tts?ie=UTF-8&q=@@text@@&tl=@@lang@@">@@text@@</a>';
-				$presets['script'] = '';
-				$presets['style'] = '';
-				break;
-		/*
-		'<a onclick="this.firstChild.play()"><audio>
-  <source src="//translate.google.com/translate_tts?ie=UTF-8&q=@@text@@&tl=@@lang@@" type="audio/mpeg">
-</audio>@@text@@</a>';
-
-'@@text@@<br /><audio controls>
-  <source src="//translate.google.com/translate_tts?ie=UTF-8&q=@@text@@&tl=@@lang@@" type="audio/mpeg">
-</audio>';
-*/
-
-		case '14':
-				$presets['key'] ='imagegallery';
-			    $presets['instructions'] ='';
-				$presets['requirecss'] ='//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.css';
-				$presets['requirejs'] = '//cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/galleria.min.js';
-				$presets['amd'] = 0;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = '';
-				$presets['bodyend'] = '</div>';
-				$presets['body'] ='<div class="galleria">';
-				$presets['script'] = 'Galleria.loadTheme("https://cdnjs.cloudflare.com/ajax/libs/galleria/1.4.2/themes/classic/galleria.classic.js");
-Galleria.run(".galleria");';
-				$presets['style'] = '.galleria{ width: 450px; height: 400px; background: #000 }';
-				break;
-				
-		case '15':
-				$presets['key'] ='videogallery';
-			    $presets['instructions'] ='';
-				$presets['requirecss'] ='';
-				$presets['requirejs'] = 'https://jwpsrv.com/library/YOURJWPLAYERID.js';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 1;
-				$presets['defaults'] = '';
-				$presets['bodyend'] = '</div>';
-				$presets['body'] ='<div id="@@AUTOID@@">';
-				$presets['script'] = 'var playlist=[];
-$("a", $("#" + @@AUTOID@@)).each(function () {
-    playlist.push({file: this.href, title: this.text});
-});
-$("#" + @@AUTOID@@).empty();
-jwplayer("@@AUTOID@@").setup({
-playlist: playlist,
-width: 720,
-height: 270,
-listbar: {
-        position: "right",
-        layout: "basic",
-        size: 240
- }
-});';
-				$presets['style'] = '';
-				break;
-				
-		case '16':
-				$presets['key'] ='fontawesome';
-			    $presets['instructions'] ='';
-				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'icon="fa-cog",orientation="fa-spin|fa-rotate-90|fa-rotate-180|fa-rotate-270",size="fa-lg|fa-2x",layout="pull-left|fa-border"';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<span class="fa @@icon@@ @@orientation@@ @@size@@ @@layout@@"></span>';
-				$presets['script'] = '';
-				$presets['style'] = '';
-				break;
-		
-		case '17':
-				$presets['key'] ='infobox';
-			    $presets['instructions'] ='';
-				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'text="Your message goes here."';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<div class="filter_generico_info">
-    <i class="fa fa-info-circle"></i>
-    @@text@@
-</div>';
-				$presets['script'] = '';
-				$presets['style'] = '.filter_generico_info {
-	margin: 10px 0px;
-    padding:12px;
-    color: #00529B;
-    background-color: #BDE5F8;
-    border: 1px solid;
-    border-radius:.5em;
-}
-.isa_info i {
-    margin:10px 22px;
-    font-size:2em;
-    vertical-align:middle;
-}';
-				break;
-				
-		case '18':
-				$presets['key'] ='warningbox';
-			    $presets['instructions'] ='';
-				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'text="Your message goes here."';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<div class="filter_generico_warning">
-    <i class="fa fa-warning"></i>
-    @@text@@
-</div>';
-				$presets['script'] = '';
-				$presets['style'] = '.filter_generico_warning {
-	margin: 10px 0px;
-    padding:12px;
-    color: #9F6000;
-    background-color: #FEEFB3;
-    border: 1px solid;
-    border-radius:.5em;
-}
-.isa_warning i {
-    margin:10px 22px;
-    font-size:2em;
-    vertical-align:middle;
-}';
-				break;
-
-		case '19':
-				$presets['key'] ='errorbox';
-			    $presets['instructions'] ='';
-				$presets['requirecss'] ='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css';
-				$presets['requirejs'] = '';
-				$presets['amd'] = 1;
-				$presets['jquery'] = 0;
-				$presets['defaults'] = 'text="Your message goes here."';
-				$presets['bodyend'] = '';
-				$presets['body'] ='<div class="filter_generico_error">
-    <i class="fa fa-times-circle"></i>
-    @@text@@
-</div>';
-				$presets['script'] = '';
-				$presets['style'] = '.filter_generico_error {
-	margin: 10px 0px;
-    padding:12px;
-    color: #D8000C;
-    background-color: #FFBABA;
-    border: 1px solid;
-    border-radius:.5em;
-}
-.isa_error i {
-    margin:10px 22px;
-    font-size:2em;
-    vertical-align:middle;
-}';
-				break;
-		
-		}	
-		
-		
-	  //update our return value
-	    $ret[$templateno] = $presets;
-	}
-	return $ret;
-	
-}
 }//end of class

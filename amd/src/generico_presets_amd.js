@@ -9,7 +9,7 @@ define(['jquery','core/log'], function($, log) {
 
 	  presetdata: false,
 	  
-	  dataitems: ['key', 'instructions','requirecss', 'requirejs', 'defaults', 'jquery',
+	  dataitems: ['key', 'instructions','requirecss', 'requirejs','shim', 'defaults', 'jquery',
 			  'amd', 'body', 'bodyend', 'script', 'style','dataset','datasetvars'],
 
 	  fetchcontrols: function(templateindex) {
@@ -18,6 +18,7 @@ define(['jquery','core/log'], function($, log) {
 		  controls.instructions = document.getElementById('id_s_filter_generico_templateinstructions_' + templateindex);
 		  controls.requirecss = document.getElementById('id_s_filter_generico_templaterequire_css_' + templateindex);
 		  controls.requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + templateindex);
+		  controls.shim = document.getElementById('id_s_filter_generico_templaterequire_js_shim_' + templateindex);
 		  controls.defaults = document.getElementById('id_s_filter_generico_templatedefaults_' + templateindex);
 		  controls.jquery = document.getElementById('id_s_filter_generico_templaterequire_jquery_' + templateindex);
 		  controls.amd = document.getElementById('id_s_filter_generico_template_amd_' + templateindex);

@@ -81,3 +81,8 @@ $string['datasetvars_desc'] = 'Put a comma separated list of variables that make
 
 
 $string['bundle'] = 'Bundle';
+
+$string['templateuploadjsshim'] = ' Upload Shim export';
+$string['templateuploadjsshim_desc'] = ' Leave blank unless you know what shimming is';
+$string['templaterequirejsshim'] = ' Require Shim export';
+$string['templaterequirejsshim_desc'] = ' Leave blank unless you know what shimming is';

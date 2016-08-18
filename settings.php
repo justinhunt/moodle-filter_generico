@@ -117,6 +117,13 @@ if (is_siteadmin()) {
 				get_string('templaterequire_js_desc', 'filter_generico'), 
 				 '', PARAM_RAW,50));
 				 
+		//template requiredjs_shim
+		$defvalue= '';
+		 $settings_page->add(new admin_setting_configtext('filter_generico/templaterequire_js_shim_' . $tindex , 
+				get_string('templaterequirejsshim', 'filter_generico',$tindex),
+				get_string('templaterequirejsshim_desc', 'filter_generico'), 
+				$defvalue, PARAM_RAW));
+				 
 		//template amd
 		$yesno = array('0'=>get_string('no'),'1'=>get_string('yes'));
 		 $settings_page->add(new admin_setting_configselect('filter_generico/template_amd_' . $tindex,
@@ -143,6 +150,13 @@ if (is_siteadmin()) {
 		$title =get_string('uploadjs', 'filter_generico',$tindex);
 		$description = get_string('uploadjs_desc', 'filter_generico');
 		$settings_page->add(new admin_setting_configstoredfile($name, $title, $description, 'uploadjs' . $tindex));
+		
+		//template uploadjs_shim
+		$defvalue= '';
+		 $settings_page->add(new admin_setting_configtext('filter_generico/uploadjs_shim_' . $tindex , 
+				get_string('templateuploadjsshim', 'filter_generico',$tindex),
+				get_string('templateuploadjsshim_desc', 'filter_generico'), 
+				$defvalue, PARAM_RAW));
 				 
 		//template page CSS heading
 		$settings_page->add(new admin_setting_heading('filter_generico/templateheading_css_' . $tindex, 
