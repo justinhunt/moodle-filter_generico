@@ -44,11 +44,7 @@ if (is_siteadmin()) {
 				get_string('templatecount', 'filter_generico'),
 				get_string('templatecount_desc', 'filter_generico'), 
 				 FILTER_GENERICO_TEMPLATE_COUNT, PARAM_INT,20));
-	
-	$settings_page->add(new admin_setting_configtext('filter_generico/jqueryurl', 
-				get_string('jqueryurl', 'filter_generico'),
-				get_string('jqueryurl_desc', 'filter_generico'), 
-				 '//code.jquery.com/jquery-1.11.2.min.js', PARAM_RAW,50));
+
 	//add page to category
 	$ADMIN->add('filter_generico_category', $settings_page);
 
@@ -130,13 +126,6 @@ if (is_siteadmin()) {
 				get_string('templaterequire_amd', 'filter_generico',$tindex),
 				get_string('templaterequire_amd_desc', 'filter_generico'), 
 				 1,$yesno));
-		
-		//template jquery		
-		 $settings_page->add(new admin_setting_configselect('filter_generico/templaterequire_jquery_' . $tindex,
-				get_string('templaterequire_jquery', 'filter_generico',$tindex),
-				get_string('templaterequire_jquery_desc', 'filter_generico'), 
-				 0,$yesno));
-				 
 		
 		//template body script
 		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatescript_' . $tindex,

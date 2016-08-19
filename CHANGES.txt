@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016082001
+Added shimming and loading of presets from bundles in the presets folder of the generico directory. Also removed the ability to declare a jquery dependency. YOu should use shimming instead.
+Also added the @@URLPARAM:xx@@ system variable for fetching parameters from the page url.
 
 Version 2016061200
 Made a better parse implementation so that evil inivisible html that gets into the filter strings is stripped out

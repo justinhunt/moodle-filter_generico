@@ -357,7 +357,6 @@ function filter_generico_callback(array $link){
 	$defaults=$conf['templatedefaults_' . $tempindex];
 	$require_js = $conf['templaterequire_js_' . $tempindex];
 	$require_css = $conf['templaterequire_css_' . $tempindex];
-	$require_jquery = $conf['templaterequire_jquery_' . $tempindex];
 	//are we AMD and Moodle 2.9 or more?
 	$require_amd = $conf['template_amd_' . $tempindex] && $CFG->version>=2015051100;
 	
@@ -366,19 +365,6 @@ function filter_generico_callback(array $link){
 		$scheme='https:';
 	}else{
 		$scheme='http:';
-	}
-	
-	//load jquery
-	//We ALWAYS load jquery using require js  so this can be deleted soon I hopw
-	if($require_jquery && !$require_amd){
-		//we don't use moodle jquery. To keep things consistent, though the user could point jqueryurl to moodle's one
-		//if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
-		if(false){
-			$PAGE->requires->jquery();
-		}else{
-			//use this for external JQuery
-			$PAGE->requires->js(new moodle_url($scheme . $conf['jqueryurl']));
-		}
 	}
 	
 	//massage the js URL depending on schemes and rel. links etc. Then insert it

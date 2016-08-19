@@ -30,8 +30,6 @@ $string['filtername'] = 'Generico';
 $string['pluginname'] = 'Generico';
 $string['filterdescription'] = 'Convert filter strings into templates merged with data';
 $string['commonpageheading'] = 'Common Settings';
-$string['jqueryurl'] = 'JQuery URL';
-$string['jqueryurl_desc'] = 'The URL Generico will use if adding jquery to the host page. If your theme already uses jquery (eg the essential theme), then you probably can leave jquery unchecked in your templates. This setting defaults to the CDN hosted version. If your site does not have internet access you will probably need to point this to a location on your Moodle server. Whatever you do do not start with http: or https:. Begin the url with // ';
 $string['templatepageheading'] = 'Template: {$a}';
 $string['templateheading'] = 'Settings for Generico Template {$a}';
 $string['template'] = 'The body of template {$a}';
@@ -48,14 +46,10 @@ $string['templatedefaults'] = 'variable defaults (template {$a})';
 $string['templatedefaults_desc'] = 'Define the defaults in comma delimited sets of name=value pairs. eg width=800,height=900,feeling=joy';
 $string['templaterequire_css'] = 'Requires CSS (template {$a})';
 $string['templaterequire_js'] = 'Requires JS (template {$a})';
-$string['templaterequire_jquery'] = 'Requires JQuery (template {$a})';
 $string['templaterequire_css_desc'] = 'A link(1 only) to an external CSS file that this template requires. optional.';
 $string['templaterequire_js_desc'] = 'A link(1 only) to an external JS file that this template requires. optional.';
-$string['templaterequire_jquery_desc'] = 'Its best NOT to check this. Many non AMD templates require JQuery. Checking here will load JQuery, but not very well. Your theme may already load JQuery anyway. If not, add this string to Site Administration -> Appearance -> Additional HTML (within HEAD):<br/> &lt;script src="https://code.jquery.com/jquery-1.11.2.min.js"&gt;&lt;/script&gt;';
-
 $string['templatecount'] = 'Template Count';
 $string['templatecount_desc'] = 'The number of templates you can have. Default is 20.';
-
 $string['templateheadingjs'] = 'Javascript Settings.';
 $string['templateheadingcss'] = 'CSS/Style Settings.';
 
