@@ -93,7 +93,7 @@ class filter_generico_template_script_generator {
 	
 				//if we have an uploaded JS file, then lets include that
 				$uploadjsfile = $conf->{'uploadjs' . $tindex};
-				$uploadjs_shim =trim($conf->{'uploadjs_shim_' . $tindex
+				$uploadjs_shim =trim($conf->{'uploadjs_shim_' . $tindex});
 				if($uploadjsfile){
 					$uploadjs = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tindex);
 				}
