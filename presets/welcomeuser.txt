@@ -1,0 +1,1 @@
+{"key":"welcomeuser","instructions":"","requirecss":"","requirejs":"","defaults":"","jquery":"0","amd":"1","body":"Hi @@USER:firstname@@. This is your picture. <br />\n@@USER:PIC@@<br />\n<a href=\"/blocks/profilepic/view.php\">Change Picture</a>","bodyend":"","script":"","style":"","dataset":"","datasetvars":""}

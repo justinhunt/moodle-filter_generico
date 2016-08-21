@@ -1,0 +1,1 @@
+{"key":"youtube","instructions":"","requirecss":"","requirejs":"","defaults":"width=560,height=315","jquery":"0","amd":"1","body":"<iframe width=\"@@width@@\" height=\"@@height@@\" src=\"//www.youtube.com/embed/@@id@@\" frameborder=\"0\" allowfullscreen></iframe>","bodyend":"","script":"","style":"","dataset":"","datasetvars":""}
