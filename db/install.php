@@ -29,9 +29,10 @@ require_once($CFG->dirroot . '/filter/generico/locallib.php');
  * Install the plugin.
  */
 function xmldb_filter_generico_install() {
-	$admin_presets = new admin_setting_genericopresets();
+	$admin_presets = new admin_setting_genericopresets('filter_generico/templatepresets_0', 
+				'presets', '',0);
     $presets = $admin_presets->fetch_presets();
-	$forinstall = array('helloworld');
+	$forinstall = array('welcomeuser');
 	$templateindex=0;
 	foreach($presets as $preset){			
 		if(in_array($preset['key'],$forinstall)){
