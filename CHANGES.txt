@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016082003
+Fixed another problem on new install where adding default template
+
 Version 2016082002
 Fixed problem on new install where adding default template
 
