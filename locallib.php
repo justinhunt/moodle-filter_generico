@@ -142,9 +142,9 @@ class filter_generico_template_script_generator {
 						$uploadjs = substr($uploadjs, 0, -3);
 					}
 					
-					$shimpaths[]="'" . $uploadjs . "'";					
+					$shimpaths[]=$uploadjs;					
 					$shimexports[]=$uploadjs_shim;
-					$requires[] = $currentkey . '-uploadjs';
+					$requires[] =  "'" . $currentkey . '-uploadjs' . "'";
 					$params[]=$uploadjs_shim;
 				}else{
 					$requires[] =  "'" . $uploadjs . "'";
