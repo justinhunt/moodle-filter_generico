@@ -1,5 +1,9 @@
 Change List
 =========
+Version 2016082005
+Fixed a problem with imagegallery preset. The shim was not set for Galleria
+Added VideoGallery preset
+
 Version 2016082004
 Fixed a type killing shim for uploaded js files
 
