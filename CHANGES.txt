@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016110901
+Added "alternate content" field for falling back to on mobile app
+
 Version 2016082005
 Fixed a problem with imagegallery preset. The shim was not set for Galleria
 Added VideoGallery preset

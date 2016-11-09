@@ -74,11 +74,16 @@ function filter_generico_callback(array $link){
 	
 	 $conf = get_object_vars(get_config('filter_generico'));
 	
-	//get our filter props
+	//get our filter props 
 	$filterprops=filter_generico_fetch_filter_properties($link[0]);
 	
 	//if we have no props, quit
 	if(empty($filterprops)){return "";}
+	
+	//we use this to see if its a web service calling this, 
+	//in which case we return the alternate content
+	$is_webservice = strpos($PAGE->url,'/webservice/pluginfile.php') > 0;
+	
 	
 	//if we want to ignore the filter (for "how to use generico" or "cut and paste" this style use) we let it go
 	//to use this, make the last parameter of the filter passthrough=1
@@ -94,7 +99,7 @@ function filter_generico_callback(array $link){
 				break;
 			}
 	}
-	//no key could be found if got all the way to 21
+	//no key could be found if got all the way to the last template
 	if($tempindex==$conf['templatecount']+1){return '';}
 	
 	//fetch our template
@@ -114,10 +119,14 @@ function filter_generico_callback(array $link){
 	//of caching
 	$js_custom_script = $conf['templatescript_' . $tempindex];
 	
+	//fetch alternate content (for use when no css or js available ala mobile app.)
+	$alternate_content = $conf['templatealternate_' . $tempindex];
+	
 	//replace the specified names with spec values
 	foreach($filterprops as $name=>$value){
 		$genericotemplate = str_replace('@@' . $name .'@@',$value,$genericotemplate);
 		$dataset_vars  = str_replace('@@' . $name .'@@',$value,$dataset_vars);
+		$alternate_content = str_replace('@@' . $name .'@@',$value,$alternate_content);
 	}
 	
 	//fetch defaults for this template
@@ -135,6 +144,8 @@ function filter_generico_callback(array $link){
 					}
 					$genericotemplate = str_replace('@@' . $name .'@@',strip_tags($value),$genericotemplate);
 					$dataset_vars  = str_replace('@@' . $name .'@@',strip_tags($value),$dataset_vars);
+					$alternate_content = str_replace('@@' . $name .'@@',strip_tags($value),$alternate_content);
+					
 					//stash for using in JS later
 					$filterprops[$name]=$value;
 				}
@@ -145,6 +156,7 @@ function filter_generico_callback(array $link){
 	//If we have autoid lets deal with that
 	$autoid = 'fg_' . time() . (string)rand(100,32767) ;
 	$genericotemplate = str_replace('@@AUTOID@@',$autoid,$genericotemplate);
+	$alternate_content = str_replace('@@AUTOID@@',$autoid,$alternate_content);
 	//stash this for passing to js
 	$filterprops['AUTOID']=$autoid;
 
@@ -153,20 +165,30 @@ function filter_generico_callback(array $link){
 	$moodlepageid = optional_param('id',0,PARAM_INT);
 	$genericotemplate = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$genericotemplate);
 	$dataset_vars  = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$dataset_vars);
+	$alternate_content  = str_replace('@@MOODLEPAGEID@@',$moodlepageid,$alternate_content);
+	
 	//stash this for passing to js
 	$filterprops['MOODLEPAGEID']=$moodlepageid;
 	
 	
 	//if we have urlparam variables e.g @@URLPARAM:id@@
-	if(strpos($genericotemplate . ' ' . $dataset_vars . ' ' . $js_custom_script ,'@@URLPARAM:')!==false){
+	if(strpos($genericotemplate . ' ' . $dataset_vars . ' ' 
+	. $alternate_content . ' ' . $js_custom_script ,'@@URLPARAM:')!==false){
 		$urlparamstubs = explode('@@URLPARAM:',$genericotemplate);
+		
 		$dv_stubs = explode('@@URLPARAM:',$dataset_vars);
 		if($dv_stubs){
 			$urlparamstubs = array_merge($urlparamstubs,$dv_stubs);
 		}
+		
 		$js_stubs = explode('@@URLPARAM:',$js_custom_script);
 		if($js_stubs){
 			$urlparamstubs = array_merge($urlparamstubs,$js_stubs);
+		}
+		
+		$alt_stubs = explode('@@URLPARAM:',$alternate_content);
+		if($alt_stubs){
+			$urlparamstubs = array_merge($urlparamstubs,$alt_stubs);
 		}
 		
 		//URL Param Props
@@ -188,6 +210,8 @@ function filter_generico_callback(array $link){
 				$propvalue = optional_param($urlprop,'',PARAM_TEXT);
 				$genericotemplate = str_replace('@@URLPARAM:' . $urlprop .'@@',$propvalue,$genericotemplate);
 				$dataset_vars  = str_replace('@@URLPARAM:' . $urlprop .'@@',$propvalue,$dataset_vars);
+				$alternate_content = str_replace('@@URLPARAM:' . $urlprop .'@@',$propvalue,$alternate_content);
+				
 				//stash this for passing to js
 				$filterprops['URLPARAM:' . $urlprop]=$propvalue;				
 		}//end of for each
@@ -197,6 +221,8 @@ function filter_generico_callback(array $link){
 	//we should stash our wwwroot too
 	$genericotemplate = str_replace('@@WWWROOT@@',$CFG->wwwroot,$genericotemplate);
 	$dataset_vars  = str_replace('@@WWWROOT@@',$CFG->wwwroot,$dataset_vars);
+	$alternate_content = str_replace('@@WWWROOT@@',$CFG->wwwroot,$alternate_content);
+	
 	//actually this is available from JS anyway M.cfg.wwwroot . But lets make it easy for people
 	$filterprops['WWWROOT']=$CFG->wwwroot;
 	
@@ -212,6 +238,10 @@ function filter_generico_callback(array $link){
 			$j_stubs=explode('@@COURSE:',$js_custom_script);
 			if($j_stubs){
 			 	$coursepropstubs = array_merge($coursepropstubs,$j_stubs);
+		    }
+		    $alt_stubs=explode('@@COURSE:',$alt_custom_script);
+			if($alt_stubs){
+			 	$coursepropstubs = array_merge($coursepropstubs,$alt_stubs);
 		    }
 
 
@@ -244,6 +274,7 @@ function filter_generico_callback(array $link){
 				if(!empty($courseprop) && !empty($propvalue)){
 					$genericotemplate = str_replace('@@COURSE:' . $courseprop_allcase .'@@',$propvalue,$genericotemplate);
 					$dataset_vars  = str_replace('@@COURSE:' . $courseprop_allcase .'@@',$propvalue,$dataset_vars);
+					$alternate_content  = str_replace('@@COURSE:' . $courseprop_allcase .'@@',$propvalue,$alternate_content);
 					//stash this for passing to js
 					$filterprops['COURSE:' . $courseprop_allcase]=$propvalue;
 				}
@@ -313,6 +344,7 @@ function filter_generico_callback(array $link){
 				//echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
 				$genericotemplate = str_replace('@@USER:' . $userprop_allcase .'@@',$propvalue,$genericotemplate);
 				$dataset_vars  = str_replace('@@USER:' . $userprop_allcase .'@@',$propvalue,$dataset_vars);
+				$alternate_content  = str_replace('@@USER:' . $userprop_allcase .'@@',$propvalue,$alternate_content);
 				//stash this for passing to js
 				$filterprops['USER:' . $userprop_allcase]=$propvalue;
 			}
@@ -339,6 +371,7 @@ function filter_generico_callback(array $link){
 					$thedata = get_object_vars(array_pop($alldata));
 					foreach ($thedata as $name => $value) {
 						$genericotemplate = str_replace('@@DATASET:' . $name . '@@', $value, $genericotemplate);
+						$alternate_content = str_replace('@@DATASET:' . $name . '@@', $value, $alternate_content);
 					}
 				}
 			}
@@ -350,6 +383,11 @@ function filter_generico_callback(array $link){
 	//If this is the end tag we don't need to subsequent CSS and JS stuff. We already did it.
 	if($endtag){
 		return $genericotemplate;
+	}
+	
+	//If this is a webservice request, we don't need subsequent CSS and JS stuff
+	if($is_webservice){
+		return $alternate_content;
 	}
 	
 	//get the conf info we need for this template
