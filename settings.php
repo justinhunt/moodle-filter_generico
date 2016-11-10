@@ -180,7 +180,13 @@ if (is_siteadmin()) {
 			get_string('datasetvars', 'filter_generico',$tindex),
 			get_string('datasetvars_desc', 'filter_generico'),
 			'', PARAM_RAW,50));
-
+			
+		//alternative content
+		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatealternate_' . $tindex,
+					get_string('templatealternate', 'filter_generico',$tindex),
+					get_string('templatealternate_desc', 'filter_generico'),
+					'',PARAM_RAW));
+ 
 		//add page to category
 		$ADMIN->add('filter_generico_category', $settings_page);
 		//$settings->add($settings_page);
