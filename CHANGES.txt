@@ -2,6 +2,7 @@ Change List
 =========
 Version 2016110901
 Added "alternate content" field for falling back to on mobile app
+Added code to distinguish numbers from strings when passing variables into the dataset (contribution from romasita)
 
 Version 2016082005
 Fixed a problem with imagegallery preset. The shim was not set for Galleria

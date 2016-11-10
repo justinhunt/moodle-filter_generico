@@ -362,8 +362,18 @@ function filter_generico_callback(array $link){
 		if($dataset_vars){
 			$vars=explode(',',$dataset_vars);
 		}
+		//turn numeric vars into numbers (not strings)
+		$query_vars = array();
+		for($i = 0; $i < sizeof($vars); $i++) {
+			if(is_numeric($vars[$i])) {
+				$query_vars[] = intval($vars[$i]);
+			} else {
+				$query_vars[] = $vars[$i];
+			}
+		}
+
 		try {
-			$alldata = $DB->get_records_sql($dataset_body, $vars);
+			$alldata = $DB->get_records_sql($dataset_body, $query_vars);
 			if($alldata) {
 				$filterprops['DATASET'] = $alldata;
 				//replace the specified names with spec values, if its a one element array
