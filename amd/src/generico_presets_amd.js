@@ -80,10 +80,18 @@ define(['jquery','core/log'], function($, log) {
 		  $.each(this.dataitems,
 			  function (index, item) {
 				  // log.debug(item + ':' + presetindex + ':' + presetdata[presetindex][item]);
-				  //first check we have a data item for this control(old bundles don7 have instructions etc)
+				  //first check we have a data item for this control(old bundles don't have instructions or new fields etc)
 				  //then set the data
 				  if (presetdata[presetindex].hasOwnProperty(item)) {
 				   controls[item].value = presetdata[presetindex][item];
+			      }else{
+			       switch(item){
+			      		case 'amd':
+			      			controls[item].value =0;
+			      			break;
+			      		default:
+			      			controls[item].value ='';
+			      	}
 			      }
 			  }
 		  );
