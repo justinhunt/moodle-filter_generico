@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016110902
+Added "alternate content"  end fields
+
 Version 2016110901
 Added "alternate content" field for falling back to on mobile app
 Added code to distinguish numbers from strings when passing variables into the dataset (contribution from romasita)

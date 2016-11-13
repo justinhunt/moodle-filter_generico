@@ -105,8 +105,12 @@ function filter_generico_callback(array $link){
 	//fetch our template
 	if($endtag){
 		$genericotemplate = $conf['templateend_' . $tempindex];
+		//fetch alternate content (for use when no css or js available ala mobile app.)
+		$alternate_content = $conf['templatealternate_end_' . $tempindex];
 	}else{
 		$genericotemplate = $conf['template_' . $tempindex];
+		//fetch alternate content (for use when no css or js available ala mobile app.)
+		$alternate_content = $conf['templatealternate_' . $tempindex];
 	}
 
 	//fetch dataset info
@@ -119,8 +123,7 @@ function filter_generico_callback(array $link){
 	//of caching
 	$js_custom_script = $conf['templatescript_' . $tempindex];
 	
-	//fetch alternate content (for use when no css or js available ala mobile app.)
-	$alternate_content = $conf['templatealternate_' . $tempindex];
+	
 	
 	//replace the specified names with spec values
 	foreach($filterprops as $name=>$value){
@@ -390,14 +393,14 @@ function filter_generico_callback(array $link){
 		}
 	}//end of if dataset
 	
+	//If this is a webservice request, we don't need subsequent CSS and JS stuff
+	if($is_webservice && !empty($alternate_content)){
+		return $alternate_content;
+	}
+	
 	//If this is the end tag we don't need to subsequent CSS and JS stuff. We already did it.
 	if($endtag){
 		return $genericotemplate;
-	}
-	
-	//If this is a webservice request, we don't need subsequent CSS and JS stuff
-	if($is_webservice){
-		return $alternate_content;
 	}
 	
 	//get the conf info we need for this template

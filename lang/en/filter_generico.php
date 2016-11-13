@@ -83,3 +83,5 @@ $string['templaterequirejsshim_desc'] = ' Leave blank unless you know what shimm
 
 $string['templatealternate'] = 'Alternate content'; 
 $string['templatealternate_desc'] = 'Content that can be used when the custom and uploaded CSS and javascript content is not available. Currently this is used when the template is processed by a webservice, probably for content on the mobile app';
+$string['templatealternate_end'] = 'Alternate content end ((template {$a})'; 
+$string['templatealternate_end_desc'] = 'Closing alternate content tags for templates that enclose user content with start and end Generico tags';

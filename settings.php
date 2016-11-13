@@ -186,6 +186,12 @@ if (is_siteadmin()) {
 					get_string('templatealternate', 'filter_generico',$tindex),
 					get_string('templatealternate_desc', 'filter_generico'),
 					'',PARAM_RAW));
+					
+		//alternative content end
+		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatealternate_end_' . $tindex,
+					get_string('templatealternate_end', 'filter_generico',$tindex),
+					get_string('templatealternate_end_desc', 'filter_generico'),
+					'',PARAM_RAW));
  
 		//add page to category
 		$ADMIN->add('filter_generico_category', $settings_page);
