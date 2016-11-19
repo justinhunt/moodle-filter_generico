@@ -82,7 +82,7 @@ function filter_generico_callback(array $link){
 	
 	//we use this to see if its a web service calling this, 
 	//in which case we return the alternate content
-	$is_webservice = strpos($PAGE->url,'/webservice/pluginfile.php') > 0;
+	$is_webservice = strpos($PAGE->url,$CFG->wwwroot .'/webservice/') === 0;
 	
 	
 	//if we want to ignore the filter (for "how to use generico" or "cut and paste" this style use) we let it go

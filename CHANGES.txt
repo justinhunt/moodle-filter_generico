@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016111901
+-fixed a bug on webservice detection for mobile/alternate content
+
 Version 2016110902
 Added "alternate content"  end fields
 
