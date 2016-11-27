@@ -2,6 +2,7 @@ Change List
 =========
 Version 2016111901
 -fixed a bug on webservice detection for mobile/alternate content
+-added a better youtube lightbox
 
 Version 2016110902
 Added "alternate content"  end fields
