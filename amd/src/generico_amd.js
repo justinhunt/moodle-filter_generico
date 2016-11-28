@@ -74,13 +74,16 @@ define(['jquery','core/log'], function($, log) {
 				}
 			}
 			
-
-			//here require, then load the template scripts and js
-			require(['filter_generico_d' + opts['TEMPLATEID']],function(d){
-				d(opts);
-			});
-
-			
+			//if we did get a template id then proceed
+			//we might not get one if the html was generated, but never sent to 
+			//the page. Sometimes this happens in the assignment and probably 
+			//elsewhere
+			if(typeof opts['TEMPLATEID'] != 'undefined'){
+				//here require, then load the template scripts and js
+				require(['filter_generico_d' + opts['TEMPLATEID']],function(d){
+					d(opts);
+				});
+			}
 		}//end of function
 
 	}

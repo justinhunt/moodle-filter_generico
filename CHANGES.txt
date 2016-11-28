@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016112801
+-fixed a bug where html from template processed but not sent to page, and js looking for it
+
 Version 2016111901
 -fixed a bug on webservice detection for mobile/alternate content
 -added a better youtube lightbox
