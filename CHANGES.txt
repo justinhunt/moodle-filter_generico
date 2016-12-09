@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016120901
+-fixed a bug where alt content was not processed properly with $COURSE variables
+
 Version 2016112801
 -fixed a bug where html from template processed but not sent to page, and js looking for it
 

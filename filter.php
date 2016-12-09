@@ -242,7 +242,7 @@ function filter_generico_callback(array $link){
 			if($j_stubs){
 			 	$coursepropstubs = array_merge($coursepropstubs,$j_stubs);
 		    }
-		    $alt_stubs=explode('@@COURSE:',$alt_custom_script);
+		    $alt_stubs=explode('@@COURSE:',$alternate_content);
 			if($alt_stubs){
 			 	$coursepropstubs = array_merge($coursepropstubs,$alt_stubs);
 		    }
