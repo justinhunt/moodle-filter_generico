@@ -183,7 +183,7 @@ class filter_generico_template_script_generator {
 		}else{
 		
 			$return_js = "if(typeof filter_generico_extfunctions == 'undefined'){filter_generico_extfunctions={};}";
-			$return_js .= "filter_generico_extfunctions['" . $ext . "']= function(opts) {" . $thescript. " \r\n};";
+			$return_js .= "filter_generico_extfunctions['" . $tindex . "']= function(opts) {" . $thescript. " \r\n};";
 		}
     	return $return_js;
     }//end of function

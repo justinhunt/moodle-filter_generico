@@ -1,5 +1,8 @@
 Change List
 =========
+Version 2016122101
+-fixed a bug where non AMD scripts were not loading properly. 
+
 Version 2016120901
 -fixed a bug where alt content was not processed properly with $COURSE variables
 
