@@ -473,11 +473,21 @@ function filter_generico_callback(array $link){
 	$filterprops['CSSUPLOAD']=false;
 	$filterprops['CSSCUSTOM']=false;
 	
+    if (!empty($conf['revision'])) {
+        $revision = $conf['revision'];
+    } else {
+        $revision = '0';
+    }
+    
 	//require any scripts from the template
 	$customcssurl=false;
 	if($conf['templatestyle_' . $tempindex]){
-		$customcssurl =new moodle_url( '/filter/generico/genericocss.php?t=' . $tempindex);
-
+        $url = '/filter/generico/genericocss.php';
+        $params = array(
+            't' => $tempindex,
+            'rev' => $revision
+        );
+		$customcssurl = new moodle_url($url, $params);
 	}
 	
 	if(!$PAGE->headerprinted && !$PAGE->requires->is_head_done()){
@@ -536,7 +546,13 @@ function filter_generico_callback(array $link){
 	}else{
 
 		//require any scripts from the template
-		$PAGE->requires->js('/filter/generico/genericojs.php?t=' . $tempindex);	
+        $url = '/filter/generico/genericojs.php';
+        $params = array(
+            't' => $tempindex,
+            'rev' => $revision
+        );
+        $moodle_url = new moodle_url($url, $params);
+		$PAGE->requires->js($moodle_url);
 	
 		//for no AMD
 		$PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops),false,$jsmodule);

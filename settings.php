@@ -128,10 +128,12 @@ if (is_siteadmin()) {
 				 1,$yesno));
 		
 		//template body script
-		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatescript_' . $tindex,
-					get_string('templatescript', 'filter_generico',$tindex),
-					get_string('templatescript_desc', 'filter_generico'),
-					'',PARAM_RAW));
+		$setting = new admin_setting_configtextarea('filter_generico/templatescript_' . $tindex,
+                        get_string('templatescript', 'filter_generico',$tindex),
+                        get_string('templatescript_desc', 'filter_generico'),
+                        '',PARAM_RAW);
+        $setting->set_updatedcallback('filter_generico_update_revision');
+        $settings_page->add($setting);
 		
 		//additional JS (upload)
 		//see here: for integrating this https://moodle.org/mod/forum/discuss.php?d=227249
@@ -158,10 +160,12 @@ if (is_siteadmin()) {
 				 '', PARAM_RAW,50));
 				 
 		//template body css
-		 $settings_page->add(new admin_setting_configtextarea('filter_generico/templatestyle_' . $tindex,
-					get_string('templatestyle', 'filter_generico',$tindex),
-					get_string('templatestyle_desc', 'filter_generico'),
-					'',PARAM_RAW));
+		$setting = new admin_setting_configtextarea('filter_generico/templatestyle_' . $tindex,
+                        get_string('templatestyle', 'filter_generico',$tindex),
+                        get_string('templatestyle_desc', 'filter_generico'),
+                        '',PARAM_RAW);
+        $setting->set_updatedcallback('filter_generico_update_revision');
+        $settings_page->add($setting);
 		
 		//additional CSS (upload)
 		$name = 'filter_generico/uploadcss' . $tindex;
