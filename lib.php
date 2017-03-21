@@ -148,3 +148,7 @@ function filter_generico_setting_file_serve($filearea, $args, $forcedownload, $o
              send_file_not_found();
           }
 }
+
+function filter_generico_update_revision() {
+    set_config('revision', time(), 'filter_generico');
+}
