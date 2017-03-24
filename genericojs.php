@@ -25,11 +25,10 @@
 
 //define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/locallib.php');
+
 
 $tindex = required_param('t',PARAM_TEXT);
-$generator = new filter_generico_template_script_generator($tindex);
+$generator = new \filter_generico\template_script_generator($tindex);
 $template_script = $generator->get_template_script();
 header('Content-Type: application/javascript');
 echo  $template_script;

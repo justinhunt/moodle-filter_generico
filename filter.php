@@ -26,8 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/locallib.php');
 
 class filter_generico extends moodle_text_filter {
 
@@ -75,7 +73,7 @@ function filter_generico_callback(array $link){
 	 $conf = get_object_vars(get_config('filter_generico'));
 	
 	//get our filter props 
-	$filterprops=filter_generico_fetch_filter_properties($link[0]);
+	$filterprops=\filter_generico\generico_utils::fetch_filter_properties($link[0]);
 	
 	//if we have no props, quit
 	if(empty($filterprops)){return "";}
@@ -136,7 +134,7 @@ function filter_generico_callback(array $link){
 	$defaults = $conf['templatedefaults_'. $tempindex];
 	if(!empty($defaults)){
 		$defaults = "{GENERICO:" . $defaults . "}";
-		$defaultprops=filter_generico_fetch_filter_properties($defaults);
+		$defaultprops=\filter_generico\generico_utils::fetch_filter_properties($defaults);
 		//replace our defaults, if not spec in the the filter string
 		if(!empty($defaultprops)){
 			foreach($defaultprops as $name=>$value){
@@ -441,7 +439,7 @@ function filter_generico_callback(array $link){
 		$filterprops['JSUPLOAD']=false;
 		$uploadjsfile = $conf['uploadjs' . $tempindex];
 		if($uploadjsfile){
-			$uploadjsurl = filter_generico_setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
+			$uploadjsurl = \filter_generico\generico_utils::setting_file_url($uploadjsfile,'uploadjs' . $tempindex);
 			
 			//for load method: NO AMD
 			$PAGE->requires->js($uploadjsurl);
@@ -464,7 +462,7 @@ function filter_generico_callback(array $link){
 	//if we have an uploaded CSS file, then lets include that
 	$uploadcssfile = $conf['uploadcss' . $tempindex];
 	if($uploadcssfile){
-		$uploadcssurl = filter_generico_setting_file_url($uploadcssfile,'uploadcss' . $tempindex);
+		$uploadcssurl = \filter_generico\generico_utils::setting_file_url($uploadcssfile,'uploadcss' . $tempindex);
 	}
 	
 	//if not too late: load css in header
@@ -528,7 +526,7 @@ function filter_generico_callback(array $link){
 	//AMD or not, and then load our js for this template on the page
 	if($require_amd){
 
-		$generator = new filter_generico_template_script_generator($tempindex);
+		$generator = new \filter_generico\template_script_generator($tempindex);
 		$template_amd_script = $generator->get_template_script();
 
 		//props can't be passed at much length , Moodle complains about too many

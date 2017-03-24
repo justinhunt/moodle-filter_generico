@@ -10,7 +10,7 @@ define(['jquery','core/log'], function($, log) {
 	  presetdata: false,
 	  
 	  dataitems: ['key', 'instructions','requirecss', 'requirejs','shim', 'defaults', 
-			  'amd', 'body', 'bodyend', 'script', 'style','dataset','datasetvars','alternate','alternateend'],
+			  'amd', 'body', 'bodyend', 'script', 'style','dataset','datasetvars','alternate','alternateend','version'],
 
 	  fetchcontrols: function(templateindex) {
 	  	  var controls = {};
@@ -30,6 +30,7 @@ define(['jquery','core/log'], function($, log) {
 		  controls.alternate = document.getElementById('id_s_filter_generico_templatealternate_' + templateindex);
 		  controls.alternateend = document.getElementById('id_s_filter_generico_templatealternate_end_' + templateindex);
 		  controls.presetdata = document.getElementById('id_s_filter_generico_presetdata_' + templateindex);
+          controls.version = document.getElementById('id_s_filter_generico_templateversion_' + templateindex);
 		  return controls;
 	  },
 	  

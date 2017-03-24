@@ -24,12 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/filter/generico/locallib.php');
 /**
  * Install the plugin.
  */
 function xmldb_filter_generico_install() {
-	$admin_presets = new admin_setting_genericopresets('filter_generico/templatepresets_0', 
+	$admin_presets = new \filter_generico\presets_control('filter_generico/templatepresets_0',
 				'presets', '',0);
     $presets = $admin_presets->fetch_presets();
 	$forinstall = array('welcomeuser');

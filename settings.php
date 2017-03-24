@@ -27,13 +27,24 @@ $settings = null;
 defined('MOODLE_INTERNAL') || die;
 if (is_siteadmin()) {
 	global $PAGE;
-	require_once($CFG->dirroot . '/filter/generico/lib.php');
-	require_once($CFG->dirroot . '/filter/generico/locallib.php');
+
 
 	//add folder in property tree for settings pages
-	$ADMIN->add('filtersettings',new admin_category('filter_generico_category', 'Generico'));
+    $generico_category_name='generico_category';
+    $generico_category = new admin_category($generico_category_name, 'Generico');
+	$ADMIN->add('filtersettings',$generico_category);
 	$conf = get_config('filter_generico');
-	
+
+    //add totally bogus page with a link to jump to poodll filter settings category
+    //its hidden so it doesn't appear in nav, but will catch the link that moodle auto adds to managefilters
+    /*
+    $jumpcat_settings = new admin_settingpage('filtersettinggenerico',get_string('pluginname', 'filter_generico'),'moodle/site:config',true);
+    $url = new \moodle_url('/admin/category.php',array('category'=>$generico_category_name));
+    $jumpcat_item = new \admin_setting_heading('filter_generico_jumpcat_settings', get_string('jumpcat_heading', 'filter_generico'), get_string('jumpcat_explanation', 'filter_generico',$url->out(false)));
+    $jumpcat_settings->add($jumpcat_item);
+    $ADMIN->add('filtersettings', $jumpcat_settings);
+	*/
+
 	//add the common settings page
 	// we changed this to use the default settings id for the top page. This way in the settings link on the manage filters
 	 //page, we will arrive here. Else the link will show there, but it will error out if clicked.
@@ -43,18 +54,19 @@ if (is_siteadmin()) {
 	$settings_page->add(new admin_setting_configtext('filter_generico/templatecount', 
 				get_string('templatecount', 'filter_generico'),
 				get_string('templatecount_desc', 'filter_generico'), 
-				 FILTER_GENERICO_TEMPLATE_COUNT, PARAM_INT,20));
+				 \filter_generico\generico_utils::FILTER_GENERICO_TEMPLATE_COUNT, PARAM_INT,20));
 
 	//add page to category
-	$ADMIN->add('filter_generico_category', $settings_page);
+	$ADMIN->add($generico_category_name, $settings_page);
 
 				 
 	//Add the template pages
 	if($conf && property_exists($conf,'templatecount')){
 		$templatecount = $conf->templatecount;
 	}else{
-		$templatecount = FILTER_GENERICO_TEMPLATE_COUNT;
+		$templatecount =  \filter_generico\generico_utils::FILTER_GENERICO_TEMPLATE_COUNT;
 	}
+
 	for($tindex=1;$tindex<=$templatecount;$tindex++){
 		 
 		 //template display name
@@ -65,15 +77,15 @@ if (is_siteadmin()) {
 		 	$tname = $tindex;
 		 }
 		 
-		 //template settings Page Settings 
-   		$settings_page = new admin_settingpage('filter_generico_templatepage_' . $tindex,get_string('templatepageheading', 'filter_generico',$tname));
+		 //template settings Page Settings (we append hidden=true as 4th param to keep out of site menu)
+   		$settings_page = new admin_settingpage('filter_generico_templatepage_' . $tindex,get_string('templatepageheading', 'filter_generico',$tname),'moodle/site:config',true);
 		
 		//template page heading
 		$settings_page->add(new admin_setting_heading('filter_generico/templateheading_' . $tindex, 
 				get_string('templateheading', 'filter_generico',$tname), ''));
 				
 		//presets
-		$settings_page->add(new admin_setting_genericopresets('filter_generico/templatepresets_' . $tindex, 
+		$settings_page->add(new \filter_generico\presets_control('filter_generico/templatepresets_' . $tindex,
 				get_string('presets', 'filter_generico'), get_string('presets_desc', 'filter_generico'),$tindex));
 
 		//template key
@@ -81,6 +93,12 @@ if (is_siteadmin()) {
 				get_string('templatekey', 'filter_generico',$tindex),
 				get_string('templatekey_desc', 'filter_generico'), 
 				 '', PARAM_ALPHANUMEXT));
+
+        //template version
+        $settings_page->add(new admin_setting_configtext('filter_generico/templateversion_' . $tindex ,
+            get_string('templateversion', 'filter_generico',$tindex),
+            get_string('templateversion_desc', 'filter_generico'),
+            '', PARAM_TEXT));
 
 		//template instructions
 		$settings_page->add(new admin_setting_configtextarea('filter_generico/templateinstructions_' . $tindex,
@@ -198,8 +216,14 @@ if (is_siteadmin()) {
 					'',PARAM_RAW));
  
 		//add page to category
-		$ADMIN->add('filter_generico_category', $settings_page);
-		//$settings->add($settings_page);
+		$ADMIN->add($generico_category_name, $settings_page);
 	}
+
+    //Templates Launch Page
+    $templatetable_settings = new admin_settingpage('filter_generico_templatetable',get_string('templates', 'filter_generico'));
+    $templatetable_item =  new \filter_generico\template_table('filter_generico/template_table',
+        get_string('templates', 'filter_generico'), '');
+    $templatetable_settings->add($templatetable_item);
+    $ADMIN->add($generico_category_name, $templatetable_settings);
 	
 }
