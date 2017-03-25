@@ -72,7 +72,9 @@ class presets_control extends \admin_setting
         $usearray = array();
 
         foreach($keys as $key){
-            $usearray[$key]=$this->presetdata[$key]['key'];
+            $name = $this->presetdata[$key]['name'];
+            if(empty($name)){$name=$key;}
+            $usearray[$key]=$name;
         }
 
         $presetsjson = json_encode($this->presetdata);

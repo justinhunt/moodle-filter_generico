@@ -9,12 +9,13 @@ define(['jquery','core/log'], function($, log) {
 
 	  presetdata: false,
 	  
-	  dataitems: ['key', 'instructions','requirecss', 'requirejs','shim', 'defaults', 
+	  dataitems: ['key','name', 'instructions','requirecss', 'requirejs','shim', 'defaults',
 			  'amd', 'body', 'bodyend', 'script', 'style','dataset','datasetvars','alternate','alternateend','version'],
 
 	  fetchcontrols: function(templateindex) {
 	  	  var controls = {};
 		  controls.key = document.getElementById('id_s_filter_generico_templatekey_' + templateindex);
+          controls.name = document.getElementById('id_s_filter_generico_templatename_' + templateindex);
 		  controls.instructions = document.getElementById('id_s_filter_generico_templateinstructions_' + templateindex);
 		  controls.requirecss = document.getElementById('id_s_filter_generico_templaterequire_css_' + templateindex);
 		  controls.requirejs = document.getElementById('id_s_filter_generico_templaterequire_js_' + templateindex);

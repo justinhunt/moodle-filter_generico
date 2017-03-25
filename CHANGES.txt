@@ -1,5 +1,10 @@
 Change List
 =========
+Version  2017032401
+-added better display of templates in navigation so that Boost doesn't completely mess it up
+-added revision flag for automating cache refresh courtesy of agrowe
+-added version field for each template
+
 Version 2016122101
 -fixed a bug where non AMD scripts were not loading properly. 
 

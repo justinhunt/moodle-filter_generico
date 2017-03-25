@@ -46,17 +46,35 @@ function xmldb_filter_generico_upgrade($oldversion) {
 				case 'piechart':
 				case 'barchart':
 				case 'linechart':
-					set_config('filter_generico/template_amd_' . $tempindex,0);
+					set_config('filter_generico/template_amd_' . $tempindex,0,'filter_generico');
 					break;
 				default:
-					set_config('filter_generico/template_amd_' . $tempindex,1);	
+					set_config('template_amd_' . $tempindex,1,'filter_generico');
 			}
 		}
 
         upgrade_plugin_savepoint(true, 2015080301, 'filter', 'generico');
     }
 
+    if ($oldversion < 2017032405) {
 
+        //Add the template name to the template
+        $conf = get_config('filter_generico');
+        //Get template count
+        if(property_exists($conf,'templatecount')){
+            $templatecount = $conf->templatecount;
+        }else{
+            $templatecount =  \filter_generico\generico_utils::FILTER_GENERICO_TEMPLATE_COUNT;
+        }
+
+        //determine which template we are using
+        for($tempindex=1;$tempindex<=$templatecount;$tempindex++){
+            if(property_exists($conf,'templatekey_' . $tempindex)){
+                set_config('templatename_' . $tempindex,$conf->{'templatekey_' . $tempindex},'filter_generico');
+            }
+        }
+        upgrade_plugin_savepoint(true, 2017032405, 'filter', 'generico');
+    }
 
     return true;
 }

@@ -94,6 +94,12 @@ if (is_siteadmin()) {
 				get_string('templatekey_desc', 'filter_generico'), 
 				 '', PARAM_ALPHANUMEXT));
 
+        //template name
+        $settings_page->add(new admin_setting_configtext('filter_generico/templatename_' . $tindex ,
+            get_string('templatename', 'filter_generico',$tindex),
+            get_string('templatename_desc', 'filter_generico'),
+            '', PARAM_RAW));
+
         //template version
         $settings_page->add(new admin_setting_configtext('filter_generico/templateversion_' . $tindex ,
             get_string('templateversion', 'filter_generico',$tindex),

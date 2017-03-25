@@ -464,18 +464,20 @@ function filter_generico_callback(array $link){
 	if($uploadcssfile){
 		$uploadcssurl = \filter_generico\generico_utils::setting_file_url($uploadcssfile,'uploadcss' . $tempindex);
 	}
-	
-	//if not too late: load css in header
-	// if too late: inject it there via JS
-	$filterprops['CSSLINK']=false;
-	$filterprops['CSSUPLOAD']=false;
-	$filterprops['CSSCUSTOM']=false;
-	
+
+    //set up our revision flag for forcing cache refreshes etc
     if (!empty($conf['revision'])) {
         $revision = $conf['revision'];
     } else {
         $revision = '0';
     }
+
+	//if not too late: load css in header
+	// if too late: inject it there via JS
+	$filterprops['CSSLINK']=false;
+	$filterprops['CSSUPLOAD']=false;
+	$filterprops['CSSCUSTOM']=false;
+
     
 	//require any scripts from the template
 	$customcssurl=false;
