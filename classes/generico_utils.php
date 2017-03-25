@@ -36,7 +36,7 @@ class generico_utils
         }
     }
 
-    public static function filter_properties($filterstring){
+    public static function fetch_filter_properties($filterstring){
         //this just removes the {GENERICO: .. }
         $rawproperties = explode ("{GENERICO:", $filterstring);
         //here we remove any html tags we find. They should not be in here
