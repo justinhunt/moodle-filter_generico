@@ -37,6 +37,10 @@ class generico_utils
     }
 
     public static function fetch_filter_properties($filterstring){
+        //lets do a general clean of all input here
+        //see: https://github.com/justinhunt/moodle-filter_generico/issues/7
+        $filterstring=clean_param($filterstring,PARAM_TEXT);
+
         //this just removes the {GENERICO: .. }
         $rawproperties = explode ("{GENERICO:", $filterstring);
         //here we remove any html tags we find. They should not be in here
