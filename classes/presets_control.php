@@ -114,14 +114,27 @@ class presets_control extends \admin_setting
 
 
     public function fetch_presets(){
-        global $CFG;
+        global $CFG,$PAGE;
+        //init return array
         $ret = array();
-        $dir = new \DirectoryIterator($CFG->dirroot . '/filter/generico/presets');
-        foreach($dir as $fileinfo){
-            if(!$fileinfo->isDot()){
-                $preset = $this->parse_preset_template($fileinfo);
-                if($preset){
-                    $ret[]=$preset;
+        $dirs=array();
+
+        //we search the Generico "presets" and the themes "generico" folders for presets
+        $generico_presets_dir=$CFG->dirroot . '/filter/generico/presets';
+        $theme_generico_dir=$PAGE->theme->dir . '/generico';
+        if(file_exists($generico_presets_dir)) {
+            $dirs[] = new \DirectoryIterator($generico_presets_dir);
+        }
+        if(file_exists($theme_generico_dir)) {
+            $dirs[] = new \DirectoryIterator($theme_generico_dir);
+        }
+        foreach($dirs as $dir) {
+            foreach ($dir as $fileinfo) {
+                if (!$fileinfo->isDot()) {
+                    $preset = $this->parse_preset_template($fileinfo);
+                    if ($preset) {
+                        $ret[] = $preset;
+                    }
                 }
             }
         }
