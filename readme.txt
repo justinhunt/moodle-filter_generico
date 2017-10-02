@@ -58,11 +58,15 @@ On the final page of the installation you will be able to register templates. Yo
 After installing you will need to enable the Generico filter. You can enable the Generico filter when you visit:
 Site Administration / plugins / filters / manage filters
 
-JQuery Configuration (Important)
+JQuery Configuration
 ==============
-Many templates will require JQuery. We used to load this as required. And you still can. (The checkbox for that is still on each template page.) Please do not use it. It will be removed in a subsequent version. Instead you should use a theme that loads JQuery already (Essential, BCU are two), or add a call to load JQuery to the Moodle site header.
-To add that, go to: Site Administration -> Appearance -> Additional HTML (within HEAD) ,and add:
-<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+Many templates will require JQuery. This is available by default in Moodle for the most part. But under the odd circumstance it is not available to Generico. We used to suggest that you add a load call to your Moodle site's additional HTML area. Thats not the best way anymore. In the odd case jquery is not working, the template can usually be rewritten to make it able to access jquery.
+
+Theme Developers
+==============
+It is possible to distribute Generico templates with your theme. Create a folder called "generico" in the root folder of your theme and place your template bundle files in there. Your theme Generico templates will then appear in the drop down list of presets on each blank Generico template settings page.
+
+
 
 Enjoy
 
