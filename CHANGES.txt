@@ -1,5 +1,8 @@
 Change List
 =========
+Version 1.4.0(Build 2018041000)
+-Implemented new Moodle Privacy API
+
 Version 1.3.14(Build 2017081100)
 -repaired toggle template which broke on Boost Theme
 -removed edit column from template table. Edit template by clicking on name
