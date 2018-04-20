@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['filtername'] = 'Generico';
 $string['pluginname'] = 'Generico';
+$string['privacy:metadata'] = 'The Generico filter plugin does not store any personal data.';
 $string['filterdescription'] = 'Convert filter strings into templates merged with data';
 $string['commonpageheading'] = 'General Settings';
 $string['templatepageheading'] = 'Template: {$a}';
