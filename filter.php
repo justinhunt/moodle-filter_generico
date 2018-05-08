@@ -413,7 +413,7 @@ function filter_generico_callback(array $link){
 	$require_amd = $conf['template_amd_' . $tempindex] && $CFG->version>=2015051100;
 	
 	//figure out if this is https or http. We don't want to scare the browser
-	if(strpos($PAGE->url->out(),'https:')===0){
+	if(property_exists($PAGE, 'url') && strpos($PAGE->url->out(),'https:')===0){
 		$scheme='https:';
 	}else{
 		$scheme='http:';
