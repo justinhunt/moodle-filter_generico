@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['filtername'] = 'Generico';
 $string['pluginname'] = 'Generico';
+$string['genericotemplatesadmin'] = 'Generico Templates Admin';
 $string['privacy:metadata'] = 'The Generico filter plugin does not store any personal data.';
 $string['filterdescription'] = 'Convert filter strings into templates merged with data';
 $string['commonpageheading'] = 'General Settings';
@@ -61,6 +62,11 @@ $string['templatestyle_desc'] = 'Enter any custom CSS that your template uses he
 
 $string['templaterequire_amd'] = 'Load via AMD';
 $string['templaterequire_amd_desc'] = 'AMD is a javascript loading mechanism. If you upload or link to javascript libraries in your template, you might have to uncheck this. It only applies if on Moodle 2.9 or greater';
+
+$string['templateupdated'] = '{$a} Poodll Templates Updated.';
+$string['updatetoversion'] = 'Update to version: {$a}';
+$string['updateall'] = 'Update all';
+$string['cleartemplate'] = 'Clear template';
 
 $string['uploadjs'] = 'Upload JS (template {$a})';
 $string['uploadjs_desc'] = 'You can upload one js library file which will be loaded for your template. Only one.';

@@ -83,7 +83,8 @@ function filter_generico_callback(array $link){
     $climode = defined('CLI_SCRIPT') && CLI_SCRIPT;
 	$is_webservice = false;
 	if(!$climode){
-	   $is_webservice = strpos($PAGE->url,$CFG->wwwroot .'/webservice/') === 0;
+	        //we get a warning here if the PAGE url is not set. But its not dangerous. just annoying.,
+            $is_webservice = strpos($PAGE->url, $CFG->wwwroot . '/webservice/') === 0;
 	}
 	
 	
