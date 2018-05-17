@@ -1,5 +1,9 @@
 Change List
 =========
+Version 1.4.01(Build 2018041001)
+-Improved templates listing
+-Added template version update ability
+
 Version 1.4.0(Build 2018041000)
 -Implemented new Moodle Privacy API
 
