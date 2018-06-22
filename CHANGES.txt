@@ -1,5 +1,9 @@
 Change List
 =========
+Version 1.4.02(Build 2018062300)
+-Added a number of new templates and fixed older ones
+-removed annoying extra brace on settings page
+
 Version 1.4.01(Build 2018041001)
 -Improved templates listing
 -Added template version update ability
