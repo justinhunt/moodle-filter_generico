@@ -166,6 +166,14 @@ function filter_generico_callback(array $link){
 	//stash this for passing to js
 	$filterprops['AUTOID']=$autoid;
 
+    //If we need a Cloud Poodll token, lets fetch it
+    if(strpos($genericotemplate,'@@CLOUDPOODLLTOKEN@@') &&
+        !empty($conf['cpapiuser']) &&
+        !empty($conf['cpapisecret'])){
+        $token = \filter_poodll\poodlltools::fetch_token($conf['cpapiuser'],$conf['cpapisecret']);
+        $genericotemplate = str_replace('@@CLOUDPOODLLTOKEN@@',$token,$genericotemplate);
+    }
+
 	//If template requires a MOODLEPAGEID lets give them one
 	//this is legacy really. Now we have @@URLPARAM we could do it that way
 	$moodlepageid = optional_param('id',0,PARAM_INT);

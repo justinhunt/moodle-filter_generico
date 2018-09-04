@@ -46,10 +46,15 @@ if (is_siteadmin()) {
 				get_string('templatecount_desc', 'filter_generico'), 
 				 \filter_generico\generico_utils::FILTER_GENERICO_TEMPLATE_COUNT, PARAM_INT,20));
 
+    //cloud poodll credentials
+    $settings_page->add(new admin_setting_heading('filter_generico_cpapi_settings', get_string('cpapi_heading', 'filter_generico'), get_string('cpapi_heading_desc', 'filter_generico')));
+    $settings_page->add(new admin_setting_configtext('filter_generico/cpapiuser', get_string('cpapiuser', 'filter_generico'),
+        get_string('cpapiuser_details', 'filter_generico'), ''));
+    $settings_page->add(new admin_setting_configtext('filter_generico/cpapisecret', get_string('cpapisecret', 'filter_generico'),
+        get_string('cpapisecret_details', 'filter_generico'), ''));
+
 	//add page to category
 	$ADMIN->add($generico_category_name, $settings_page);
-
-
 
     $genericotemplatesadmin_settings = new admin_externalpage('genericotemplatesadmin', get_string('templates', 'filter_generico'),
         $CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php' );

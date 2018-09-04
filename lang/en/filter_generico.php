@@ -100,3 +100,11 @@ $string['templatealternate_end_desc'] = 'Closing alternate content tags for temp
 $string['templates']='Templates';
 $string['jumpcat_heading']='Generico filter settings';
 $string['jumpcat_explanation']='The full set of Generico filter settings can be found <a href="{$a}">here</a>.';
+
+//cloud poodll settings
+$string['cpapi_heading'] = 'Cloud Poodll API Settings';
+$string['cpapi_heading_desc'] = "Cloud Poodll allows you to embed recorders direct from cloud.poodll.com in widgets. This is optional and you do not need to fill this in.";
+$string['cpapiuser'] = 'Cloud Poodll Username';
+$string['cpapiuser_details'] = 'This is the same as your username at Poodll.com.';
+$string['cpapisecret'] = 'Cloud Poodll API Secret';
+$string['cpapisecret_details'] = "This is a special secret key that can be generated from the <a href='https://support.poodll.com/support/solutions/articles/19000083076-cloud-poodll-api-secret'>API tab</a> in your members area on Poodll.com. ";
