@@ -1,7 +1,9 @@
 Change List
 =========
-Version 1.4.05(Build 2018090300) [in progress]
+
+Version 1.4.05(Build 2018102500)
 - fixed popup recorder template
+- security fix
 
 Version 1.4.04(Build 2018090300)
 -added Cloud Poodll support
