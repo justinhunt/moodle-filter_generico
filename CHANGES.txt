@@ -1,5 +1,10 @@
 Change List
 =========
+
+Version 1.4.07 (Build 2019012000)
+-Added better cron calling
+-Added Poodll loader.html for cloudpoodll
+
 Version 1.4.06(Build 2018120500)
 -Fixed bug when presets dir contained a directory.
 

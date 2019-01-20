@@ -166,8 +166,9 @@ class generico_utils
         }
 
         // Send the request & save response to $resp
-        $token_url ="https://cloud.poodll.com/local/cpapi/poodlltoken.php?username=$apiuser&password=$apisecret&service=cloud_poodll";
-        $token_response = self::curl_fetch($token_url);
+        $token_url ="https://cloud.poodll.com/local/cpapi/poodlltoken.php";
+        $postdata=array('username'=>$apiuser,'password'=>$apisecret,'service'=>'cloud_poodll');
+        $token_response = self::curl_fetch($token_url,$postdata);
         if ($token_response) {
             $resp_object = json_decode($token_response);
             if($resp_object && property_exists($resp_object,'token')) {
@@ -202,13 +203,12 @@ class generico_utils
 
     //we use curl to fetch transcripts from AWS and Tokens from cloudpoodll
     //this is our helper
-    public static function curl_fetch($url){
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        $data = curl_exec($curl);
-        curl_close($curl);
-        return $data;
+    public static function curl_fetch($url,$postdata){
+        global $CFG;
+        require_once($CFG->libdir.'/filelib.php');
+        $curl = new \curl();
+
+        $result = $curl->get($url, $postdata);
+        return $result;
     }
 }
