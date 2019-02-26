@@ -71,6 +71,7 @@ function filter_generico_callback(array $link){
 	global $CFG, $COURSE, $USER, $PAGE, $DB;
 	
 	 $conf = get_object_vars(get_config('filter_generico'));
+	 $context=false;//we get this if when we need it
 	
 	//get our filter props 
 	$filterprops=\filter_generico\generico_utils::fetch_filter_properties($link[0]);
@@ -91,6 +92,24 @@ function filter_generico_callback(array $link){
 	//if we want to ignore the filter (for "how to use generico" or "cut and paste" this style use) we let it go
 	//to use this, make the last parameter of the filter passthrough=1
 	if (!empty($filterprops['passthrough'])) return str_replace( ",passthrough=1","",$link[0]);
+
+	//Perform role/permissions check on this filter
+    if (!empty($filterprops['viewcapability'])) {
+        if(!$context) {
+            $context = context_course::instance($COURSE->id);
+        }
+        if(!has_capability($filterprops['viewcapability'],$context)) {
+            return '';
+        }
+    }
+    if (!empty($filterprops['hidecapability'])) {
+        if(!$context) {
+            $context = context_course::instance($COURSE->id);
+        }
+        if(has_capability($filterprops['hidecapability'],$context)) {
+            return '';
+        }
+    }
 	
 	//determine which template we are using
 	$endtag=false;
@@ -279,7 +298,9 @@ function filter_generico_callback(array $link){
 				if(array_key_exists($courseprop,$coursevars)){
 					$propvalue=$coursevars[$courseprop];
 				}elseif($courseprop=='contextid'){
-					$context = context_course::instance($COURSE->id);
+				    if(!$context) {
+                        $context = context_course::instance($COURSE->id);
+                    }
 					if($context){
 						$propvalue=$context->id;
 					}

@@ -1,6 +1,9 @@
 Change List
 =========
 
+Version 1.4.08 (Build 2019022600)
+-Added a capabilities check feature to Generico, viewcapability="" and hidecapability=""
+
 Version 1.4.07 (Build 2019012000)
 -Added better cron calling
 -Added Poodll loader.html for cloudpoodll
