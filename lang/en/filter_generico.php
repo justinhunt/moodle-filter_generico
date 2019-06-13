@@ -90,7 +90,7 @@ $string['templateuploadjsshim_desc'] = ' Leave blank unless you know what shimmi
 $string['templaterequirejsshim'] = ' Require Shim export';
 $string['templaterequirejsshim_desc'] = ' Leave blank unless you know what shimming is';
 $string['templateversion'] = 'The version of this template {$a}';
-$string['templateversion_desc'] = 'When sharing templates it is best to maintain a clear version per release. The version format is up to you.';
+$string['templateversion_desc'] = 'Use semantic versioning e.g 1.0.0. Generico will show an update button when the preset version is greater than the template version.';;
 $string['templatealternate'] = 'Alternate content'; 
 $string['templatealternate_desc'] = 'Content that can be used when the custom and uploaded CSS and javascript content is not available. Currently this is used when the template is processed by a webservice, probably for content on the mobile app';
 $string['templatealternate_end'] = 'Alternate content end (template {$a})';
@@ -104,7 +104,17 @@ $string['jumpcat_explanation']='The full set of Generico filter settings can be 
 //cloud poodll settings
 $string['cpapi_heading'] = 'Cloud Poodll API Settings';
 $string['cpapi_heading_desc'] = "Cloud Poodll allows you to embed recorders direct from cloud.poodll.com in widgets. This is optional and you do not need to fill this in.";
-$string['cpapiuser'] = 'Cloud Poodll Username';
+$string['cpapiuser'] = 'Cloud Poodll API User';
 $string['cpapiuser_details'] = 'This is the same as your username at Poodll.com.';
 $string['cpapisecret'] = 'Cloud Poodll API Secret';
 $string['cpapisecret_details'] = "This is a special secret key that can be generated from the <a href='https://support.poodll.com/support/solutions/articles/19000083076-cloud-poodll-api-secret'>API tab</a> in your members area on Poodll.com. ";
+
+//CLOUD POODLL API summary display info
+$string['displaysubs'] = '{$a->subscriptionname} : expires {$a->expiredate}';
+$string['noapiuser'] = "No API username entered.";
+$string['noapisecret'] = "No API secret entered.";
+$string['credentialsinvalid'] = "The API username and secret entered could not be used to get access. Please check them.";
+$string['appauthorised']= "Cloud Poodll is authorised for this site.";
+$string['appnotauthorised']=  "Cloud Poodll is not authorised for this site.";
+$string['refreshtoken']= "Refresh Cloud Poodll license information.";
+$string['notokenincache']= "Refresh Cloud Poodll license information to see details.";

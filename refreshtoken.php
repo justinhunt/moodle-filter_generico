@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,18 +16,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * A token refreshing helper for Read Aloud
  *
- * @package    filter
- * @subpackage generico
- * @copyright  2014 Justin Hunt <poodllsupport@gmail.com>
+ *
+ * @package    filter_poodll
+ * @copyright  Justin Hunt (justin@poodll.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019061400;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011070100;        // Requires this Moodle version
-$plugin->component = 'filter_generico'; // Full name of the plugin (used for diagnostics)
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'Version 1.4.09(Build 2019061400)';
+require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+
+use \filter_generico\constants;
+
+require_login(0, false);
+$systemcontext = context_system::instance();
+
+if(has_capability('moodle/site:config',$systemcontext)){
+    $apiuser = get_config(constants::MOD_FRANKY,'cpapiuser');
+    $apisecret=get_config(constants::MOD_FRANKY,'cpapisecret');
+    $force=true;
+    if($apiuser && $apisecret) {
+        $gu = new \filter_generico\generico_utils();
+        $gu->fetch_token($apiuser, $apisecret, $force);
+    }
+}
+redirect($CFG->wwwroot . '/admin/settings.php?section=filtersettinggenerico');

@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use  filter_generico\constants;
+
 $settings = null;
 
 if (is_siteadmin()) {
@@ -51,8 +53,19 @@ if (is_siteadmin()) {
     $settings_page->add(new admin_setting_heading('filter_generico_cpapi_settings', get_string('cpapi_heading', 'filter_generico'), get_string('cpapi_heading_desc', 'filter_generico')));
     $settings_page->add(new admin_setting_configtext('filter_generico/cpapiuser', get_string('cpapiuser', 'filter_generico'),
         get_string('cpapiuser_details', 'filter_generico'), ''));
+    //we show a summary of the users apps if we can get the info
+    $apiuser=get_config(constants::MOD_FRANKY,'cpapiuser');
+    $apisecret=get_config(constants::MOD_FRANKY,'cpapisecret');
+    if($apiuser && $apisecret) {
+        $gu = new \filter_generico\generico_utils();
+        $tokeninfo =  $gu->fetch_token_for_display($apiuser, $apisecret);
+    }else{
+        $tokeninfo = get_string('cpapisecret_details', constants::MOD_FRANKY);
+    }
     $settings_page->add(new admin_setting_configtext('filter_generico/cpapisecret', get_string('cpapisecret', 'filter_generico'),
-        get_string('cpapisecret_details', 'filter_generico'), ''));
+        $tokeninfo, ''));
+
+
 
 	//add page to category
 	$ADMIN->add($generico_category_name, $settings_page);

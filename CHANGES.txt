@@ -1,5 +1,9 @@
 Change List
 =========
+Version 1.4.09(Build 2019061400)
+-Fixed cloud poodll token fetch (had been requiring Poodll)
+-Added cloud poodll refresh
+-Clarified template version format
 
 Version 1.4.08 (Build 2019022600)
 -Added a capabilities check feature to Generico, viewcapability="" and hidecapability=""

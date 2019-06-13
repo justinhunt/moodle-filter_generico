@@ -189,7 +189,7 @@ function filter_generico_callback(array $link){
     if(strpos($genericotemplate,'@@CLOUDPOODLLTOKEN@@') &&
         !empty($conf['cpapiuser']) &&
         !empty($conf['cpapisecret'])){
-        $token = \filter_poodll\poodlltools::fetch_token($conf['cpapiuser'],$conf['cpapisecret']);
+        $token = \filter_generico\generico_utils::fetch_token($conf['cpapiuser'],$conf['cpapisecret']);
         $genericotemplate = str_replace('@@CLOUDPOODLLTOKEN@@',$token,$genericotemplate);
     }
 
