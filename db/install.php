@@ -28,16 +28,16 @@ defined('MOODLE_INTERNAL') || die();
  * Install the plugin.
  */
 function xmldb_filter_generico_install() {
-	$admin_presets = new \filter_generico\presets_control('filter_generico/templatepresets_0',
-				'presets', '',0);
+    $admin_presets = new \filter_generico\presets_control('filter_generico/templatepresets_0',
+            'presets', '', 0);
     $presets = $admin_presets->fetch_presets();
-	$forinstall = array('welcomeuser');
-	$templateindex=0;
-	foreach($presets as $preset){			
-		if(in_array($preset['key'],$forinstall)){
-			$templateindex++;
-			//set the config
-			$admin_presets->set_preset_to_config($preset,$templateindex);
-		}
-	}//end of for each presets	
+    $forinstall = array('welcomeuser');
+    $templateindex = 0;
+    foreach ($presets as $preset) {
+        if (in_array($preset['key'], $forinstall)) {
+            $templateindex++;
+            //set the config
+            $admin_presets->set_preset_to_config($preset, $templateindex);
+        }
+    }//end of for each presets	
 }

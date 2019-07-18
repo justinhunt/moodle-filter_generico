@@ -14,30 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 require_once("../../config.php");
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('genericotemplatesadmin');
 
 //get template to update
-$updatetemplate = optional_param('updatetemplate',0,PARAM_INT);
+$updatetemplate = optional_param('updatetemplate', 0, PARAM_INT);
 
-$updated=0;
-$redirecturl = new moodle_url($CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php',array());
-if($updatetemplate==-1) {
-    $updated= \filter_generico\presets_control::update_all_templates();
-    redirect($redirecturl,get_string('templateupdated','filter_generico',$updated));
-}elseif($updatetemplate > 0){
-    $updated= \filter_generico\presets_control::update_template($updatetemplate);
-    redirect($redirecturl,get_string('templateupdated','filter_generico',$updated));
-}else{
+$updated = 0;
+$redirecturl = new moodle_url($CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php', array());
+if ($updatetemplate == -1) {
+    $updated = \filter_generico\presets_control::update_all_templates();
+    redirect($redirecturl, get_string('templateupdated', 'filter_generico', $updated));
+} else if ($updatetemplate > 0) {
+    $updated = \filter_generico\presets_control::update_template($updatetemplate);
+    redirect($redirecturl, get_string('templateupdated', 'filter_generico', $updated));
+} else {
     //do nothing we just want to show the table
 }
 
 //if we are exporting html, do that
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('genericotemplatesadmin','filter_generico'),3);
+echo $OUTPUT->heading(get_string('genericotemplatesadmin', 'filter_generico'), 3);
 echo \filter_generico\templateadmintools::fetch_template_table();
 echo $OUTPUT->footer();
 

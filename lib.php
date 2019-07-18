@@ -23,18 +23,17 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-
 function filter_generico_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-	$config = get_config('filter_generico');
-	
-	for($i=1;$i<=$config->templatecount;$i++){
-    	if($context->contextlevel == CONTEXT_SYSTEM){
-    		if($filearea === 'uploadjs' . $i || $filearea === 'uploadcss' . $i ) {
-        		return \filter_generico\generico_utils::setting_file_serve($filearea,$args,$forcedownload, $options);
-        	}
-		} 
-	}
-	send_file_not_found();
+    $config = get_config('filter_generico');
+
+    for ($i = 1; $i <= $config->templatecount; $i++) {
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            if ($filearea === 'uploadjs' . $i || $filearea === 'uploadcss' . $i) {
+                return \filter_generico\generico_utils::setting_file_serve($filearea, $args, $forcedownload, $options);
+            }
+        }
+    }
+    send_file_not_found();
 }
 
 /**

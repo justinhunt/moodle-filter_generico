@@ -24,19 +24,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 
 use \filter_generico\constants;
 
 require_login(0, false);
 $systemcontext = context_system::instance();
 
-if(has_capability('moodle/site:config',$systemcontext)){
-    $apiuser = get_config(constants::MOD_FRANKY,'cpapiuser');
-    $apisecret=get_config(constants::MOD_FRANKY,'cpapisecret');
-    $force=true;
-    if($apiuser && $apisecret) {
+if (has_capability('moodle/site:config', $systemcontext)) {
+    $apiuser = get_config(constants::MOD_FRANKY, 'cpapiuser');
+    $apisecret = get_config(constants::MOD_FRANKY, 'cpapisecret');
+    $force = true;
+    if ($apiuser && $apisecret) {
         $gu = new \filter_generico\generico_utils();
         $gu->fetch_token($apiuser, $apisecret, $force);
     }

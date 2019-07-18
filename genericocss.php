@@ -24,15 +24,15 @@
  */
 
 //define('AJAX_SCRIPT', true);
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(__FILE__) . '/lib.php');
 
-$tindex = required_param('t',PARAM_TEXT);
+$tindex = required_param('t', PARAM_TEXT);
 
 $conf = get_config('filter_generico');
 
 //get presets
-$thestyle=$conf->{'templatestyle_' . $tindex};
+$thestyle = $conf->{'templatestyle_' . $tindex};
 
 header('Content-Type: text/css');
 echo $thestyle;

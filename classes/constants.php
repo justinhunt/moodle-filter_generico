@@ -8,8 +8,6 @@
 
 namespace filter_generico;
 
-
-class constants
-{
- const MOD_FRANKY='filter_generico';
+class constants {
+    const MOD_FRANKY = 'filter_generico';
 }
