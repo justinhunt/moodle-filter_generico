@@ -193,8 +193,12 @@ function filter_generico_callback(array $link) {
         $token = \filter_generico\generico_utils::fetch_token($conf['cpapiuser'], $conf['cpapisecret']);
         if ($token) {
             $genericotemplate = str_replace('@@CLOUDPOODLLTOKEN@@', $token, $genericotemplate);
+            //stash this for passing to js
+            $filterprops['CLOUDPOODLLTOKEN'] = $token;
         } else {
             $genericotemplate = str_replace('@@CLOUDPOODLLTOKEN@@', 'INVALID TOKEN', $genericotemplate);
+            //stash this for passing to js
+            $filterprops['CLOUDPOODLLTOKEN'] = 'INVALID TOKEN';
         }
     }
 

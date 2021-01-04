@@ -44,10 +44,13 @@ class presets_control extends \admin_setting {
      * @param string $heading heading
      * @param string $information text in box
      */
-    public function __construct($name, $visiblename, $information, $templateindex) {
+    public function __construct($name, $visiblename, $information, $templateindex, $presetdata=false) {
         $this->nosave = true;
         $this->templateindex = $templateindex;
-        $this->presetdata = $this->fetch_presets();
+        if(!$presetdata){
+            $presetdata=$this->fetch_presets();
+        }
+        $this->presetdata = $presetdata;
         $this->visiblename = $visiblename;
         $this->information = $information;
         parent::__construct($name, $visiblename, $information, $templateindex);

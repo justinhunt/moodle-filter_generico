@@ -73,10 +73,13 @@ if (is_siteadmin()) {
 
     $ADMIN->add($generico_category_name, $genericotemplatesadmin_settings);
 
+
     //Templates
-    $template_pages = \filter_generico\settingstools::fetch_template_pages($conf);
-    foreach ($template_pages as $template_page) {
-        $ADMIN->add($generico_category_name, $template_page);
+    if($ADMIN->fulltree) {
+        $template_pages = \filter_generico\settingstools::fetch_template_pages($conf);
+        foreach ($template_pages as $template_page) {
+            $ADMIN->add($generico_category_name, $template_page);
+        }
     }
 
 }

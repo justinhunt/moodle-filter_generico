@@ -16,10 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A token refreshing helper for Read Aloud
+ * A token refreshing helper for Generico
  *
  *
- * @package    filter_poodll
+ * @package    filter_generico
  * @copyright  Justin Hunt (justin@poodll.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
