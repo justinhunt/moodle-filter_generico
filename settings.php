@@ -28,7 +28,7 @@ use  filter_generico\constants;
 
 $settings = null;
 
-if (is_siteadmin()) {
+if (has_capability('filter/generico:managetemplates',context_system::instance())) {
     global $PAGE;
 
     //add folder in property tree for settings pages
@@ -69,7 +69,7 @@ if (is_siteadmin()) {
     $ADMIN->add($generico_category_name, $settings_page);
 
     $genericotemplatesadmin_settings = new admin_externalpage('genericotemplatesadmin', get_string('templates', 'filter_generico'),
-            $CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php');
+            $CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php','filter/generico:managetemplates');
 
     $ADMIN->add($generico_category_name, $genericotemplatesadmin_settings);
 

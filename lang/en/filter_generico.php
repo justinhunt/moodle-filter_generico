@@ -30,6 +30,7 @@ $string['filtername'] = 'Generico';
 $string['pluginname'] = 'Generico';
 $string['genericotemplatesadmin'] = 'Generico Templates Admin';
 $string['privacy:metadata'] = 'The Generico filter plugin does not store any personal data.';
+$string['generico:managetemplates'] = 'Manage Generico Template';
 $string['filterdescription'] = 'Convert filter strings into templates merged with data';
 $string['commonpageheading'] = 'General Settings';
 $string['templatepageheading'] = 'Template: {$a}';

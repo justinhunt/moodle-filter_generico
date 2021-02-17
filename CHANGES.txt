@@ -1,5 +1,8 @@
 Change List
 =========
+Version 1.4.12 (Build 2021021700)
+- added filter/generico:managetemplates capability to make it easier to build roles with access to Generico as per https://github.com/justinhunt/moodle-filter_generico/issues/26
+
 Version 1.4.11(Build 2021010400)
 - optimized preset loading
 - Fixed cloudpoodlltoken to be callable from template JS

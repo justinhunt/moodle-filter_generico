@@ -102,7 +102,7 @@ class settingstools {
 
             //template settings Page Settings (we append hidden=true as 4th param to keep out of site menu)
             $settings_page = new \admin_settingpage('filter_generico_templatepage_' . $tindex,
-                    get_string('templatepageheading', 'filter_generico', $tname), 'moodle/site:config', true);
+                    get_string('templatepageheading', 'filter_generico', $tname), 'filter/generico:managetemplates', true);
 
             //template page heading
             $settings_page->add(new \admin_setting_heading('filter_generico/templateheading_' . $tindex,

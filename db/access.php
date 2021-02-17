@@ -15,18 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Plugin capabilities
  *
- * @package    filter
- * @subpackage generico
- * @copyright  2014 Justin Hunt <poodllsupport@gmail.com>
+ * @package    filter_generico
+ * @copyright  2021 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2021021700;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires = 2011070100;        // Requires this Moodle version
-$plugin->component = 'filter_generico'; // Full name of the plugin (used for diagnostics)
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'Version 1.4.12(Build 2021021700)';
+$capabilities = array(
+
+    'filter/generico:managetemplates' => array(
+            'captype' => 'read',
+            'contextlevel' => CONTEXT_SYSTEM,
+            'archetypes' => array(
+                    'manager' => CAP_ALLOW
+            ),
+            'clonepermissionsfrom' => 'moodle/site:config'
+    )
+);
+
