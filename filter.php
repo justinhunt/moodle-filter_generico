@@ -414,7 +414,7 @@ function filter_generico_callback(array $link) {
         $query_vars = array();
         for ($i = 0; $i < sizeof($vars); $i++) {
             if (is_numeric($vars[$i])) {
-                $query_vars[] = intval($vars[$i]);
+                $query_vars[] = 0 + $vars[$i];
             } else {
                 $query_vars[] = $vars[$i];
             }
@@ -426,7 +426,7 @@ function filter_generico_callback(array $link) {
                 $filterprops['DATASET'] = $alldata;
                 //replace the specified names with spec values, if its a one element array
                 if (sizeof($filterprops['DATASET']) == 1) {
-                    $thedata = get_object_vars(array_pop($alldata));
+                    $thedata = get_object_vars(reset($alldata));
                     foreach ($thedata as $name => $value) {
                         $genericotemplate = str_replace('@@DATASET:' . $name . '@@', $value, $genericotemplate);
                         $alternate_content = str_replace('@@DATASET:' . $name . '@@', $value, $alternate_content);

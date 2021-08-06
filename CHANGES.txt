@@ -1,5 +1,9 @@
 Change List
 =========
+Version 1.4.13(Build 2021080600)
+ - fixed issue where numeric variables to dataset where forced as int
+ - fixed issue where in the case of only 1 returned entry in dataset it was not available in JS
+
 Version 1.4.12 (Build 2021021700)
 - added filter/generico:managetemplates capability to make it easier to build roles with access to Generico as per https://github.com/justinhunt/moodle-filter_generico/issues/26
 
