@@ -272,7 +272,29 @@ function filter_generico_callback(array $link) {
 
     //if we have course variables e.g @@COURSE:ID@@
     if (strpos($genericotemplate . ' ' . $dataset_vars, '@@COURSE:') !== false) {
-        $coursevars = get_object_vars($COURSE);
+        $coursevars=false;
+        if(!empty($filterprops['courseid']) && is_numeric($filterprops['courseid'] )){
+            $thecourse = get_course($filterprops['courseid']);
+            if($thecourse){
+                $coursevars = get_object_vars($thecourse);
+                //custom fields
+                if(class_exists('\core_customfield\handler')) {
+                    $handler = \core_customfield\handler::get_handler('core_course', 'course');
+                    $customfields = $handler->get_instance_data($filterprops['courseid']);
+                    foreach ($customfields as $customfield) {
+                        if (empty($customfield->get_value())) {
+                            continue;
+                        }
+                        $shortname = $customfield->get_field()->get('shortname');
+                        $coursevars[$shortname] = $customfield->get_value();
+                    }
+                }
+            }
+        }
+        if(!$coursevars){
+            $coursevars = get_object_vars($COURSE);
+        }
+
         $coursepropstubs = explode('@@COURSE:', $genericotemplate);
         $d_stubs = explode('@@COURSE:', $dataset_vars);
         if ($d_stubs) {

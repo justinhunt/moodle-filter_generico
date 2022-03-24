@@ -1,5 +1,8 @@
 Change List
 =========
+Version 1.4.14(Build 2022032400)
+- Added course custom variables to variables to use in filter
+
 Version 1.4.13(Build 2021080600)
  - fixed issue where numeric variables to dataset where forced as int
  - fixed issue where in the case of only 1 returned entry in dataset it was not available in JS
