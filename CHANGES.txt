@@ -1,5 +1,8 @@
 Change List
 =========
+Version 1.4.15(Build 2022062700)
+- Removed JQuery UI because it breaks drawers in Moodle 4
+
 Version 1.4.14(Build 2022032400)
 - Added course custom variables to variables to use in filter
 
