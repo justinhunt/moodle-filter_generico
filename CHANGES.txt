@@ -1,5 +1,8 @@
 Change List
 =========
+Version 1.4.16(Build 2022082200)
+- Added lightbox, Buncee, Flip, Wordwall, Quizlet templates
+
 Version 1.4.15(Build 2022062700)
 - Removed JQuery UI because it breaks drawers in Moodle 4
 
