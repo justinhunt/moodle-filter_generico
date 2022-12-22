@@ -413,7 +413,7 @@ function filter_generico_callback(array $link) {
             }
 
             //if we have a propname and a propvalue, do the replace
-            if (!empty($userprop) && !empty($propvalue)) {
+            if (!empty($userprop) && !is_null($propvalue)) {
                 //echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
                 $genericotemplate = str_replace('@@USER:' . $userprop_allcase . '@@', $propvalue, $genericotemplate);
                 $dataset_vars = str_replace('@@USER:' . $userprop_allcase . '@@', $propvalue, $dataset_vars);
