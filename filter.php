@@ -202,6 +202,22 @@ function filter_generico_callback(array $link) {
         }
     }
 
+    //If this is a renderer call, lets do it
+    //it will be a function in a renderer with a name that begins with "embed_" .. e.g "embed_something"
+    //the args filterprops will be a pipe delimited string of args, eg {POODLL:type="mod_ogte",function="embed_table",args="arg1|arg2|arg3"}
+    //if the args string contains "cloudpoodlltoken" it will be replaced with the actual cloud poodll token.
+    if(isset($filterprops['renderer']) && isset($filterprops['function']) && strpos($filterprops['function'],'embed_')===0){
+        if(!isset($token)){$token=false;}
+        $somerenderer = $PAGE->get_renderer($filterprops['renderer']);
+        $args=[];
+        if(isset($filterprops['args'])){
+            $args_string =str_replace('cloudpoodlltoken',$token,$filterprops['args']);
+            $args_array = explode('|',$args_string);
+        }
+        $renderedcontent=call_user_func_array([$somerenderer, $filterprops['function']], $args_array);
+        $genericotemplate = str_replace('@@renderedcontent@@',$renderedcontent, $genericotemplate);
+    }
+
     //If template requires a MOODLEPAGEID lets give them one
     //this is legacy really. Now we have @@URLPARAM we could do it that way
     $moodlepageid = optional_param('id', 0, PARAM_INT);
