@@ -1,5 +1,8 @@
 Change List
 =========
+Version  1.4.19(Build 2024012400)
+- Added a template and code to support it, that allows you to call a renderer function from a template
+
 Version 1.4.18(Build 2022122200)
 - will return an empty string for custom user/course profile fields that exist but are empty (previously returned the unparsed variable name)
 
