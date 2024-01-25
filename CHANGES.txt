@@ -1,6 +1,6 @@
 Change List
 =========
-Version  1.4.20(Build 202401xxxx)
+Version  1.4.20(Build 2024012500)
  - Added a try/catch to renderedcontent filter processing
 
 Version  1.4.19(Build 2024012400)
