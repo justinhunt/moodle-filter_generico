@@ -1,5 +1,8 @@
 Change List
 =========
+Version  1.4.20(Build 202401xxxx)
+ - Added a try/catch to renderedcontent filter processing
+
 Version  1.4.19(Build 2024012400)
 - Added a template and code to support it, that allows you to call a renderer function from a template
 

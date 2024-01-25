@@ -207,15 +207,21 @@ function filter_generico_callback(array $link) {
     //the args filterprops will be a pipe delimited string of args, eg {POODLL:type="mod_ogte",function="embed_table",args="arg1|arg2|arg3"}
     //if the args string contains "cloudpoodlltoken" it will be replaced with the actual cloud poodll token.
     if(isset($filterprops['renderer']) && isset($filterprops['function']) && strpos($filterprops['function'],'embed_')===0){
-        if(!isset($token)){$token=false;}
-        $somerenderer = $PAGE->get_renderer($filterprops['renderer']);
-        $args=[];
-        if(isset($filterprops['args'])){
-            $args_string =str_replace('cloudpoodlltoken',$token,$filterprops['args']);
-            $args_array = explode('|',$args_string);
+        try {
+            if (!isset($token)) {
+                $token = false;
+            }
+            $somerenderer = $PAGE->get_renderer($filterprops['renderer']);
+            $args = [];
+            if (isset($filterprops['args'])) {
+                $args_string = str_replace('cloudpoodlltoken', $token, $filterprops['args']);
+                $args_array = explode('|', $args_string);
+            }
+            $renderedcontent = call_user_func_array([$somerenderer, $filterprops['function']], $args_array);
+            $genericotemplate = str_replace('@@renderedcontent@@', $renderedcontent, $genericotemplate);
+        } catch (Exception $e) {
+            $genericotemplate = str_replace('@@renderedcontent@@', 'Failed to render!!', $genericotemplate);
         }
-        $renderedcontent=call_user_func_array([$somerenderer, $filterprops['function']], $args_array);
-        $genericotemplate = str_replace('@@renderedcontent@@',$renderedcontent, $genericotemplate);
     }
 
     //If template requires a MOODLEPAGEID lets give them one
