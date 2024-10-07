@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -36,8 +35,8 @@ class filter_generico extends moodle_text_filter {
      * @param array $options filter options
      * @return string text after processing
      */
-    public function filter($text, array $options = array()) {
-        //if we don't even have our tag, just bail out
+    public function filter($text, array $options = []) {
+        // if we don't even have our tag, just bail out
         if (strpos($text, '{GENERICO:') === false) {
             return $text;
         }
@@ -62,39 +61,39 @@ class filter_generico extends moodle_text_filter {
 }//end of class
 
 /*
-*	Callback function , exists outside of class definition(because its a callback ...)
+*    Callback function , exists outside of class definition(because its a callback ...)
 *
 */
 function filter_generico_callback(array $link) {
     global $CFG, $COURSE, $USER, $PAGE, $DB;
 
     $conf = get_object_vars(get_config('filter_generico'));
-    $context = false;//we get this if when we need it
+    $context = false;// we get this if when we need it
 
-    //get our filter props
+    // get our filter props
     $filterprops = \filter_generico\generico_utils::fetch_filter_properties($link[0]);
 
-    //if we have no props, quit
+    // if we have no props, quit
     if (empty($filterprops)) {
         return "";
     }
 
-    //we use this to see if its a web service calling this,
-    //in which case we return the alternate content
+    // we use this to see if its a web service calling this,
+    // in which case we return the alternate content
     $climode = defined('CLI_SCRIPT') && CLI_SCRIPT;
-    $is_webservice = false;
+    $iswebservice = false;
     if (!$climode) {
-        //we get a warning here if the PAGE url is not set. But its not dangerous. just annoying.,
-        $is_webservice = strpos($PAGE->url, $CFG->wwwroot . '/webservice/') === 0;
+        // we get a warning here if the PAGE url is not set. But its not dangerous. just annoying.,
+        $iswebservice = strpos($PAGE->url, $CFG->wwwroot . '/webservice/') === 0;
     }
 
-    //if we want to ignore the filter (for "how to use generico" or "cut and paste" this style use) we let it go
-    //to use this, make the last parameter of the filter passthrough=1
+    // if we want to ignore the filter (for "how to use generico" or "cut and paste" this style use) we let it go
+    // to use this, make the last parameter of the filter passthrough=1
     if (!empty($filterprops['passthrough'])) {
         return str_replace(",passthrough=1", "", $link[0]);
     }
 
-    //Perform role/permissions check on this filter
+    // Perform role/permissions check on this filter
     if (!empty($filterprops['viewcapability'])) {
         if (!$context) {
             $context = context_course::instance($COURSE->id);
@@ -112,7 +111,7 @@ function filter_generico_callback(array $link) {
         }
     }
 
-    //determine which template we are using
+    // determine which template we are using
     $endtag = false;
     for ($tempindex = 1; $tempindex <= $conf['templatecount']; $tempindex++) {
         if ($filterprops['type'] == $conf['templatekey_' . $tempindex]) {
@@ -122,91 +121,91 @@ function filter_generico_callback(array $link) {
             break;
         }
     }
-    //no key could be found if got all the way to the last template
+    // no key could be found if got all the way to the last template
     if ($tempindex == $conf['templatecount'] + 1) {
         return '';
     }
 
-    //fetch our template
+    // fetch our template
     if ($endtag) {
         $genericotemplate = $conf['templateend_' . $tempindex];
-        //fetch alternate content (for use when no css or js available ala mobile app.)
-        $alternate_content = $conf['templatealternate_end_' . $tempindex];
+        // fetch alternate content (for use when no css or js available ala mobile app.)
+        $alternatecontent = $conf['templatealternate_end_' . $tempindex];
     } else {
         $genericotemplate = $conf['template_' . $tempindex];
-        //fetch alternate content (for use when no css or js available ala mobile app.)
-        $alternate_content = $conf['templatealternate_' . $tempindex];
+        // fetch alternate content (for use when no css or js available ala mobile app.)
+        $alternatecontent = $conf['templatealternate_' . $tempindex];
     }
 
-    //fetch dataset info
-    $dataset_body = $conf['dataset_' . $tempindex];
-    $dataset_vars = $conf['datasetvars_' . $tempindex];
+    // fetch dataset info
+    $datasetbody = $conf['dataset_' . $tempindex];
+    $datasetvars = $conf['datasetvars_' . $tempindex];
 
-    //js custom script
-    //we really just want to be sure anything that appears in custom script
-    //is stored in $filterprops and passed to js. we dont replace it server side because
-    //of caching
-    $js_custom_script = $conf['templatescript_' . $tempindex];
+    // js custom script
+    // we really just want to be sure anything that appears in custom script
+    // is stored in $filterprops and passed to js. we dont replace it server side because
+    // of caching
+    $jscustomscript = $conf['templatescript_' . $tempindex];
 
-    //replace the specified names with spec values
+    // replace the specified names with spec values
     foreach ($filterprops as $name => $value) {
         $genericotemplate = str_replace('@@' . $name . '@@', $value, $genericotemplate);
-        $dataset_vars = str_replace('@@' . $name . '@@', $value, $dataset_vars);
-        $alternate_content = str_replace('@@' . $name . '@@', $value, $alternate_content);
+        $datasetvars = str_replace('@@' . $name . '@@', $value, $datasetvars);
+        $alternatecontent = str_replace('@@' . $name . '@@', $value, $alternatecontent);
     }
 
-    //fetch defaults for this template
+    // fetch defaults for this template
     $defaults = $conf['templatedefaults_' . $tempindex];
     if (!empty($defaults)) {
         $defaults = "{GENERICO:" . $defaults . "}";
         $defaultprops = \filter_generico\generico_utils::fetch_filter_properties($defaults);
-        //replace our defaults, if not spec in the the filter string
+        // replace our defaults, if not spec in the the filter string
         if (!empty($defaultprops)) {
             foreach ($defaultprops as $name => $value) {
                 if (!array_key_exists($name, $filterprops)) {
-                    //if we have options as defaults, lets just take the first one
+                    // if we have options as defaults, lets just take the first one
                     if (strpos($value, '|') !== false) {
                         $value = explode('|', $value)[0];
                     }
                     $genericotemplate = str_replace('@@' . $name . '@@', strip_tags($value), $genericotemplate);
-                    $dataset_vars = str_replace('@@' . $name . '@@', strip_tags($value), $dataset_vars);
-                    $alternate_content = str_replace('@@' . $name . '@@', strip_tags($value), $alternate_content);
+                    $datasetvars = str_replace('@@' . $name . '@@', strip_tags($value), $datasetvars);
+                    $alternatecontent = str_replace('@@' . $name . '@@', strip_tags($value), $alternatecontent);
 
-                    //stash for using in JS later
+                    // stash for using in JS later
                     $filterprops[$name] = $value;
                 }
             }
         }
     }
 
-    //If we have autoid lets deal with that
+    // If we have autoid lets deal with that
     $autoid = 'fg_' . time() . (string) rand(100, 32767);
     $genericotemplate = str_replace('@@AUTOID@@', $autoid, $genericotemplate);
-    $alternate_content = str_replace('@@AUTOID@@', $autoid, $alternate_content);
-    //stash this for passing to js
+    $alternatecontent = str_replace('@@AUTOID@@', $autoid, $alternatecontent);
+    // stash this for passing to js
     $filterprops['AUTOID'] = $autoid;
 
-    //If we need a Cloud Poodll token, lets fetch it
+    // If we need a Cloud Poodll token, lets fetch it
     if (strpos($genericotemplate, '@@CLOUDPOODLLTOKEN@@') &&
             !empty($conf['cpapiuser']) &&
             !empty($conf['cpapisecret'])) {
         $token = \filter_generico\generico_utils::fetch_token($conf['cpapiuser'], $conf['cpapisecret']);
         if ($token) {
             $genericotemplate = str_replace('@@CLOUDPOODLLTOKEN@@', $token, $genericotemplate);
-            //stash this for passing to js
+            // stash this for passing to js
             $filterprops['CLOUDPOODLLTOKEN'] = $token;
         } else {
             $genericotemplate = str_replace('@@CLOUDPOODLLTOKEN@@', 'INVALID TOKEN', $genericotemplate);
-            //stash this for passing to js
+            // stash this for passing to js
             $filterprops['CLOUDPOODLLTOKEN'] = 'INVALID TOKEN';
         }
     }
 
-    //If this is a renderer call, lets do it
-    //it will be a function in a renderer with a name that begins with "embed_" .. e.g "embed_something"
-    //the args filterprops will be a pipe delimited string of args, eg {POODLL:type="mod_ogte",function="embed_table",args="arg1|arg2|arg3"}
-    //if the args string contains "cloudpoodlltoken" it will be replaced with the actual cloud poodll token.
-    if(isset($filterprops['renderer']) && isset($filterprops['function']) && strpos($filterprops['function'],'embed_')===0){
+    // If this is a renderer call, lets do it
+    // it will be a function in a renderer with a name that begins with "embed_" .. e.g "embed_something"
+    // the args filterprops will be a pipe delimited string of args, eg {POODLL:type="mod_ogte",function="embed_table",args="arg1|arg2|arg3"}
+    // if the args string contains "cloudpoodlltoken" it will be replaced with the actual cloud poodll token.
+    if (isset($filterprops['renderer']) && isset($filterprops['function']) && strpos($filterprops['function'], 'embed_') === 0) {
         try {
             if (!isset($token)) {
                 $token = false;
@@ -214,87 +213,87 @@ function filter_generico_callback(array $link) {
             $somerenderer = $PAGE->get_renderer($filterprops['renderer']);
             $args = [];
             if (isset($filterprops['args'])) {
-                $args_string = str_replace('cloudpoodlltoken', $token, $filterprops['args']);
-                $args_array = explode('|', $args_string);
+                $argsstring = str_replace('cloudpoodlltoken', $token, $filterprops['args']);
+                $argsarray = explode('|', $argsstring);
             }
-            $renderedcontent = call_user_func_array([$somerenderer, $filterprops['function']], $args_array);
+            $renderedcontent = call_user_func_array([$somerenderer, $filterprops['function']], $argsarray);
             $genericotemplate = str_replace('@@renderedcontent@@', $renderedcontent, $genericotemplate);
         } catch (Exception $e) {
             $genericotemplate = str_replace('@@renderedcontent@@', 'Failed to render!!', $genericotemplate);
         }
     }
 
-    //If template requires a MOODLEPAGEID lets give them one
-    //this is legacy really. Now we have @@URLPARAM we could do it that way
+    // If template requires a MOODLEPAGEID lets give them one
+    // this is legacy really. Now we have @@URLPARAM we could do it that way
     $moodlepageid = optional_param('id', 0, PARAM_INT);
     $genericotemplate = str_replace('@@MOODLEPAGEID@@', $moodlepageid, $genericotemplate);
-    $dataset_vars = str_replace('@@MOODLEPAGEID@@', $moodlepageid, $dataset_vars);
-    $alternate_content = str_replace('@@MOODLEPAGEID@@', $moodlepageid, $alternate_content);
+    $datasetvars = str_replace('@@MOODLEPAGEID@@', $moodlepageid, $datasetvars);
+    $alternatecontent = str_replace('@@MOODLEPAGEID@@', $moodlepageid, $alternatecontent);
 
-    //stash this for passing to js
+    // stash this for passing to js
     $filterprops['MOODLEPAGEID'] = $moodlepageid;
 
-    //if we have urlparam variables e.g @@URLPARAM:id@@
-    if (strpos($genericotemplate . ' ' . $dataset_vars . ' '
-                    . $alternate_content . ' ' . $js_custom_script, '@@URLPARAM:') !== false) {
+    // if we have urlparam variables e.g @@URLPARAM:id@@
+    if (strpos($genericotemplate . ' ' . $datasetvars . ' '
+                    . $alternatecontent . ' ' . $jscustomscript, '@@URLPARAM:') !== false) {
         $urlparamstubs = explode('@@URLPARAM:', $genericotemplate);
 
-        $dv_stubs = explode('@@URLPARAM:', $dataset_vars);
-        if ($dv_stubs) {
-            $urlparamstubs = array_merge($urlparamstubs, $dv_stubs);
+        $dvstubs = explode('@@URLPARAM:', $datasetvars);
+        if ($dvstubs) {
+            $urlparamstubs = array_merge($urlparamstubs, $dvstubs);
         }
 
-        $js_stubs = explode('@@URLPARAM:', $js_custom_script);
-        if ($js_stubs) {
-            $urlparamstubs = array_merge($urlparamstubs, $js_stubs);
+        $jsstubs = explode('@@URLPARAM:', $jscustomscript);
+        if ($jsstubs) {
+            $urlparamstubs = array_merge($urlparamstubs, $jsstubs);
         }
 
-        $alt_stubs = explode('@@URLPARAM:', $alternate_content);
-        if ($alt_stubs) {
-            $urlparamstubs = array_merge($urlparamstubs, $alt_stubs);
+        $altstubs = explode('@@URLPARAM:', $alternatecontent);
+        if ($altstubs) {
+            $urlparamstubs = array_merge($urlparamstubs, $altstubs);
         }
 
-        //URL Param Props
+        // URL Param Props
         $count = 0;
         foreach ($urlparamstubs as $propstub) {
-            //we don't want the first one, its junk
+            // we don't want the first one, its junk
             $count++;
             if ($count == 1) {
                 continue;
             }
-            //init our prop value
+            // init our prop value
             $propvalue = false;
 
-            //fetch the property name
-            //user can use any case, but we work with lower case version
+            // fetch the property name
+            // user can use any case, but we work with lower case version
             $end = strpos($propstub, '@@');
             $urlprop = substr($propstub, 0, $end);
             if (empty($urlprop)) {
                 continue;
             }
 
-            //check if it exists in the params to the url and if so, set it.
+            // check if it exists in the params to the url and if so, set it.
             $propvalue = optional_param($urlprop, '', PARAM_TEXT);
             $genericotemplate = str_replace('@@URLPARAM:' . $urlprop . '@@', $propvalue, $genericotemplate);
-            $dataset_vars = str_replace('@@URLPARAM:' . $urlprop . '@@', $propvalue, $dataset_vars);
-            $alternate_content = str_replace('@@URLPARAM:' . $urlprop . '@@', $propvalue, $alternate_content);
+            $datasetvars = str_replace('@@URLPARAM:' . $urlprop . '@@', $propvalue, $datasetvars);
+            $alternatecontent = str_replace('@@URLPARAM:' . $urlprop . '@@', $propvalue, $alternatecontent);
 
-            //stash this for passing to js
+            // stash this for passing to js
             $filterprops['URLPARAM:' . $urlprop] = $propvalue;
         }//end of for each
     }//end of if we have@@URLPARAM
 
-    //we should stash our wwwroot too
+    // we should stash our wwwroot too
     $genericotemplate = str_replace('@@WWWROOT@@', $CFG->wwwroot, $genericotemplate);
-    $dataset_vars = str_replace('@@WWWROOT@@', $CFG->wwwroot, $dataset_vars);
-    $alternate_content = str_replace('@@WWWROOT@@', $CFG->wwwroot, $alternate_content);
+    $datasetvars = str_replace('@@WWWROOT@@', $CFG->wwwroot, $datasetvars);
+    $alternatecontent = str_replace('@@WWWROOT@@', $CFG->wwwroot, $alternatecontent);
 
-    //actually this is available from JS anyway M.cfg.wwwroot . But lets make it easy for people
+    // actually this is available from JS anyway M.cfg.wwwroot . But lets make it easy for people
     $filterprops['WWWROOT'] = $CFG->wwwroot;
 
-    //if we have course variables e.g @@COURSE:ID@@
-    if (strpos($genericotemplate . ' ' . $dataset_vars, '@@COURSE:') !== false) {
-        $coursevars=false;
+    // if we have course variables e.g @@COURSE:ID@@
+    if (strpos($genericotemplate . ' ' . $datasetvars, '@@COURSE:') !== false) {
+        $coursevars = false;
         if(!empty($filterprops['courseid']) && is_numeric($filterprops['courseid'] )) {
             $thecourse = get_course($filterprops['courseid']);
             if($thecourse) {
@@ -302,10 +301,10 @@ function filter_generico_callback(array $link) {
             }
         }else{
             $coursevars = get_object_vars($COURSE);
-            $filterprops['courseid']=$COURSE->id;
+            $filterprops['courseid'] = $COURSE->id;
         }
         if($coursevars){
-            //custom fields
+            // custom fields
             if(class_exists('\core_customfield\handler')) {
                 $handler = \core_customfield\handler::get_handler('core_course', 'course');
                 $customfields = $handler->get_instance_data($filterprops['courseid']);
@@ -319,40 +318,39 @@ function filter_generico_callback(array $link) {
             }
         }
 
-
         $coursepropstubs = explode('@@COURSE:', $genericotemplate);
-        $d_stubs = explode('@@COURSE:', $dataset_vars);
-        if ($d_stubs) {
-            $coursepropstubs = array_merge($coursepropstubs, $d_stubs);
+        $dstubs = explode('@@COURSE:', $datasetvars);
+        if ($dstubs) {
+            $coursepropstubs = array_merge($coursepropstubs, $dstubs);
         }
-        $j_stubs = explode('@@COURSE:', $js_custom_script);
-        if ($j_stubs) {
-            $coursepropstubs = array_merge($coursepropstubs, $j_stubs);
+        $jstubs = explode('@@COURSE:', $jscustomscript);
+        if ($jstubs) {
+            $coursepropstubs = array_merge($coursepropstubs, $jstubs);
         }
-        $alt_stubs = explode('@@COURSE:', $alternate_content);
-        if ($alt_stubs) {
-            $coursepropstubs = array_merge($coursepropstubs, $alt_stubs);
+        $altstubs = explode('@@COURSE:', $alternatecontent);
+        if ($altstubs) {
+            $coursepropstubs = array_merge($coursepropstubs, $altstubs);
         }
 
-        //Course Props
+        // Course Props
         $profileprops = false;
         $count = 0;
         foreach ($coursepropstubs as $propstub) {
-            //we don't want the first one, its junk
+            // we don't want the first one, its junk
             $count++;
             if ($count == 1) {
                 continue;
             }
-            //init our prop value
+            // init our prop value
             $propvalue = false;
 
-            //fetch the property name
-            //user can use any case, but we work with lower case version
+            // fetch the property name
+            // user can use any case, but we work with lower case version
             $end = strpos($propstub, '@@');
-            $courseprop_allcase = substr($propstub, 0, $end);
-            $courseprop = strtolower($courseprop_allcase);
+            $coursepropallcase = substr($propstub, 0, $end);
+            $courseprop = strtolower($coursepropallcase);
 
-            //check if it exists in course
+            // check if it exists in course
             if (array_key_exists($courseprop, $coursevars)) {
                 $propvalue = $coursevars[$courseprop];
             } else if ($courseprop == 'contextid') {
@@ -363,51 +361,51 @@ function filter_generico_callback(array $link) {
                     $propvalue = $context->id;
                 }
             }
-            //if we have a propname and a propvalue, do the replace
+            // if we have a propname and a propvalue, do the replace
             if (!empty($courseprop) && !is_null($propvalue)) {
-                $genericotemplate = str_replace('@@COURSE:' . $courseprop_allcase . '@@', $propvalue, $genericotemplate);
-                $dataset_vars = str_replace('@@COURSE:' . $courseprop_allcase . '@@', $propvalue, $dataset_vars);
-                $alternate_content = str_replace('@@COURSE:' . $courseprop_allcase . '@@', $propvalue, $alternate_content);
-                //stash this for passing to js
-                $filterprops['COURSE:' . $courseprop_allcase] = $propvalue;
+                $genericotemplate = str_replace('@@COURSE:' . $coursepropallcase . '@@', $propvalue, $genericotemplate);
+                $datasetvars = str_replace('@@COURSE:' . $coursepropallcase . '@@', $propvalue, $datasetvars);
+                $alternatecontent = str_replace('@@COURSE:' . $coursepropallcase . '@@', $propvalue, $alternatecontent);
+                // stash this for passing to js
+                $filterprops['COURSE:' . $coursepropallcase] = $propvalue;
             }
         }
     }//end of if @@COURSE
 
-    //if we have user variables e.g @@USER:FIRSTNAME@@
-    //It is a bit wordy, because trying to avoid loading a lib
-    //or making a DB call if unneccessary
-    if (strpos($genericotemplate . ' ' . $dataset_vars . ' ' . $js_custom_script, '@@USER:') !== false) {
+    // if we have user variables e.g @@USER:FIRSTNAME@@
+    // It is a bit wordy, because trying to avoid loading a lib
+    // or making a DB call if unneccessary
+    if (strpos($genericotemplate . ' ' . $datasetvars . ' ' . $jscustomscript, '@@USER:') !== false) {
         $uservars = get_object_vars($USER);
         $userpropstubs = explode('@@USER:', $genericotemplate);
-        $d_stubs = explode('@@USER:', $dataset_vars);
-        if ($d_stubs) {
-            $userpropstubs = array_merge($userpropstubs, $d_stubs);
+        $dstubs = explode('@@USER:', $datasetvars);
+        if ($dstubs) {
+            $userpropstubs = array_merge($userpropstubs, $dstubs);
         }
-        $j_stubs = explode('@@USER:', $js_custom_script);
-        if ($j_stubs) {
-            $userpropstubs = array_merge($userpropstubs, $j_stubs);
+        $jstubs = explode('@@USER:', $jscustomscript);
+        if ($jstubs) {
+            $userpropstubs = array_merge($userpropstubs, $jstubs);
         }
 
-        //User Props
+        // User Props
         $profileprops = false;
         $count = 0;
         foreach ($userpropstubs as $propstub) {
-            //we don't want the first one, its junk
+            // we don't want the first one, its junk
             $count++;
             if ($count == 1) {
                 continue;
             }
-            //init our prop value
+            // init our prop value
             $propvalue = false;
 
-            //fetch the property name
-            //user can use any case, but we work with lower case version
+            // fetch the property name
+            // user can use any case, but we work with lower case version
             $end = strpos($propstub, '@@');
-            $userprop_allcase = substr($propstub, 0, $end);
-            $userprop = strtolower($userprop_allcase);
+            $userpropallcase = substr($propstub, 0, $end);
+            $userprop = strtolower($userpropallcase);
 
-            //check if it exists in user, else look for it in profile fields
+            // check if it exists in user, else look for it in profile fields
             if (array_key_exists($userprop, $uservars)) {
                 $propvalue = $uservars[$userprop];
             } else {
@@ -422,170 +420,170 @@ function filter_generico_callback(array $link) {
                         case 'picurl':
                             require_once("$CFG->libdir/outputcomponents.php");
                             global $PAGE;
-                            $user_picture = new user_picture($USER);
-                            $propvalue = $user_picture->get_url($PAGE);
+                            $userpicture = new user_picture($USER);
+                            $propvalue = $userpicture->get_url($PAGE);
                             break;
 
                         case 'pic':
                             global $OUTPUT;
-                            $propvalue = $OUTPUT->user_picture($USER, array('popup' => true));
+                            $propvalue = $OUTPUT->user_picture($USER, ['popup' => true]);
                             break;
                     }
                 }
             }
 
-            //if we have a propname and a propvalue, do the replace
+            // if we have a propname and a propvalue, do the replace
             if (!empty($userprop) && !is_null($propvalue)) {
-                //echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
-                $genericotemplate = str_replace('@@USER:' . $userprop_allcase . '@@', $propvalue, $genericotemplate);
-                $dataset_vars = str_replace('@@USER:' . $userprop_allcase . '@@', $propvalue, $dataset_vars);
-                $alternate_content = str_replace('@@USER:' . $userprop_allcase . '@@', $propvalue, $alternate_content);
-                //stash this for passing to js
-                $filterprops['USER:' . $userprop_allcase] = $propvalue;
+                // echo "userprop:" . $userprop . '<br/>propvalue:' . $propvalue;
+                $genericotemplate = str_replace('@@USER:' . $userpropallcase . '@@', $propvalue, $genericotemplate);
+                $datasetvars = str_replace('@@USER:' . $userpropallcase . '@@', $propvalue, $datasetvars);
+                $alternatecontent = str_replace('@@USER:' . $userpropallcase . '@@', $propvalue, $alternatecontent);
+                // stash this for passing to js
+                $filterprops['USER:' . $userpropallcase] = $propvalue;
             }
         }
     }//end of of we @@USER
 
-    //if we have a dataset body
-    //we split the $data_vars string passed in by user (which should have had all the replacing done)
-    //into the vars array. This is passed to get_records_sql and the returned result is stored
-    //in filter props. If its a single record, its available to the body area.
-    //otherwise it needs to be accessewd from javascript in the DATASET variable
+    // if we have a dataset body
+    // we split the $data_vars string passed in by user (which should have had all the replacing done)
+    // into the vars array. This is passed to get_records_sql and the returned result is stored
+    // in filter props. If its a single record, its available to the body area.
+    // otherwise it needs to be accessewd from javascript in the DATASET variable
     $filterprops['DATASET'] = false;
-    if ($dataset_body) {
-        $vars = array();
-        if ($dataset_vars) {
-            $vars = explode(',', $dataset_vars);
+    if ($datasetbody) {
+        $vars = [];
+        if ($datasetvars) {
+            $vars = explode(',', $datasetvars);
         }
-        //turn numeric vars into numbers (not strings)
-        $query_vars = array();
+        // turn numeric vars into numbers (not strings)
+        $queryvars = [];
         for ($i = 0; $i < sizeof($vars); $i++) {
             if (is_numeric($vars[$i])) {
-                $query_vars[] = 0 + $vars[$i];
+                $queryvars[] = 0 + $vars[$i];
             } else {
-                $query_vars[] = $vars[$i];
+                $queryvars[] = $vars[$i];
             }
         }
 
         try {
-            $alldata = $DB->get_records_sql($dataset_body, $query_vars);
+            $alldata = $DB->get_records_sql($datasetbody, $queryvars);
             if ($alldata) {
                 $filterprops['DATASET'] = $alldata;
-                //replace the specified names with spec values, if its a one element array
+                // replace the specified names with spec values, if its a one element array
                 if (sizeof($filterprops['DATASET']) == 1) {
                     $thedata = get_object_vars(reset($alldata));
                     foreach ($thedata as $name => $value) {
                         $genericotemplate = str_replace('@@DATASET:' . $name . '@@', $value, $genericotemplate);
-                        $alternate_content = str_replace('@@DATASET:' . $name . '@@', $value, $alternate_content);
+                        $alternatecontent = str_replace('@@DATASET:' . $name . '@@', $value, $alternatecontent);
                     }
                 }
             }
         } catch (Exception $e) {
-            //do nothing;
+            // do nothing;
         }
     }//end of if dataset
 
-    //If this is a webservice request, we don't need subsequent CSS and JS stuff
-    if ($is_webservice && !empty($alternate_content)) {
-        return $alternate_content;
+    // If this is a webservice request, we don't need subsequent CSS and JS stuff
+    if ($iswebservice && !empty($alternatecontent)) {
+        return $alternatecontent;
     }
 
-    //If this is the end tag we don't need to subsequent CSS and JS stuff. We already did it.
+    // If this is the end tag we don't need to subsequent CSS and JS stuff. We already did it.
     if ($endtag) {
         return $genericotemplate;
     }
 
-    //get the conf info we need for this template
+    // get the conf info we need for this template
     $thescript = $conf['templatescript_' . $tempindex];
     $defaults = $conf['templatedefaults_' . $tempindex];
-    $require_js = $conf['templaterequire_js_' . $tempindex];
-    $require_css = $conf['templaterequire_css_' . $tempindex];
-    //are we AMD and Moodle 2.9 or more?
-    $require_amd = $conf['template_amd_' . $tempindex] && $CFG->version >= 2015051100;
+    $requirejs = $conf['templaterequire_js_' . $tempindex];
+    $requirecss = $conf['templaterequire_css_' . $tempindex];
+    // are we AMD and Moodle 2.9 or more?
+    $requireamd = $conf['template_amd_' . $tempindex] && $CFG->version >= 2015051100;
 
-    //figure out if this is https or http. We don't want to scare the browser
+    // figure out if this is https or http. We don't want to scare the browser
     if (!$climode && strpos($PAGE->url->out(), 'https:') === 0) {
         $scheme = 'https:';
     } else {
         $scheme = 'http:';
     }
 
-    //massage the js URL depending on schemes and rel. links etc. Then insert it
-    //with AMD we set these as dependencies, so we don't need this song and dance
-    if (!$require_amd) {
+    // massage the js URL depending on schemes and rel. links etc. Then insert it
+    // with AMD we set these as dependencies, so we don't need this song and dance
+    if (!$requireamd) {
         $filterprops['JSLINK'] = false;
-        if ($require_js) {
-            if (strpos($require_js, '//') === 0) {
-                $require_js = $scheme . $require_js;
-            } else if (strpos($require_js, '/') === 0) {
-                $require_js = $CFG->wwwroot . $require_js;
+        if ($requirejs) {
+            if (strpos($requirejs, '//') === 0) {
+                $requirejs = $scheme . $requirejs;
+            } else if (strpos($requirejs, '/') === 0) {
+                $requirejs = $CFG->wwwroot . $requirejs;
             }
 
-            //for load method: NO AMD
-            $PAGE->requires->js(new moodle_url($require_js));
+            // for load method: NO AMD
+            $PAGE->requires->js(new moodle_url($requirejs));
 
-            //for load method: AMD
-            //$require_js = substr($require_js, 0, -3);
-            $filterprops['JSLINK'] = $require_js;
+            // for load method: AMD
+            // $require_js = substr($require_js, 0, -3);
+            $filterprops['JSLINK'] = $requirejs;
         }
 
-        //if we have an uploaded JS file, then lets include that
+        // if we have an uploaded JS file, then lets include that
         $filterprops['JSUPLOAD'] = false;
         $uploadjsfile = $conf['uploadjs' . $tempindex];
         if ($uploadjsfile) {
             $uploadjsurl = \filter_generico\generico_utils::setting_file_url($uploadjsfile, 'uploadjs' . $tempindex);
 
-            //for load method: NO AMD
+            // for load method: NO AMD
             $PAGE->requires->js($uploadjsurl);
 
-            //for load method: AMD
-            //$uploadjsurl = substr($uploadjsurl, 0, -3);
+            // for load method: AMD
+            // $uploadjsurl = substr($uploadjsurl, 0, -3);
             $filterprops['JSUPLOAD'] = $uploadjsurl;
         }
     }
 
-    //massage the CSS URL depending on schemes and rel. links etc.
-    if (!empty($require_css)) {
-        if (strpos($require_css, '//') === 0) {
-            $require_css = $scheme . $require_css;
-        } else if (strpos($require_css, '/') === 0) {
-            $require_css = $CFG->wwwroot . $require_css;
+    // massage the CSS URL depending on schemes and rel. links etc.
+    if (!empty($requirecss)) {
+        if (strpos($requirecss, '//') === 0) {
+            $requirecss = $scheme . $requirecss;
+        } else if (strpos($requirecss, '/') === 0) {
+            $requirecss = $CFG->wwwroot . $requirecss;
         }
     }
 
-    //if we have an uploaded CSS file, then lets include that
+    // if we have an uploaded CSS file, then lets include that
     $uploadcssfile = $conf['uploadcss' . $tempindex];
     if ($uploadcssfile) {
         $uploadcssurl = \filter_generico\generico_utils::setting_file_url($uploadcssfile, 'uploadcss' . $tempindex);
     }
 
-    //set up our revision flag for forcing cache refreshes etc
+    // set up our revision flag for forcing cache refreshes etc
     if (!empty($conf['revision'])) {
         $revision = $conf['revision'];
     } else {
         $revision = '0';
     }
 
-    //if not too late: load css in header
+    // if not too late: load css in header
     // if too late: inject it there via JS
     $filterprops['CSSLINK'] = false;
     $filterprops['CSSUPLOAD'] = false;
     $filterprops['CSSCUSTOM'] = false;
 
-    //require any scripts from the template
+    // require any scripts from the template
     $customcssurl = false;
     if ($conf['templatestyle_' . $tempindex]) {
         $url = '/filter/generico/genericocss.php';
-        $params = array(
+        $params = [
                 't' => $tempindex,
-                'rev' => $revision
-        );
+                'rev' => $revision,
+        ];
         $customcssurl = new moodle_url($url, $params);
     }
 
     if (!$PAGE->headerprinted && !$PAGE->requires->is_head_done()) {
-        if ($require_css) {
-            $PAGE->requires->css(new moodle_url($require_css));
+        if ($requirecss) {
+            $PAGE->requires->css(new moodle_url($requirecss));
         }
         if ($uploadcssfile) {
             $PAGE->requires->css($uploadcssurl);
@@ -594,8 +592,8 @@ function filter_generico_callback(array $link) {
             $PAGE->requires->css($customcssurl);
         }
     } else {
-        if ($require_css) {
-            $filterprops['CSSLINK'] = $require_css;
+        if ($requirecss) {
+            $filterprops['CSSLINK'] = $requirecss;
         }
         if ($uploadcssfile) {
             $filterprops['CSSUPLOAD'] = $uploadcssurl->out();
@@ -606,49 +604,49 @@ function filter_generico_callback(array $link) {
 
     }
 
-    //Tell javascript which template this is
+    // Tell javascript which template this is
     $filterprops['TEMPLATEID'] = $tempindex;
 
-    $jsmodule = array(
+    $jsmodule = [
             'name' => 'filter_generico',
             'fullpath' => '/filter/generico/module.js',
-            'requires' => array('json')
-    );
+            'requires' => ['json'],
+    ];
 
-    //AMD or not, and then load our js for this template on the page
-    if ($require_amd) {
+    // AMD or not, and then load our js for this template on the page
+    if ($requireamd) {
 
         $generator = new \filter_generico\template_script_generator($tempindex);
-        $template_amd_script = $generator->get_template_script();
+        $templateamdscript = $generator->get_template_script();
 
-        //props can't be passed at much length , Moodle complains about too many
-        //so we do this ... lets hope it don't break things
+        // props can't be passed at much length , Moodle complains about too many
+        // so we do this ... lets hope it don't break things
         $jsonstring = json_encode($filterprops);
-        $props_html = \html_writer::tag('input', '',
-                array('id' => 'filter_generico_amdopts_' . $filterprops['AUTOID'], 'type' => 'hidden', 'value' => $jsonstring));
-        $genericotemplate = $props_html . $genericotemplate;
+        $propshtml = \html_writer::tag('input', '',
+                ['id' => 'filter_generico_amdopts_' . $filterprops['AUTOID'], 'type' => 'hidden', 'value' => $jsonstring]);
+        $genericotemplate = $propshtml . $genericotemplate;
 
-        //load define for this template. Later it will be called from loadgenerico
-        $PAGE->requires->js_amd_inline($template_amd_script);
-        //for AMD generico script
+        // load define for this template. Later it will be called from loadgenerico
+        $PAGE->requires->js_amd_inline($templateamdscript);
+        // for AMD generico script
         $PAGE->requires->js_call_amd('filter_generico/generico_amd', 'loadgenerico',
-                array(array('AUTOID' => $filterprops['AUTOID'])));
+                [['AUTOID' => $filterprops['AUTOID']]]);
 
     } else {
 
-        //require any scripts from the template
+        // require any scripts from the template
         $url = '/filter/generico/genericojs.php';
-        $params = array(
+        $params = [
                 't' => $tempindex,
-                'rev' => $revision
-        );
-        $moodle_url = new moodle_url($url, $params);
-        $PAGE->requires->js($moodle_url);
+                'rev' => $revision,
+        ];
+        $moodleurl = new moodle_url($url, $params);
+        $PAGE->requires->js($moodleurl);
 
-        //for no AMD
-        $PAGE->requires->js_init_call('M.filter_generico.loadgenerico', array($filterprops), false, $jsmodule);
+        // for no AMD
+        $PAGE->requires->js_init_call('M.filter_generico.loadgenerico', [$filterprops], false, $jsmodule);
     }
 
-    //finally return our template text
+    // finally return our template text
     return $genericotemplate;
 }
