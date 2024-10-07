@@ -27,7 +27,14 @@ namespace filter_generico;
 
 defined('MOODLE_INTERNAL') || die();
 
-class text_filter extends \core_filters\text_filter {
+if (class_exists('\core_filters\text_filter')) {
+    class_alias('\core_filters\text_filter', 'generico_base_text_filter');
+} else {
+    class_alias('\moodle_text_filter', 'generico_base_text_filter');
+}
+
+
+class text_filter extends \generico_base_text_filter {
 
     /**
      * Apply the filter to the text
