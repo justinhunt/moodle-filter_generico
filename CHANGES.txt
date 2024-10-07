@@ -2,6 +2,7 @@ Change List
 =========
 Version 1.4.21(Build 2024100700) 
  - Moodle 4.5 support
+ - Updated old jquery lib
 
 Version  1.4.20(Build 2024012500)
  - Added a try/catch to renderedcontent filter processing
