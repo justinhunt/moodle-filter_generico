@@ -57,7 +57,7 @@ class text_filter extends \generico_base_text_filter {
         }
         $newtext = $text;
 
-        $newtext = preg_replace_callback($search, [self::class, 'filter_generico_callback'], $newtext);
+        $newtext = preg_replace_callback($search, [$this, 'filter_generico_callback'], $newtext);
 
         if (is_null($newtext) or $newtext === $text) {
             // error or not filtered
