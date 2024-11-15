@@ -58,6 +58,9 @@ class templateadmintools {
             $titlelink = $editlink = \html_writer::link($item->url, $item->title);
             $titlecell = new \html_table_cell($titlelink);
 
+            // templatekey cell
+            $templatekeycell = new \html_table_cell($item->templatekey);
+            
             //version cell
             $updateversion = presets_control::template_has_update($item->index);
             if ($updateversion) {
@@ -75,7 +78,7 @@ class templateadmintools {
             $instructionscell = new \html_table_cell($item->instructions);
 
             $row->cells = array(
-                    $titlecell, $versioncell, $instructionscell
+                    $titlecell, $templatekeycell, $versioncell, $instructionscell
             );
             $table->data[] = $row;
         }
