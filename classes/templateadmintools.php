@@ -46,7 +46,7 @@ class templateadmintools {
                 get_string('version'),
                 get_string('description')
         );
-        $table->headspan = array(1, 1, 1);
+        $table->headspan = array(1, 1, 1, 1);
         $table->colclasses = array(
                 'templatenamecol', 'templatekeycol', 'templateversioncol', 'templateinstructionscol'
         );
