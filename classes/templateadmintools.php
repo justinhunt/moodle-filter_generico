@@ -42,12 +42,13 @@ class templateadmintools {
         $table->id = 'filter_generico_template_list';
         $table->head = array(
                 get_string('name'),
+                get_string('templatekey'),
                 get_string('version'),
                 get_string('description')
         );
         $table->headspan = array(1, 1, 1);
         $table->colclasses = array(
-                'templatenamecol', 'templateversioncol', 'templateinstructionscol'
+                'templatenamecol', 'templatekeycol', 'templateversioncol', 'templateinstructionscol'
         );
 
         //loop through templates and add to table
