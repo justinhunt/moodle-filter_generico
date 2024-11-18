@@ -39,6 +39,7 @@ $string['template'] = 'The body of template {$a}';
 $string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@';
 $string['templatekey'] = 'The key that identifies template {$a}';
 $string['templatekey_desc'] = 'The key should be one word and only contain numbers and letters, underscores, hyphens and dots .';
+$string['key'] = 'Template key';
 $string['templatename'] = 'Template Name';
 $string['templatename_desc'] = 'The name of this template.';
 $string['templateinstructions'] = 'Instructions (template {$a})';
