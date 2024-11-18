@@ -42,7 +42,7 @@ class templateadmintools {
         $table->id = 'filter_generico_template_list';
         $table->head = array(
                 get_string('name'),
-                get_string('templatekey'),
+                get_string('key', 'filter_generico'),
                 get_string('version'),
                 get_string('description')
         );
@@ -134,6 +134,12 @@ class templateadmintools {
             $template_details = new \stdClass();
             $template_details->index = $tindex;
             $template_details->title = $template_title;
+
+            if ($conf && property_exists($conf, 'templatekey_' . $tindex)) {
+                $template_details->templatekey = $conf->{'templatekey_' . $tindex};;
+            } else {
+                $template_details->templatekey = '';
+            }
 
             $template_details->version = "";
             if (property_exists($conf, 'templateversion_' . $tindex)) {
