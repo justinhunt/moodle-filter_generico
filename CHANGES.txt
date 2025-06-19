@@ -1,5 +1,8 @@
 Change List
 =========
+Version 1.4.22 (Build 2025061900)
+- Better cleaning up of filter string inputs to prevent variable injection and meddling
+
 Version 1.4.21(Build 2024100700) 
  - Moodle 4.5 support
  - Updated old jquery lib
