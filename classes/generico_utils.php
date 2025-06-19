@@ -85,11 +85,39 @@ class generico_utils {
             $propscount = count($matches[1]);
             for ($cnt = 0; $cnt < $propscount; $cnt++) {
                 // echo $matches[1][$cnt] . "=" . $matches[2][$cnt] . " ";
+
+                //prepare the new value
                 $newvalue = $matches[2][$cnt];
                 //this could be done better, I am sure. WE are removing the quotes from start and end
                 //this wil however remove multiple quotes id they exist at start and end. NG really
                 $newvalue = trim($newvalue, '"');
-                $itemprops[trim($matches[1][$cnt])] = $newvalue;
+
+                //remove any @@ characters from the new value - that would be some sort of variable injection
+                $newvalue = str_replace('@@', '', $newvalue);
+
+                // Prepare the new key.
+                $newkey = trim($matches[1][$cnt]);
+
+                // Remove any attempts to overwrite simple system values via the key.
+                $systemvars = array('AUTOID', 'WWWROOT', 'MOODLEPAGEID');
+                if(in_array($newkey, $systemvars)) {
+                    continue;
+                }
+
+                // Remove any attempts to overwrite system values that are sets of data.
+                $systemvars_partial = array('URLPARAM:', 'COURSE:','USER:','DATASET:');
+                foreach ($systemvars_partial as $systemvar) {
+                    if (stripos($newkey, $systemvar) === 0) {
+                        $newkey = '';
+                        break;
+                    }
+                }
+                if(empty($newkey)) {
+                    continue;
+                }
+
+                //store the key/value pair
+                $itemprops[$newkey] = $newvalue;
             }
         }
         return $itemprops;
