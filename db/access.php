@@ -24,15 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
 
-    'filter/generico:managetemplates' => array(
+    'filter/generico:managetemplates' => [
             'captype' => 'read',
             'contextlevel' => CONTEXT_SYSTEM,
-            'archetypes' => array(
-                    'manager' => CAP_ALLOW
-            ),
-            'clonepermissionsfrom' => 'moodle/site:config'
-    )
-);
+            'archetypes' => [
+                    'manager' => CAP_ALLOW,
+            ],
+            'clonepermissionsfrom' => 'moodle/site:config',
+    ],
+];
 

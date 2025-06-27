@@ -17,15 +17,15 @@
 /**
  * Manual authentication plugin upgrade code
  *
- * @package    filter
+ * @package    filter_generico
  * @subpackage generico
  * @copyright  2015 Justin Hunt (http://poodll.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
+ * Update steps
+ *
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
@@ -36,10 +36,9 @@ function xmldb_filter_generico_upgrade($oldversion) {
 
     if ($oldversion < 2015080301) {
 
-
         $conf = get_object_vars(get_config('filter_generico'));
 
-        //determine which template we are using
+        // Determine which template we are using.
         for ($tempindex = 1; $tempindex <= 20; $tempindex++) {
             switch ($conf['templatekey_' . $tempindex]) {
                 case 'lightboxyoutube':
@@ -58,16 +57,16 @@ function xmldb_filter_generico_upgrade($oldversion) {
 
     if ($oldversion < 2017032405) {
 
-        //Add the template name to the template
+        // Add the template name to the template.
         $conf = get_config('filter_generico');
-        //Get template count
+        // Get template count.
         if (property_exists($conf, 'templatecount')) {
             $templatecount = $conf->templatecount;
         } else {
             $templatecount = \filter_generico\generico_utils::FILTER_GENERICO_TEMPLATE_COUNT;
         }
 
-        //determine which template we are using
+        // Determine which template we are using.
         for ($tempindex = 1; $tempindex <= $templatecount; $tempindex++) {
             if (property_exists($conf, 'templatekey_' . $tempindex)) {
                 set_config('templatename_' . $tempindex, $conf->{'templatekey_' . $tempindex}, 'filter_generico');
