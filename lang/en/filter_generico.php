@@ -55,7 +55,7 @@ $string['presets_desc'] = 'Generico comes with some default presets you can use 
 $string['privacy:metadata'] = 'The Generico filter plugin does not store any personal data.';
 $string['refreshtoken'] = "Refresh Cloud Poodll license information.";
 $string['template'] = 'The body of template {$a}';
-$string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@';
+$string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@. Be aware of potential <a href="https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html"> IDOR vulnerabilities </a> when choosing what variables to use - users can modify most variables entered here to be any value.';
 $string['templatealternate'] = 'Alternate content';
 $string['templatealternate_desc'] = 'Content that can be used when the custom and uploaded CSS and javascript content is not available. Currently this is used when the template is processed by a webservice, probably for content on the mobile app';
 $string['templatealternate_end'] = 'Alternate content end (template {$a})';
@@ -86,7 +86,7 @@ $string['templaterequirejsshim'] = ' Require Shim export';
 $string['templaterequirejsshim_desc'] = ' Leave blank unless you know what shimming is';
 $string['templates'] = 'Templates';
 $string['templatescript'] = 'Custom JS (template {$a})';
-$string['templatescript_desc'] = 'If your template needs to run custom javascript, enter that here. It will be run once all the elements have loaded on the page.';
+$string['templatescript_desc'] = 'If your template needs to run custom javascript, enter that here. It will be run once all the elements have loaded on the page. Be aware that variables used here may present a <a href="https://owasp.org/www-community/attacks/xss/"> XSS risk </a> as users are likely able to edit them to be any value.';
 $string['templatestyle'] = 'Custom CSS (template {$a})';
 $string['templatestyle_desc'] = 'Enter any custom CSS that your template uses here. Template variables will not work here. Just plain old css.';
 $string['templateupdated'] = '{$a} Poodll Templates Updated.';

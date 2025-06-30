@@ -73,6 +73,37 @@ final class filter_test extends advanced_testcase {
                     self::WWWROOT,
                 ],
             ],
+            'Template injection via @@AUTOID@@ (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My id is @@AUTOID@@',
+                'input' => '{GENERICO:type="welcomeuser",AUTOID="@@WWWROOT@@"}',
+                'outputcontains' => [],
+                'outputnotcontains' => [
+                    self::WWWROOT,
+                ],
+            ],
+            '@@AUTOID@@ override (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My id is @@AUTOID@@',
+                'input' => '{GENERICO:type="welcomeuser",AUTOID="mycustomautoid"}',
+                'outputcontains' => [
+                    // Difficult to simulate AUTOID id so not checking for it here.
+                ],
+                'outputnotcontains' => [
+                    'mycustomautoid',
+                ],
+            ],
+            '@@MOODLEPAGEID@@ override (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My id is @@MOODLEPAGEID@@',
+                'input' => '{GENERICO:type="welcomeuser",MOODLEPAGEID="mypageid"}',
+                'outputcontains' => [
+                    // Difficult to simulate page id so not checking for it here.
+                ],
+                'outputnotcontains' => [
+                    'mypageid',
+                ],
+            ],
         ];
     }
 
