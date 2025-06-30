@@ -10,5 +10,4 @@ jobs:
     # secrets:
       # moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}
     with:
-      disable_phpunit: true # No tests are currently defined.
       disable_ci_validate: true # Filter plugins are broken here because of v3/v4 ci mismatch.
