@@ -44,7 +44,6 @@ define(['jquery', 'core/log'], function ($, log) {
             );
             var jsonbundle = JSON.stringify(bundle);
             return jsonbundle;
-            window.open("data:text/json;charset=utf-8," + encodeURIComponent(bundlejson));
         },
 
         exportbundle: function (templateindex) {
@@ -124,10 +123,10 @@ define(['jquery', 'core/log'], function ($, log) {
             });
 
             //drag drop square events
-            var ddsquareid = '#id_s_filter_generico_dragdropsquare_' + opts['templateindex']
+            var ddsquareid = '#id_s_filter_generico_dragdropsquare_' + opts['templateindex'];
 
             //export the current bundle
-            $(ddsquareid).on("click", function (event) {
+            $(ddsquareid).on("click", function () {
                 amdpresets.exportbundle(opts['templateindex']);
             });
 
@@ -151,7 +150,7 @@ define(['jquery', 'core/log'], function ($, log) {
                 event.preventDefault();
                 //Now we need to get the files that were dropped
                 //The normal method would be to use event.dataTransfer.files
-                //but as jquery creates its own event object you ave to access 
+                //but as jquery creates its own event object you ave to access
                 //the browser even through originalEvent.  which looks like this
                 var files = event.originalEvent.dataTransfer.files;
 
@@ -166,7 +165,7 @@ define(['jquery', 'core/log'], function ($, log) {
                             if (templatedata.key) {
                                 amdpresets.dopopulate(opts['templateindex'], templatedata);
                             }
-                        }
+                        };
                         r.readAsText(f);
                     } else {
                         alert("Failed to load file");
@@ -176,6 +175,6 @@ define(['jquery', 'core/log'], function ($, log) {
             });
         }//end of function
 
-    }
+    };
 });
 /* jshint ignore:end */

@@ -15,7 +15,7 @@ define(['jquery', 'core/log'], function ($, log) {
 
         jslinks: Array(),
 
-        appendjspath: function (jslink, theprefix) {
+        appendjspath: function (jslink) {
             require.config({
                 paths: {
                     theprefix: jslink
@@ -76,8 +76,8 @@ define(['jquery', 'core/log'], function ($, log) {
             }
 
             //if we did get a template id then proceed
-            //we might not get one if the html was generated, but never sent to 
-            //the page. Sometimes this happens in the assignment and probably 
+            //we might not get one if the html was generated, but never sent to
+            //the page. Sometimes this happens in the assignment and probably
             //elsewhere
             if (typeof opts['TEMPLATEID'] != 'undefined') {
                 //here require, then load the template scripts and js
@@ -87,6 +87,6 @@ define(['jquery', 'core/log'], function ($, log) {
             }
         }//end of function
 
-    }
+    };
 });
 /* jshint ignore:end */
