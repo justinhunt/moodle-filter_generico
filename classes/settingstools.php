@@ -220,6 +220,10 @@ class settingstools {
             $description = get_string('uploadcss_desc', 'filter_generico');
             $settingspage->add(new \admin_setting_configstoredfile($name, $title, $description, 'uploadcss' . $tindex));
 
+            // Dataset heading.
+            $settingspage->add(new \admin_setting_heading('filter_generico/datasetheading_' . $tindex,
+                get_string('datasetheading', 'filter_generico'), ''));
+
             // Dataset.
             $settingspage->add(new \admin_setting_configtextarea('filter_generico/dataset_' . $tindex,
                     get_string('dataset', 'filter_generico', $tindex),
@@ -231,6 +235,10 @@ class settingstools {
                     get_string('datasetvars', 'filter_generico', $tindex),
                     get_string('datasetvars_desc', 'filter_generico'),
                     '', PARAM_RAW, 50));
+
+            // Alternate content heading.
+            $settingspage->add(new \admin_setting_heading('filter_generico/alternateheading_' . $tindex,
+                get_string('alternateheading', 'filter_generico'), ''));
 
             // Alternative content.
             $settingspage->add(new \admin_setting_configtextarea('filter_generico/templatealternate_' . $tindex,

@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['alternateheading'] = 'Alternate';
 $string['appauthorised'] = "Cloud Poodll is authorised for this site.";
 $string['appnotauthorised'] = "Cloud Poodll is not authorised for this site.";
 $string['bundle'] = 'Bundle';
@@ -37,6 +38,7 @@ $string['cpapiuser_details'] = 'This is the same as your username at Poodll.com.
 $string['credentialsinvalid'] = "The API username and secret entered could not be used to get access. Please check them.";
 $string['dataset'] = 'Dataset';
 $string['dataset_desc'] = 'Generico allows you to pull a dataset from the database for use in your template. This is an advanced feature. Enter the sql portion of a $DB->get_records_sql call here.';
+$string['datasetheading'] = 'Dataset';
 $string['datasetvars'] = 'Dataset Variables';
 $string['datasetvars_desc'] = 'Put a comma separated list of variables that make up the vars for the SQL. You can and probably will want to use variables here.';
 $string['displaysubs'] = '{$a->subscriptionname} : expires {$a->expiredate}';
