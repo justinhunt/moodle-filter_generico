@@ -130,6 +130,11 @@ class text_filter extends \generico_base_text_filter {
             return '';
         }
 
+        // Check context against the template index.
+        if (!\filter_generico\generico_utils::is_context_allowed($this->context, $tempindex)) {
+            return '';
+        }
+
         // Fetch our template.
         if ($endtag) {
             $genericotemplate = $conf['templateend_' . $tempindex];

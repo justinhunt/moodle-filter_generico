@@ -436,4 +436,67 @@ class generico_utils {
         $result = $curl->get($url, $postdata);
         return $result;
     }
+
+    /**
+     * Determins if a specific context is allowed to use a given template
+     *
+     * @param context|null $context
+     * @param int $templateidx Template index
+     * @return bool true if allowed, else false.
+     */
+    public static function is_context_allowed(?\context $context, int $templateidx): bool {
+        // Allowed context levels, e.g. "system", "course", "mod_xxxx".
+        $allowedcontexts = self::explode_csv_list((string) get_config('filter_generico', 'allowedcontexts_' . $templateidx));
+        if (!empty($allowedcontexts) && !in_array(self::get_context_name($context), $allowedcontexts)) {
+            return false;
+        }
+
+        // Allowed specific context ids.
+        $allowedcontextids = self::explode_csv_list((string) get_config('filter_generico', 'allowedcontextids_' . $templateidx));
+        if (!empty($allowedcontextids) && !in_array($context->id, $allowedcontextids)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Explodes a CSV list of values and cleans any extra whitespace.
+     *
+     * @param string $csvlist string with csv values in it
+     * @return array exploded values
+     */
+    private static function explode_csv_list(string $csvlist): array {
+        return array_filter(array_map(fn($v) => trim($v), explode(',', $csvlist)));
+    }
+
+    /**
+     * Get the context name
+     *
+     * @param context|null $context
+     * @return string
+     */
+    private static function get_context_name(?\context $context): string {
+        if (empty($context)) {
+            return 'empty';
+        }
+
+        switch ($context->contextlevel) {
+            case CONTEXT_MODULE:
+                return 'mod_' . get_coursemodule_from_id(null, $context->instanceid, 0, false, MUST_EXIST)->modname;
+            // We would use get_short_name here, but that is only available in 4.2+, so we must hardcode it :(.
+            case CONTEXT_SYSTEM:
+                return 'system';
+            case CONTEXT_USER:
+                return 'user';
+            case CONTEXT_COURSE:
+                return 'course';
+            case CONTEXT_COURSECAT:
+                return 'coursecat';
+            case CONTEXT_BLOCK:
+                return 'block';
+            default:
+                throw new \coding_exception("Unhandled contextlevel " . $context->contextlevel);
+        }
+    }
 }

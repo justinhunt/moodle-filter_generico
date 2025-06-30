@@ -252,6 +252,22 @@ class settingstools {
                     get_string('templatealternate_end_desc', 'filter_generico'),
                     '', PARAM_RAW));
 
+            // Security heading.
+            $settingspage->add(new \admin_setting_heading('filter_generico/securityheading_' . $tindex,
+                get_string('securityheading', 'filter_generico'), ''));
+
+            $settingspage->add(new \admin_setting_configtext('filter_generico/allowedcontexts_' . $tindex,
+                get_string('allowedcontexts', 'filter_generico'),
+                get_string('allowedcontexts_desc', 'filter_generico'),
+                ''
+            ));
+
+            $settingspage->add(new \admin_setting_configtext('filter_generico/allowedcontextids_' . $tindex,
+                get_string('allowedcontextids', 'filter_generico'),
+                get_string('allowedcontextids_desc', 'filter_generico'),
+                ''
+            ));
+
             $pages[] = $settingspage;
         }
 

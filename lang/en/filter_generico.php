@@ -23,6 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allowedcontextids'] = 'Allowed context ids';
+$string['allowedcontextids_desc'] = 'A comma separated list of context ids where this template can be used. If empty, this is not applied.';
+$string['allowedcontexts'] = 'Allowed contexts';
+$string['allowedcontexts_desc'] = 'A comma separated list of context types where this template can be used. E.g. "system", "course", "user". Activities can be referenced using "mod_pluginname" format. If empty, this is not applied.';
 $string['alternateheading'] = 'Alternate';
 $string['appauthorised'] = "Cloud Poodll is authorised for this site.";
 $string['appnotauthorised'] = "Cloud Poodll is not authorised for this site.";
@@ -56,6 +60,7 @@ $string['presets'] = 'Autofill template with a Preset';
 $string['presets_desc'] = 'Generico comes with some default presets you can use out of the box, or to help you get started with your own template. Choose one of those here, or just create your own template from scratch. You can export a template as a bundle by clicking on the green box above. You can import a bundle by dragging it onto the green box.';
 $string['privacy:metadata'] = 'The Generico filter plugin does not store any personal data.';
 $string['refreshtoken'] = "Refresh Cloud Poodll license information.";
+$string['securityheading'] = 'Security';
 $string['template'] = 'The body of template {$a}';
 $string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@. Be aware of potential <a href="https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html"> IDOR vulnerabilities </a> when choosing what variables to use - users can modify most variables entered here to be any value.';
 $string['templatealternate'] = 'Alternate content';
