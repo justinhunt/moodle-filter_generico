@@ -21,9 +21,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/adminlib.php');
 
 /**
+ * Template admin tools
  *
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    filter_generico
+ * @subpackage generico
+ * @copyright  2014 Justin Hunt <poodllsupport@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class templateadmintools {
 
@@ -35,12 +38,12 @@ class templateadmintools {
     public static function fetch_template_table() {
         global $OUTPUT, $CFG;
         $conf = get_config('filter_generico');
-        $template_details = self::fetch_template_details($conf);
-        $have_updates = false;
+        $templatedetails = self::fetch_template_details($conf);
+        $haveupdates = false;
 
         $table = new \html_table();
         $table->id = 'filter_generico_template_list';
-        $table->head = array(
+        $table->head = [
                 get_string('name'),
                 get_string('key', 'filter_generico'),
                 get_string('version'),
@@ -66,11 +69,11 @@ class templateadmintools {
             if ($updateversion) {
                 $button = new \single_button(
                         new \moodle_url($CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php',
-                                array('updatetemplate' => $item->index)),
+                                ['updatetemplate' => $item->index]),
                         get_string('updatetoversion', 'filter_generico', $updateversion));
-                $update_html = $OUTPUT->render($button);
-                $versioncell = new \html_table_cell($item->version . $update_html);
-                $have_updates = true;
+                $updatehtml = $OUTPUT->render($button);
+                $versioncell = new \html_table_cell($item->version . $updatehtml);
+                $haveupdates = true;
             } else {
                 $versioncell = new \html_table_cell($item->version);
             }
@@ -83,26 +86,31 @@ class templateadmintools {
             $table->data[] = $row;
         }
 
-        $template_table = \html_writer::table($table);
+        $templatetable = \html_writer::table($table);
 
-        //if have_updates
-        $update_all_html = '';
-        if ($have_updates) {
-            $all_button = new \single_button(
-                    new \moodle_url($CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php', array('updatetemplate' => -1)),
+        // If have_updates.
+        $updateallhtml = '';
+        if ($haveupdates) {
+            $allbutton = new \single_button(
+                    new \moodle_url($CFG->wwwroot . '/filter/generico/genericotemplatesadmin.php', ['updatetemplate' => -1]),
                     get_string('updateall', 'filter_generico'));
-            $update_all_html = $OUTPUT->render($all_button);
+            $updateallhtml = $OUTPUT->render($allbutton);
         }
 
-        return $update_all_html . $template_table;
+        return $updateallhtml . $templatetable;
 
-    }//end of output html
+    }// End of output html.
 
+    /**
+     * Fetch template details
+     *
+     * @param mixed $conf
+     * @return array
+     */
     public static function fetch_template_details($conf) {
-        global $CFG;
-        $ret = array();
+        $ret = [];
 
-        //Get template count
+        // Get template count.
         if ($conf && property_exists($conf, 'templatecount')) {
             $templatecount = $conf->templatecount;
         } else {
@@ -110,30 +118,29 @@ class templateadmintools {
         }
         for ($tindex = 1; $tindex <= $templatecount; $tindex++) {
 
-
-            //template display name
+            // Template display name.
             if ($conf && property_exists($conf, 'templatename_' . $tindex)) {
-                $template_title = $conf->{'templatename_' . $tindex};
-                if (empty($template_title)) {
+                $templatetitle = $conf->{'templatename_' . $tindex};
+                if (empty($templatetitle)) {
                     if (property_exists($conf, 'templatekey_' . $tindex)) {
-                        $template_title = $conf->{'templatekey_' . $tindex};
+                        $templatetitle = $conf->{'templatekey_' . $tindex};
                     }
-                    if (empty($template_title)) {
-                        $template_title = $tindex;
+                    if (empty($templatetitle)) {
+                        $templatetitle = $tindex;
                     }
                 }
             } else if ($conf && property_exists($conf, 'templatekey_' . $tindex)) {
-                $template_title = $conf->{'templatekey_' . $tindex};
-                if (empty($template_title)) {
-                    $template_title = $tindex;
+                $templatetitle = $conf->{'templatekey_' . $tindex};
+                if (empty($templatetitle)) {
+                    $templatetitle = $tindex;
                 }
             } else {
-                $template_title = $tindex;
+                $templatetitle = $tindex;
             }
 
-            $template_details = new \stdClass();
-            $template_details->index = $tindex;
-            $template_details->title = $template_title;
+            $templatedetails = new \stdClass();
+            $templatedetails->index = $tindex;
+            $templatedetails->title = $templatetitle;
 
             if ($conf && property_exists($conf, 'templatekey_' . $tindex)) {
                 $template_details->templatekey = $conf->{'templatekey_' . $tindex};;
@@ -143,18 +150,18 @@ class templateadmintools {
 
             $template_details->version = "";
             if (property_exists($conf, 'templateversion_' . $tindex)) {
-                $template_details->version = $conf->{'templateversion_' . $tindex};
+                $templatedetails->version = $conf->{'templateversion_' . $tindex};
             }
 
-            $template_details->instructions = "";
+            $templatedetails->instructions = "";
             if (property_exists($conf, 'templateinstructions_' . $tindex)) {
-                $template_details->instructions = $conf->{'templateinstructions_' . $tindex};
+                $templatedetails->instructions = $conf->{'templateinstructions_' . $tindex};
             }
 
-            $template_details->url =
-                    new \moodle_url('/admin/settings.php', array('section' => 'filter_generico_templatepage_' . $tindex));
-            $ret[] = $template_details;
+            $templatedetails->url =
+                    new \moodle_url('/admin/settings.php', ['section' => 'filter_generico_templatepage_' . $tindex]);
+            $ret[] = $templatedetails;
         }
         return $ret;
-    }//end of fetch_templates function
-}//end of class
+    }// End of fetch_templates function.
+}// End of class.

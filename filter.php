@@ -17,12 +17,10 @@
 /**
  * Filter for expanding Generico templates
  *
- * @package    filter
+ * @package    filter_generico
  * @subpackage generico
  * @copyright  2014 Justin Hunt <poodllsupport@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
 
 class_alias(\filter_generico\text_filter::class, \filter_generico::class);

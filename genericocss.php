@@ -16,6 +16,7 @@
 
 /**
  * Returns the JS for a specified template
+ *
  * Its php but looks to browser like js file, cos that is what it returns.
  *
  * @package    filter_generico
@@ -23,15 +24,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
+
+require_login();
 
 $tindex = required_param('t', PARAM_TEXT);
 
 $conf = get_config('filter_generico');
 
-//get presets
+// Get presets.
 $thestyle = $conf->{'templatestyle_' . $tindex};
 
 header('Content-Type: text/css');

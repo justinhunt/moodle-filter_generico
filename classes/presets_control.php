@@ -14,26 +14,39 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    filter
- * @subpackage generico
- * @copyright  2014 Justin Hunt <poodllsupport@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace filter_generico;
 
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/adminlib.php');
 
+/**
+ * Presets control
+ *
+ * @package    filter_generico
+ * @subpackage generico
+ * @copyright  2014 Justin Hunt <poodllsupport@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class presets_control extends \admin_setting {
-
-    /** @var mixed int index of template */
+    /**
+     * @var mixed int index of template
+     * */
     public $templateindex;
-    /** @var array template data for spec index */
+
+    /**
+     * @var array template data for spec index
+     * */
     public $presetdata;
+
+    /**
+     * @var string $visiblename
+     */
     public $visiblename;
+
+    /**
+     * @var string $information
+     */
     public $information;
 
     /**
@@ -41,14 +54,16 @@ class presets_control extends \admin_setting {
      *
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in
      *         config_plugins.
-     * @param string $heading heading
+     * @param string $visiblename
      * @param string $information text in box
+     * @param mixed $templateindex
+     * @param mixed $presetdata
      */
     public function __construct($name, $visiblename, $information, $templateindex, $presetdata=false) {
         $this->nosave = true;
         $this->templateindex = $templateindex;
-        if(!$presetdata){
-            $presetdata=$this->fetch_presets();
+        if (!$presetdata) {
+            $presetdata = $this->fetch_presets();
         }
         $this->presetdata = $presetdata;
         $this->visiblename = $visiblename;
@@ -77,24 +92,27 @@ class presets_control extends \admin_setting {
     /**
      * Never write settings
      *
+     * @param mixed $data
      * @return string Always returns an empty string
      */
     public function write_setting($data) {
-        // do not write any setting
+        // Do not write any setting.
         return '';
     }
 
     /**
      * Returns an HTML string
      *
+     * @param mixed $data
+     * @param string $query
      * @return string Returns an HTML string
      */
     public function output_html($data, $query = '') {
         global $PAGE;
 
-        //build our select form
+        // Build our select form.
         $keys = array_keys($this->presetdata);
-        $usearray = array();
+        $usearray = [];
 
         foreach ($keys as $key) {
             $name = $this->presetdata[$key]['name'];
@@ -106,18 +124,18 @@ class presets_control extends \admin_setting {
 
         $presetsjson = json_encode($this->presetdata);
         $presetscontrol = \html_writer::tag('input', '',
-                array('id' => 'id_s_filter_generico_presetdata_' . $this->templateindex, 'type' => 'hidden',
-                        'value' => $presetsjson));
+                ['id' => 'id_s_filter_generico_presetdata_' . $this->templateindex, 'type' => 'hidden',
+                        'value' => $presetsjson]);
 
-        //Add javascript handler for presets
+        // Add javascript handler for presets.
         $PAGE->requires->js_call_amd('filter_generico/generico_presets_amd',
-                'init', array(array('templateindex' => $this->templateindex)));
+                'init', [['templateindex' => $this->templateindex]]);
 
         $select = \html_writer::select($usearray, 'filter_generico/presets', '', '--custom--');
 
         $dragdropsquare = \html_writer::tag('div', get_string('bundle', 'filter_generico'),
-                array('id' => 'id_s_filter_generico_dragdropsquare_' . $this->templateindex,
-                        'class' => 'filter_generico_dragdropsquare'));
+                ['id' => 'id_s_filter_generico_dragdropsquare_' . $this->templateindex,
+                        'class' => 'filter_generico_dragdropsquare']);
 
         return format_admin_setting($this, $this->visiblename,
                 $dragdropsquare . '<div class="form-text defaultsnext">' . $presetscontrol . $select . '</div>',
@@ -125,34 +143,44 @@ class presets_control extends \admin_setting {
 
     }
 
+    /**
+     * Parse preset template
+     *
+     * @param \SplFileInfo $fileinfo
+     * @return array|false
+     */
     protected static function parse_preset_template(\SplFileInfo $fileinfo) {
         $file = $fileinfo->openFile("r");
         $content = "";
         while (!$file->eof()) {
             $content .= $file->fgets();
         }
-        $preset_object = json_decode($content);
-        if ($preset_object && is_object($preset_object)) {
-            return get_object_vars($preset_object);
+        $presetobject = json_decode($content);
+        if ($presetobject && is_object($presetobject)) {
+            return get_object_vars($presetobject);
         } else {
             return false;
         }
-    }//end of parse preset template
+    }// End of parse preset template.
 
+    /**
+     * Fetch presets
+     * @return array
+     */
     public static function fetch_presets() {
         global $CFG, $PAGE;
-        //init return array
-        $ret = array();
-        $dirs = array();
+        // Init return array.
+        $ret = [];
+        $dirs = [];
 
-        //we search the Generico "presets" and the themes "generico" folders for presets
-        $generico_presets_dir = $CFG->dirroot . '/filter/generico/presets';
-        $theme_generico_dir = $PAGE->theme->dir . '/generico';
-        if (file_exists($generico_presets_dir)) {
-            $dirs[] = new \DirectoryIterator($generico_presets_dir);
+        // We search the Generico "presets" and the themes "generico" folders for presets.
+        $genericopresetsdir = $CFG->dirroot . '/filter/generico/presets';
+        $themegenericodir = $PAGE->theme->dir . '/generico';
+        if (file_exists($genericopresetsdir)) {
+            $dirs[] = new \DirectoryIterator($genericopresetsdir);
         }
-        if (file_exists($theme_generico_dir)) {
-            $dirs[] = new \DirectoryIterator($theme_generico_dir);
+        if (file_exists($themegenericodir)) {
+            $dirs[] = new \DirectoryIterator($themegenericodir);
         }
         foreach ($dirs as $dir) {
             foreach ($dir as $fileinfo) {
@@ -165,10 +193,16 @@ class presets_control extends \admin_setting {
             }
         }
         return $ret;
-    }//end of fetch presets function
+    }// End of fetch presets function.
 
+    /**
+     * Set preset to config
+     *
+     * @param array $preset
+     * @param string $templateindex
+     */
     public static function set_preset_to_config($preset, $templateindex) {
-        $fields = array();
+        $fields = [];
         $fields['name'] = 'templatename';
         $fields['key'] = 'templatekey';
         $fields['instructions'] = 'templateinstructions';
@@ -193,22 +227,31 @@ class presets_control extends \admin_setting {
             }
             set_config($fieldname . '_' . $templateindex, $fieldvalue, 'filter_generico');
         }
-    }//End of set_preset_to_config
+    }// End of set_preset_to_config.
 
+    /**
+     * If template has update
+     *
+     * @param string $templateindex
+     * @return mixed|false
+     */
     public static function template_has_update($templateindex) {
         $presets = self::fetch_presets();
         foreach ($presets as $preset) {
             if (get_config('filter_generico', 'templatekey_' . $templateindex) == $preset['key']) {
-                $template_version = get_config('filter_generico', 'templateversion_' . $templateindex);
-                $preset_version = $preset['version'];
-                if (version_compare($preset_version, $template_version) > 0) {
-                    return $preset_version;
-                }//end of version compare
-            }//end of if keys match
-        }//end of presets loop
+                $templateversion = get_config('filter_generico', 'templateversion_' . $templateindex);
+                $presetversion = $preset['version'];
+                if (version_compare($presetversion, $templateversion) > 0) {
+                    return $presetversion;
+                }// End of version compare.
+            }//  End of if keys match.
+        }// End of presets loop.
         return false;
     }
 
+    /**
+     * Update all templates
+     */
     public static function update_all_templates() {
         $templatecount = get_config('filter_generico', 'templatecount');
         $updatecount = 0;
@@ -217,25 +260,31 @@ class presets_control extends \admin_setting {
             if ($updated) {
                 $updatecount++;
             }
-        }//end of templatecount loop
+        }// End of templatecount loop.
         return $updatecount;
-    }//end of function
+    }// End of function.
 
+    /**
+     * Update template
+     *
+     * @param string $templateindex
+     * @return bool
+     */
     public static function update_template($templateindex) {
         $updated = false;
         $presets = self::fetch_presets();
         foreach ($presets as $preset) {
             if (get_config('filter_generico', 'templatekey_' . $templateindex) == $preset['key']) {
-                $template_version = get_config('filter_generico', 'templateversion_' . $templateindex);
-                $preset_version = $preset['version'];
-                if (version_compare($preset_version, $template_version) > 0) {
+                $templateversion = get_config('filter_generico', 'templateversion_' . $templateindex);
+                $presetversion = $preset['version'];
+                if (version_compare($presetversion, $templateversion) > 0) {
                     self::set_preset_to_config($preset, $templateindex);
                     $updated = true;
-                }//end of version compare
+                }// End of version compare.
                 return $updated;
-            }//end of if keys match
-        }//end of presets loop
+            }// End of if keys match.
+        }// End of presets loop.
         return false;
-    }//end of function
+    }// End of function.
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,14 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package filter_generico
+ * Generic lib functions
+ *
+ * @package    filter_generico
  * @copyright  2014 Justin Hunt (http://poodll.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-function filter_generico_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+/**
+ * File serving.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The cm object.
+ * @param context $context The context object.
+ * @param string $filearea The file area.
+ * @param array $args List of arguments.
+ * @param bool $forcedownload Whether or not to force the download of the file.
+ * @param array $options Array of options.
+ * @return void|false
+ */
+function filter_generico_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     $config = get_config('filter_generico');
 
     for ($i = 1; $i <= $config->templatecount; $i++) {
@@ -37,9 +48,8 @@ function filter_generico_pluginfile($course, $cm, $context, $filearea, $args, $f
 }
 
 /**
- * called back on customcss or custom js update, to bump the rev flag
- * this is appended to the customcss url (and sometimes js) so will force a cache refresh
- *
+ * Called back on customcss or custom js update, to bump the rev flag
+ * this is appended to the customcss url (and sometimes js) so will force a cache refresh.
  */
 function filter_generico_update_revision() {
     set_config('revision', time(), 'filter_generico');
