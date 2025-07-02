@@ -42,12 +42,13 @@ class templateadmintools {
         $table->id = 'filter_generico_template_list';
         $table->head = array(
                 get_string('name'),
+                get_string('key', 'filter_generico'),
                 get_string('version'),
                 get_string('description')
         );
-        $table->headspan = array(1, 1, 1);
+        $table->headspan = array(1, 1, 1, 1);
         $table->colclasses = array(
-                'templatenamecol', 'templateversioncol', 'templateinstructionscol'
+                'templatenamecol', 'templatekeycol', 'templateversioncol', 'templateinstructionscol'
         );
 
         //loop through templates and add to table
@@ -57,6 +58,9 @@ class templateadmintools {
             $titlelink = $editlink = \html_writer::link($item->url, $item->title);
             $titlecell = new \html_table_cell($titlelink);
 
+            // templatekey cell
+            $templatekeycell = new \html_table_cell($item->templatekey);
+            
             //version cell
             $updateversion = presets_control::template_has_update($item->index);
             if ($updateversion) {
@@ -74,7 +78,7 @@ class templateadmintools {
             $instructionscell = new \html_table_cell($item->instructions);
 
             $row->cells = array(
-                    $titlecell, $versioncell, $instructionscell
+                    $titlecell, $templatekeycell, $versioncell, $instructionscell
             );
             $table->data[] = $row;
         }
@@ -130,6 +134,12 @@ class templateadmintools {
             $template_details = new \stdClass();
             $template_details->index = $tindex;
             $template_details->title = $template_title;
+
+            if ($conf && property_exists($conf, 'templatekey_' . $tindex)) {
+                $template_details->templatekey = $conf->{'templatekey_' . $tindex};;
+            } else {
+                $template_details->templatekey = '';
+            }
 
             $template_details->version = "";
             if (property_exists($conf, 'templateversion_' . $tindex)) {
