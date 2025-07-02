@@ -73,6 +73,7 @@ $string['templateinstructions'] = 'Instructions (template {$a})';
 $string['templateinstructions_desc'] = 'Any instructions entered here will be displayed on the Generic atto form for this template is displayed. Keep them short or it will look bad.';
 $string['templatekey'] = 'The key that identifies template {$a}';
 $string['templatekey_desc'] = 'The key should be one word and only contain numbers and letters, underscores, hyphens and dots .';
+$string['key'] = 'Template key';
 $string['templatename'] = 'Template Name';
 $string['templatename_desc'] = 'The name of this template.';
 $string['templatepageheading'] = 'Template: {$a}';

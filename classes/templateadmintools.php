@@ -45,22 +45,26 @@ class templateadmintools {
         $table->id = 'filter_generico_template_list';
         $table->head = [
                 get_string('name'),
+                get_string('key', 'filter_generico'),
                 get_string('version'),
-                get_string('description'),
-        ];
-        $table->headspan = [1, 1, 1];
-        $table->colclasses = [
-                'templatenamecol', 'templateversioncol', 'templateinstructionscol',
-        ];
+                get_string('description')
+        );
+        $table->headspan = array(1, 1, 1, 1);
+        $table->colclasses = array(
+                'templatenamecol', 'templatekeycol', 'templateversioncol', 'templateinstructionscol'
+        );
 
-        // Loop through templates and add to table.
-        foreach ($templatedetails as $item) {
+        //loop through templates and add to table
+        foreach ($template_details as $item) {
             $row = new \html_table_row();
 
             $titlelink = $editlink = \html_writer::link($item->url, $item->title);
             $titlecell = new \html_table_cell($titlelink);
 
-            // Version cell.
+            // templatekey cell
+            $templatekeycell = new \html_table_cell($item->templatekey);
+            
+            //version cell
             $updateversion = presets_control::template_has_update($item->index);
             if ($updateversion) {
                 $button = new \single_button(
@@ -76,9 +80,9 @@ class templateadmintools {
 
             $instructionscell = new \html_table_cell($item->instructions);
 
-            $row->cells = [
-                    $titlecell, $versioncell, $instructionscell,
-            ];
+            $row->cells = array(
+                    $titlecell, $templatekeycell, $versioncell, $instructionscell
+            );
             $table->data[] = $row;
         }
 
@@ -138,7 +142,13 @@ class templateadmintools {
             $templatedetails->index = $tindex;
             $templatedetails->title = $templatetitle;
 
-            $templatedetails->version = "";
+            if ($conf && property_exists($conf, 'templatekey_' . $tindex)) {
+                $template_details->templatekey = $conf->{'templatekey_' . $tindex};;
+            } else {
+                $template_details->templatekey = '';
+            }
+
+            $template_details->version = "";
             if (property_exists($conf, 'templateversion_' . $tindex)) {
                 $templatedetails->version = $conf->{'templateversion_' . $tindex};
             }
