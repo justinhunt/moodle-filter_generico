@@ -23,6 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allowedcontextids'] = 'Allowed context ids';
+$string['allowedcontextids_desc'] = 'A comma separated list of context ids where this template can be used. If empty, this is not applied.';
+$string['allowedcontexts'] = 'Allowed contexts';
+$string['allowedcontexts_desc'] = 'A comma separated list of context types where this template can be used. E.g. "system", "course", "user". Activities can be referenced using "mod_pluginname" format. If empty, this is not applied.';
+$string['alternateheading'] = 'Alternate';
 $string['appauthorised'] = "Cloud Poodll is authorised for this site.";
 $string['appnotauthorised'] = "Cloud Poodll is not authorised for this site.";
 $string['bundle'] = 'Bundle';
@@ -37,6 +42,7 @@ $string['cpapiuser_details'] = 'This is the same as your username at Poodll.com.
 $string['credentialsinvalid'] = "The API username and secret entered could not be used to get access. Please check them.";
 $string['dataset'] = 'Dataset';
 $string['dataset_desc'] = 'Generico allows you to pull a dataset from the database for use in your template. This is an advanced feature. Enter the sql portion of a $DB->get_records_sql call here.';
+$string['datasetheading'] = 'Dataset';
 $string['datasetvars'] = 'Dataset Variables';
 $string['datasetvars_desc'] = 'Put a comma separated list of variables that make up the vars for the SQL. You can and probably will want to use variables here.';
 $string['displaysubs'] = '{$a->subscriptionname} : expires {$a->expiredate}';
@@ -54,8 +60,9 @@ $string['presets'] = 'Autofill template with a Preset';
 $string['presets_desc'] = 'Generico comes with some default presets you can use out of the box, or to help you get started with your own template. Choose one of those here, or just create your own template from scratch. You can export a template as a bundle by clicking on the green box above. You can import a bundle by dragging it onto the green box.';
 $string['privacy:metadata'] = 'The Generico filter plugin does not store any personal data.';
 $string['refreshtoken'] = "Refresh Cloud Poodll license information.";
+$string['securityheading'] = 'Security';
 $string['template'] = 'The body of template {$a}';
-$string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@';
+$string['template_desc'] = 'Put the template here, define variables by surrounding them with @@ marks at either e. eg @@variable@@. Be aware of potential <a href="https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html"> IDOR vulnerabilities </a> when choosing what variables to use - users can modify most variables entered here to be any value.';
 $string['templatealternate'] = 'Alternate content';
 $string['templatealternate_desc'] = 'Content that can be used when the custom and uploaded CSS and javascript content is not available. Currently this is used when the template is processed by a webservice, probably for content on the mobile app';
 $string['templatealternate_end'] = 'Alternate content end (template {$a})';
@@ -87,7 +94,7 @@ $string['templaterequirejsshim'] = ' Require Shim export';
 $string['templaterequirejsshim_desc'] = ' Leave blank unless you know what shimming is';
 $string['templates'] = 'Templates';
 $string['templatescript'] = 'Custom JS (template {$a})';
-$string['templatescript_desc'] = 'If your template needs to run custom javascript, enter that here. It will be run once all the elements have loaded on the page.';
+$string['templatescript_desc'] = 'If your template needs to run custom javascript, enter that here. It will be run once all the elements have loaded on the page. Be aware that variables used here may present a <a href="https://owasp.org/www-community/attacks/xss/"> XSS risk </a> as users are likely able to edit them to be any value.';
 $string['templatestyle'] = 'Custom CSS (template {$a})';
 $string['templatestyle_desc'] = 'Enter any custom CSS that your template uses here. Template variables will not work here. Just plain old css.';
 $string['templateupdated'] = '{$a} Poodll Templates Updated.';

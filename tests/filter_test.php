@@ -29,8 +29,8 @@ use advanced_testcase;
  * @covers     \filter_generico\text_filter
  */
 final class filter_test extends advanced_testcase {
-    /** @var string username placeholder */
-    const USERNAME = 'username';
+    /** @var string user firstname placeholder */
+    const USER_FIRSTNAME = 'user_firstname';
 
     /** @var string wwwroot placeholder */
     const WWWROOT = 'wwwroot';
@@ -46,11 +46,85 @@ final class filter_test extends advanced_testcase {
                 'template' => 'Hi @@USER:firstname@@. <a href="@@WWWROOT@@/blocks/profilepic/view.php">',
                 'input' => '{GENERICO:type="welcomeuser"}',
                 'outputcontains' => [
-                    self::USERNAME,
+                    self::USER_FIRSTNAME,
+                    self::WWWROOT,
+                ],
+                'outputnotcontains' => [],
+            ],
+            '@@WWWROOT@@ override (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My url is @@WWWROOT@@',
+                'input' => '{GENERICO:type="welcomeuser",WWWROOT=mycustomwwwroot.invalid}',
+                'outputcontains' => [
+                    self::WWWROOT,
+                ],
+                'outputnotcontains' => [
+                    'mycustomwwwroot.invalid',
+                ],
+            ],
+            'Template injection via @@USER@@ (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My name is @@USER:firstname@@',
+                'input' => '{GENERICO:type="welcomeuser",USER:firstname="@@WWWROOT@@"}',
+                'outputcontains' => [
+                    self::USER_FIRSTNAME,
+                ],
+                'outputnotcontains' => [
                     self::WWWROOT,
                 ],
             ],
+            'Template injection via @@AUTOID@@ (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My id is @@AUTOID@@',
+                'input' => '{GENERICO:type="welcomeuser",AUTOID="@@WWWROOT@@"}',
+                'outputcontains' => [],
+                'outputnotcontains' => [
+                    self::WWWROOT,
+                ],
+            ],
+            '@@AUTOID@@ override (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My id is @@AUTOID@@',
+                'input' => '{GENERICO:type="welcomeuser",AUTOID="mycustomautoid"}',
+                'outputcontains' => [
+                    // Difficult to simulate AUTOID id so not checking for it here.
+                ],
+                'outputnotcontains' => [
+                    'mycustomautoid',
+                ],
+            ],
+            '@@MOODLEPAGEID@@ override (not allowed)' => [
+                'name' => 'welcomeuser',
+                'template' => 'My id is @@MOODLEPAGEID@@',
+                'input' => '{GENERICO:type="welcomeuser",MOODLEPAGEID="mypageid"}',
+                'outputcontains' => [
+                    // Difficult to simulate page id so not checking for it here.
+                ],
+                'outputnotcontains' => [
+                    'mypageid',
+                ],
+            ],
         ];
+    }
+
+    /**
+     * Replace value with placeholder (if it is one)
+     *
+     * @param string $value
+     * @return string
+     */
+    private function replace_placeholder(string $value): string {
+        global $USER, $CFG;
+
+        switch ($value) {
+            case self::USER_FIRSTNAME:
+                return ucfirst($USER->firstname);
+            case self::WWWROOT:
+                return $CFG->wwwroot;
+        }
+
+        // Not a placeholder.
+        return $value;
     }
 
     /**
@@ -61,10 +135,10 @@ final class filter_test extends advanced_testcase {
      * @param string $template
      * @param string $input
      * @param array $outputcontains
+     * @param array $outputnotcontains
      */
-    public function test_filter(string $name, string $template, string $input, array $outputcontains): void {
-        global $USER, $CFG;
-
+    public function test_filter(string $name, string $template, string $input, array $outputcontains,
+        array $outputnotcontains): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         filter_set_global_state('generico', TEXTFILTER_ON);
@@ -73,17 +147,16 @@ final class filter_test extends advanced_testcase {
         set_config('template_1', $template, 'filter_generico');
         $out = format_text($input);
 
+        // Check output contains.
         foreach ($outputcontains as $expectedoutput) {
-            // Replace any placeholders with the actual values.
-            switch ($expectedoutput) {
-                case self::USERNAME:
-                    $expectedoutput = ucfirst($USER->username);
-                    break;
-                case self::WWWROOT:
-                    $expectedoutput = $CFG->wwwroot;
-                    break;
-            }
+            $expectedoutput = $this->replace_placeholder($expectedoutput);
             $this->assertStringContainsString($expectedoutput, $out);
+        }
+
+        // Check output NOT contains.
+        foreach ($outputnotcontains as $expectednotoutput) {
+            $expectednotoutput = $this->replace_placeholder($expectednotoutput);
+            $this->assertStringNotContainsString($expectednotoutput, $out);
         }
     }
 }
