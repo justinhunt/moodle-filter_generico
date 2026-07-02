@@ -26,8 +26,6 @@
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 
-require_login();
-
 $tindex = required_param('t', PARAM_TEXT);
 $generator = new \filter_generico\template_script_generator($tindex);
 $templatescript = $generator->get_template_script();
