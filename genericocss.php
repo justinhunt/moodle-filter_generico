@@ -27,8 +27,6 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
-require_login();
-
 $tindex = required_param('t', PARAM_TEXT);
 
 $conf = get_config('filter_generico');
