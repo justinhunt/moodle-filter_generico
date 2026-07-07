@@ -134,6 +134,10 @@ class settingstools {
                     get_string('templateinstructions', 'filter_generico', $tindex),
                     get_string('templateinstructions_desc', 'filter_generico'),
                     '', PARAM_RAW));
+            // Template hidden.
+            $settingspage->add(new \admin_setting_configcheckbox('filter_generico/templatehidden_' . $tindex,
+                    get_string('templatehidden', 'filter_generico', $tindex),
+                    get_string('templatehidden_desc', 'filter_generico'), 0));
 
             // Template body.
             $settingspage->add(new \admin_setting_configtextarea('filter_generico/template_' . $tindex,
