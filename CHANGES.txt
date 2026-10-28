@@ -1,5 +1,9 @@
 Change List
 =========
+Version 1.4.26 (Build 2026102800)
+- Declared support for Moodle 4.1 to 5.3 (it was 4.1 to 4.5)
+- Tested with Moodle 5.3
+
 Version 1.4.25 (Build 2025100500)
 - More cleaning up of filter string inputs
 
